@@ -4,4 +4,11 @@
     android:layout_height="match_parent"
     tools:context="com.soundcloud.android.crop.example.MainActivity">
 
+    <Button
+        android:id="@+id/select_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Select image" />
+
 </RelativeLayout>
