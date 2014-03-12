@@ -3,24 +3,33 @@ package com.soundcloud.android.crop.example;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.soundcloud.android.crop.CropImageActivity;
+
+import java.io.File;
 
 public class MainActivity extends ActionBarActivity {
 
     private static final int REQUEST_PICK_IMAGE = 10;
     private static final int REQUEST_CROP_IMAGE = 11;
 
+    private Uri output;
+    private ImageView resultView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        output = Uri.fromFile(new File(getCacheDir(), "cropped"));
+        resultView = (ImageView) findViewById(R.id.result_image);
     }
 
     @Override
@@ -51,7 +60,8 @@ public class MainActivity extends ActionBarActivity {
                     Exception e = (Exception) result.getSerializableExtra("error");
                     Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
-                    // TODO: Handle successful crop
+                    resultView.setImageDrawable(null);
+                    resultView.setImageURI(output);
                 }
         }
     }
@@ -68,10 +78,11 @@ public class MainActivity extends ActionBarActivity {
     private void cropImage(Uri input) {
         Intent intent = new Intent(this, CropImageActivity.class)
                 .setData(input)
+                .putExtra(MediaStore.EXTRA_OUTPUT, output)
                 .putExtra("aspectX", 1)
                 .putExtra("aspectY", 1)
-                .putExtra("maxX", 100)
-                .putExtra("maxY", 100);
+                .putExtra("maxX", 200)
+                .putExtra("maxY", 200);
         startActivityForResult(intent, REQUEST_CROP_IMAGE);
     }
 
