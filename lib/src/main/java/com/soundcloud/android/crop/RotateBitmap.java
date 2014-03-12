@@ -16,16 +16,14 @@
 
 package com.soundcloud.android.crop;
 
-import org.jetbrains.annotations.Nullable;
-
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 
 public class RotateBitmap {
-    private @Nullable Bitmap mBitmap;
+    private Bitmap mBitmap;
     private int mRotation;
 
-    public RotateBitmap(@Nullable Bitmap bitmap, int rotation) {
+    public RotateBitmap(Bitmap bitmap, int rotation) {
         mBitmap = bitmap;
         mRotation = rotation % 360;
     }
@@ -38,7 +36,7 @@ public class RotateBitmap {
         return mRotation;
     }
 
-    public @Nullable Bitmap getBitmap() {
+    public Bitmap getBitmap() {
         return mBitmap;
     }
 

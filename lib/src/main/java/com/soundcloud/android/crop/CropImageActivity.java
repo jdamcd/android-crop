@@ -18,9 +18,6 @@
 // data to caller. Removed saving to file, MediaManager, unneeded options, etc.
 package com.soundcloud.android.crop;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -76,8 +73,8 @@ public class CropImageActivity extends MonitoredActivity {
 
     private boolean mSaving; // Whether the "save" button is already clicked.
 
-    private @NotNull CropImageView mImageView;
-    private @Nullable RotateBitmap mRotateBitmap;
+    private CropImageView mImageView;
+    private RotateBitmap mRotateBitmap;
     private HighlightView mCrop;
 
     private Uri mSourceUri;
@@ -328,7 +325,7 @@ public class CropImageActivity extends MonitoredActivity {
      * @throws IllegalArgumentException if the rectangle is outside of the image
      */
     @TargetApi(10)
-    private @Nullable Bitmap decodeRegionCrop(Bitmap croppedImage, Rect rect) {
+    private Bitmap decodeRegionCrop(Bitmap croppedImage, Rect rect) {
         // release memory now
         clearImageView();
 
@@ -371,7 +368,7 @@ public class CropImageActivity extends MonitoredActivity {
         return croppedImage;
     }
 
-    private @Nullable Bitmap inMemoryCrop(@NotNull RotateBitmap rotateBitmap,
+    private Bitmap inMemoryCrop(RotateBitmap rotateBitmap,
                                 Bitmap croppedImage,
                                 Rect r,
                                 int width, int height, int outWidth, int outHeight) {
@@ -507,7 +504,7 @@ public class CropImageActivity extends MonitoredActivity {
             }
         }
 
-    public static @Nullable File getFromMediaUri(ContentResolver resolver, Uri uri) {
+    public static File getFromMediaUri(ContentResolver resolver, Uri uri) {
         if (uri == null) return null;
 
         if ("file".equals(uri.getScheme())) {
