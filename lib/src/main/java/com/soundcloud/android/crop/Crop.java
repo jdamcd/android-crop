@@ -72,4 +72,16 @@ public class Crop {
         }
     }
 
+    public static boolean isError(Intent result) {
+        return result.hasExtra(Extra.ERROR);
+    }
+
+    public static Exception getError(Intent result) {
+        if (isError(result)) {
+            return (Exception) result.getSerializableExtra(Extra.ERROR);
+        } else {
+            throw new RuntimeException("Trying to get exception from result without checking!");
+        }
+    }
+
 }

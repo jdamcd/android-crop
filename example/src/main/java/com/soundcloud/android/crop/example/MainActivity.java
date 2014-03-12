@@ -47,12 +47,7 @@ public class MainActivity extends Activity {
         if (resultCode != RESULT_OK) return;
         switch (requestCode) {
             case Crop.REQUEST_PICK:
-                new Crop(result.getData())
-                        .output(output)
-                        .asSquare()
-                        .maxX(200)
-                        .maxY(200)
-                        .start(this);
+                new Crop(result.getData()).output(output).asSquare().start(this);
                 break;
             case Crop.REQUEST_CROP:
                 setImage(result);
@@ -60,12 +55,11 @@ public class MainActivity extends Activity {
     }
 
     private void setImage(Intent result) {
-        if (result.getExtras().containsKey("error")) {
-            Exception e = (Exception) result.getSerializableExtra("error");
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-        } else {
+        if (!Crop.isError(result)) {
             resultView.setImageDrawable(null);
             resultView.setImageURI(output);
+        } else {
+            Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
