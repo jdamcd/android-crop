@@ -119,15 +119,7 @@ public class CropImageView extends ImageViewTouchBase {
                         - mLastX, event.getY() - mLastY);
                 mLastX = event.getX();
                 mLastY = event.getY();
-
-                if (true) {
-                    // This section of code is optional. It has some user
-                    // benefit in that moving the crop rectangle against
-                    // the edge of the screen causes scrolling but it means
-                    // that the crop rectangle is no longer fixed under
-                    // the user's finger.
-                    ensureVisible(mMotionHighlightView);
-                }
+                ensureVisible(mMotionHighlightView);
             }
             break;
         }
