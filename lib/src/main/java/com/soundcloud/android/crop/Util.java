@@ -75,7 +75,6 @@ public class Util {
             }
         }
 
-
         @Override
         public void onActivityDestroyed(MonitoredActivity activity) {
             // We get here only when the onDestroyed being called before

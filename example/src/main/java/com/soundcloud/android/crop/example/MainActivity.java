@@ -1,9 +1,7 @@
 package com.soundcloud.android.crop.example;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,14 +10,11 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.soundcloud.android.crop.CropImageActivity;
+import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
 
 public class MainActivity extends ActionBarActivity {
-
-    private static final int REQUEST_PICK_IMAGE = 10;
-    private static final int REQUEST_CROP_IMAGE = 11;
 
     private Uri output;
     private ImageView resultView;
@@ -41,7 +36,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_select) {
-            pickImage();
+            Crop.pickImage(this);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -50,40 +45,28 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent result) {
         if (resultCode != RESULT_OK) return;
-
         switch (requestCode) {
-            case REQUEST_PICK_IMAGE:
-                cropImage(result.getData());
+            case Crop.REQUEST_PICK:
+                new Crop(result.getData())
+                        .output(output)
+                        .asSquare()
+                        .maxX(200)
+                        .maxY(200)
+                        .start(this);
                 break;
-            case REQUEST_CROP_IMAGE:
-                if (result.getExtras().containsKey("error")) {
-                    Exception e = (Exception) result.getSerializableExtra("error");
-                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                } else {
-                    resultView.setImageDrawable(null);
-                    resultView.setImageURI(output);
-                }
+            case Crop.REQUEST_CROP:
+                setImage(result);
         }
     }
 
-    private void pickImage() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
-        try {
-            startActivityForResult(intent, REQUEST_PICK_IMAGE);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, R.string.error_pick_image, Toast.LENGTH_SHORT).show();
+    private void setImage(Intent result) {
+        if (result.getExtras().containsKey("error")) {
+            Exception e = (Exception) result.getSerializableExtra("error");
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        } else {
+            resultView.setImageDrawable(null);
+            resultView.setImageURI(output);
         }
-    }
-
-    private void cropImage(Uri input) {
-        Intent intent = new Intent(this, CropImageActivity.class)
-                .setData(input)
-                .putExtra(MediaStore.EXTRA_OUTPUT, output)
-                .putExtra("aspectX", 1)
-                .putExtra("aspectY", 1)
-                .putExtra("maxX", 200)
-                .putExtra("maxY", 200);
-        startActivityForResult(intent, REQUEST_CROP_IMAGE);
     }
 
 }

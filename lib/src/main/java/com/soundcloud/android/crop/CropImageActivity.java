@@ -50,15 +50,8 @@ import java.util.concurrent.CountDownLatch;
 public class CropImageActivity extends MonitoredActivity {
 
     private static final String TAG = CropImageActivity.class.getSimpleName();
-    public static final boolean IN_MEMORY_CROP = Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1;
 
-    public static interface Extras {
-        String ASPECT_X = "aspectX";
-        String ASPECT_Y = "aspectY";
-        String MAX_X = "maxX";
-        String MAX_Y = "maxY";
-        String ERROR = "error";
-    }
+    public static final boolean IN_MEMORY_CROP = Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1;
 
     private int mAspectX, mAspectY;
     private final Handler mHandler = new Handler();
@@ -97,10 +90,10 @@ public class CropImageActivity extends MonitoredActivity {
         Bundle extras = intent.getExtras();
 
         if (extras != null) {
-            mAspectX = extras.getInt(Extras.ASPECT_X);
-            mAspectY = extras.getInt(Extras.ASPECT_Y);
-            mMaxX = extras.getInt(Extras.MAX_X);
-            mMaxY = extras.getInt(Extras.MAX_Y);
+            mAspectX = extras.getInt(Crop.Extra.ASPECT_X);
+            mAspectY = extras.getInt(Crop.Extra.ASPECT_Y);
+            mMaxX = extras.getInt(Crop.Extra.MAX_X);
+            mMaxY = extras.getInt(Crop.Extra.MAX_Y);
             mSaveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);
         }
 
@@ -460,7 +453,7 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     private void setResultByUriWithException(Uri uri, Exception exception){
-        setResult(RESULT_OK, new Intent().putExtra(MediaStore.EXTRA_OUTPUT, uri).putExtra(Extras.ERROR, exception));
+        setResult(RESULT_OK, new Intent().putExtra(MediaStore.EXTRA_OUTPUT, uri).putExtra(Crop.Extra.ERROR, exception));
     }
 
     public static int getExifRotation(File imageFile) {

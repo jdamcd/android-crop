@@ -2,6 +2,7 @@
 
     <string name="saving">Saving picture…</string>
     <string name="wait">Please wait…</string>
+    <string name="error_pick_image">No image sources available</string>
 
     <string name="done">DONE</string>
     <string name="cancel">CANCEL</string>
