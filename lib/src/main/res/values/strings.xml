@@ -1,3 +1,8 @@
 <resources>
 
+    <string name="savingImage">Saving picture\u2026</string>
+    <string name="please_wait">Please wait\u2026</string>
+    <string name="crop_discard_text">Discard</string>
+    <string name="crop_save_text">Save</string>
+
 </resources>
