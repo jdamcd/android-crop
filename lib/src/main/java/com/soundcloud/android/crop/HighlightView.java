@@ -27,16 +27,14 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 
 /*
- * This class is used by CropImage to display a highlighted cropping rectangle
- * overlayed with the image. There are two coordinate spaces in use. One is
+ * Modified from HighlightView in AOSP.
+ *
+ * This class is used to display a highlighted cropping rectangle
+ * overlayed on the image. There are two coordinate spaces in use. One is
  * image, another is screen. computeLayout() uses mMatrix to map from image
  * space to screen space.
  */
 class HighlightView {
-
-    @SuppressWarnings("unused")
-    private static final String TAG = "HighlightView";
-    View mContext;  // The View displaying the image.
 
     public static final int GROW_NONE        = (1 << 0);
     public static final int GROW_LEFT_EDGE   = (1 << 1);
@@ -45,27 +43,48 @@ class HighlightView {
     public static final int GROW_BOTTOM_EDGE = (1 << 4);
     public static final int MOVE             = (1 << 5);
 
-    enum ModifyMode { None, Move, Grow }
+    enum ModifyMode { None, Move, Grow;}
 
-    private ModifyMode mMode = ModifyMode.None;
-
-    Rect mDrawRect;  // in screen space
-    private RectF mImageRect;  // in image space
-    RectF mCropRect;  // in image space
+    RectF mCropRect; // Image space
+    Rect mDrawRect; // Screen space
     Matrix mMatrix;
-
-    private boolean mMaintainAspectRatio;
-    private float mInitialAspectRatio;
-
-    private Drawable mResizeDrawableWidth;
-    private Drawable mResizeDrawableHeight;
+    private RectF mImageRect; // Image space
 
     private final Paint mFocusPaint = new Paint();
     private final Paint mNoFocusPaint = new Paint();
     private final Paint mOutlinePaint = new Paint();
 
-    public HighlightView(View ctx) {
-        mContext = ctx;
+    private View mContext; // View displaying image
+    private ModifyMode mMode = ModifyMode.None;
+    private boolean mMaintainAspectRatio;
+    private float mInitialAspectRatio;
+    private Drawable mResizeDrawableWidth;
+    private Drawable mResizeDrawableHeight;
+    private boolean mIsFocused;
+
+    public HighlightView(View context) {
+        mContext = context;
+    }
+
+    public void setup(Matrix m, Rect imageRect, RectF cropRect,
+                      boolean maintainAspectRatio) {
+        mMatrix = new Matrix(m);
+
+        mCropRect = cropRect;
+        mImageRect = new RectF(imageRect);
+        mMaintainAspectRatio = maintainAspectRatio;
+
+        mInitialAspectRatio = mCropRect.width() / mCropRect.height();
+        mDrawRect = computeLayout();
+
+        mFocusPaint.setARGB(125, 50, 50, 50);
+        mNoFocusPaint.setARGB(125, 50, 50, 50);
+        mOutlinePaint.setStrokeWidth(3F);
+        mOutlinePaint.setStyle(Paint.Style.STROKE);
+        mOutlinePaint.setAntiAlias(true);
+
+        mMode = ModifyMode.None;
+        init();
     }
 
     private void init() {
@@ -76,21 +95,7 @@ class HighlightView {
                 resources.getDrawable(R.drawable.camera_crop_height);
     }
 
-    boolean mIsFocused;
-    boolean mHidden;
-
-    public boolean hasFocus() {
-        return mIsFocused;
-    }
-
-    public void setFocus(boolean f) {
-        mIsFocused = f;
-    }
-
     protected void draw(Canvas canvas) {
-        if (mHidden) {
-            return;
-        }
         canvas.save();
         Path path = new Path();
         if (!hasFocus()) {
@@ -322,25 +327,12 @@ class HighlightView {
         mDrawRect = computeLayout();
     }
 
-    public void setup(Matrix m, Rect imageRect, RectF cropRect,
-                      boolean maintainAspectRatio) {
-        mMatrix = new Matrix(m);
+    public boolean hasFocus() {
+        return mIsFocused;
+    }
 
-        mCropRect = cropRect;
-        mImageRect = new RectF(imageRect);
-        mMaintainAspectRatio = maintainAspectRatio;
-
-        mInitialAspectRatio = mCropRect.width() / mCropRect.height();
-        mDrawRect = computeLayout();
-
-        mFocusPaint.setARGB(125, 50, 50, 50);
-        mNoFocusPaint.setARGB(125, 50, 50, 50);
-        mOutlinePaint.setStrokeWidth(3F);
-        mOutlinePaint.setStyle(Paint.Style.STROKE);
-        mOutlinePaint.setAntiAlias(true);
-
-        mMode = ModifyMode.None;
-        init();
+    public void setFocus(boolean isFocused) {
+        mIsFocused = isFocused;
     }
 
 }

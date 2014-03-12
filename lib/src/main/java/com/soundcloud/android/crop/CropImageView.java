@@ -39,7 +39,7 @@ public class CropImageView extends ImageViewTouchBase {
 
                 hv.mMatrix.set(getUnrotatedMatrix());
                 hv.invalidate();
-                if (hv.mIsFocused) {
+                if (hv.hasFocus()) {
                     centerBasedOnHighlightView(hv);
                 }
             }
