@@ -2,5 +2,7 @@
 <resources>
 
     <string name="app_name">Crop Demo</string>
+    <string name="action_select">Select</string>
+    <string name="error_pick_image">No image providers… Whaaat?</string>
 
 </resources>

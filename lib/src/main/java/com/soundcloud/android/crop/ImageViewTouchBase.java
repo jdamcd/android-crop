@@ -26,6 +26,9 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.widget.ImageView;
 
+/*
+ * Modified from original in AOSP.
+ */
 abstract class ImageViewTouchBase extends ImageView {
     // This is the base transformation which is used to show the image
     // initially.  The current computation for this shows the image in

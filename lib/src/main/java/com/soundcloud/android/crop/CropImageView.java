@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import java.util.ArrayList;
 
 public class CropImageView extends ImageViewTouchBase {
+
     ArrayList<HighlightView> mHighlightViews = new ArrayList<HighlightView>();
     HighlightView mMotionHighlightView;
     float mLastX, mLastY;
@@ -45,7 +46,6 @@ public class CropImageView extends ImageViewTouchBase {
             }
         }
     }
-
 
     @Override
     protected void zoomTo(float scale, float centerX, float centerY) {

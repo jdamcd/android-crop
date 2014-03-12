@@ -1,7 +1,7 @@
 <resources>
 
-    <string name="saving">Saving picture\u2026</string>
-    <string name="wait">Please wait\u2026</string>
+    <string name="saving">Saving picture…</string>
+    <string name="wait">Please wait…</string>
 
     <string name="done">DONE</string>
     <string name="cancel">CANCEL</string>

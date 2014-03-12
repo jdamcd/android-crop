@@ -19,6 +19,9 @@ package com.soundcloud.android.crop;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 
+/*
+ * Modified from original in AOSP.
+ */
 public class RotateBitmap {
     private Bitmap mBitmap;
     private int mRotation;

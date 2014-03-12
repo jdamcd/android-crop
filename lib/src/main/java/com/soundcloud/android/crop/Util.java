@@ -21,12 +21,10 @@ import android.os.Handler;
 
 import java.io.Closeable;
 
-/**
- * Collection of utility functions used in this package.
+/*
+ * Modified from original in AOSP.
  */
 public class Util {
-    private Util() {
-    }
 
     public static void closeSilently(Closeable c) {
         if (c == null) return;

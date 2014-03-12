@@ -5,13 +5,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import android.widget.Toast;
 
 import com.soundcloud.android.crop.CropImageActivity;
 
-import static android.view.View.*;
-
-public class MainActivity extends ActionBarActivity implements OnClickListener {
+public class MainActivity extends ActionBarActivity {
 
     private static final int REQUEST_PICK_IMAGE = 10;
     private static final int REQUEST_CROP_IMAGE = 11;
@@ -20,12 +21,21 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        findViewById(R.id.select_button).setOnClickListener(this);
     }
 
     @Override
-    public void onClick(View v) {
-        pickImage();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_select) {
+            pickImage();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -34,11 +44,12 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
         switch (requestCode) {
             case REQUEST_PICK_IMAGE:
-                cropImage(result.getData(), 100, 100);
+                cropImage(result.getData());
                 break;
             case REQUEST_CROP_IMAGE:
                 if (result.getExtras().containsKey("error")) {
                     Exception e = (Exception) result.getSerializableExtra("error");
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
                     // TODO: Handle successful crop
                 }
@@ -50,18 +61,18 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
         try {
             startActivityForResult(intent, REQUEST_PICK_IMAGE);
         } catch (ActivityNotFoundException e) {
-            // No Activity to provide images!
+            Toast.makeText(this, R.string.error_pick_image, Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void cropImage(Uri input, int width, int height) {
+    private void cropImage(Uri input) {
         Intent intent = new Intent(this, CropImageActivity.class)
                 .setData(input)
                 .putExtra("aspectX", 1)
                 .putExtra("aspectY", 1)
-                .putExtra("maxX", width)
-                .putExtra("maxY", height);
-        startActivityForResult(intent, 0);
+                .putExtra("maxX", 100)
+                .putExtra("maxY", 100);
+        startActivityForResult(intent, REQUEST_CROP_IMAGE);
     }
 
 }

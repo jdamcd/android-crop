@@ -17,6 +17,7 @@
 package com.soundcloud.android.crop;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -27,7 +28,7 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 
 /*
- * Modified from HighlightView in AOSP.
+ * Modified from version in AOSP.
  *
  * This class is used to display a highlighted cropping rectangle
  * overlayed on the image. There are two coordinate spaces in use. One is
@@ -43,7 +44,7 @@ class HighlightView {
     public static final int GROW_BOTTOM_EDGE = (1 << 4);
     public static final int MOVE             = (1 << 5);
 
-    enum ModifyMode { None, Move, Grow;}
+    enum ModifyMode { None, Move, Grow }
 
     RectF mCropRect; // Image space
     Rect mDrawRect; // Screen space
@@ -84,29 +85,27 @@ class HighlightView {
         mOutlinePaint.setAntiAlias(true);
 
         mMode = ModifyMode.None;
-        init();
+        initResources();
     }
 
-    private void init() {
+    private void initResources() {
         android.content.res.Resources resources = mContext.getResources();
-        mResizeDrawableWidth =
-                resources.getDrawable(R.drawable.camera_crop_width);
-        mResizeDrawableHeight =
-                resources.getDrawable(R.drawable.camera_crop_height);
+        mResizeDrawableWidth = resources.getDrawable(R.drawable.camera_crop_width);
+        mResizeDrawableHeight = resources.getDrawable(R.drawable.camera_crop_height);
     }
 
     protected void draw(Canvas canvas) {
         canvas.save();
         Path path = new Path();
         if (!hasFocus()) {
-            mOutlinePaint.setColor(0xFF000000);
+            mOutlinePaint.setColor(Color.BLACK);
             canvas.drawRect(mDrawRect, mOutlinePaint);
         } else {
             Rect viewDrawingRect = new Rect();
             mContext.getDrawingRect(viewDrawingRect);
 
             path.addRect(new RectF(mDrawRect), Path.Direction.CW);
-            mOutlinePaint.setColor(0xFFFF8A00);
+            mOutlinePaint.setColor(0xFF33B5E5);
 
             canvas.clipPath(path, Region.Op.DIFFERENCE);
             canvas.drawRect(viewDrawingRect,

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-// originally from AOSP Camera code. modified to only do cropping and return
-// data to caller. Removed saving to file, MediaManager, unneeded options, etc.
 package com.soundcloud.android.crop;
 
 import android.annotation.TargetApi;
@@ -47,8 +45,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.CountDownLatch;
 
-/**
- * The activity can crop specific region of interest from an image.
+/*
+ * Modified from original in AOSP.
  */
 public class CropImageActivity extends MonitoredActivity {
 
