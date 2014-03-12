@@ -216,7 +216,7 @@ public class CropImageActivity extends MonitoredActivity {
             int y = (height - cropHeight) / 2;
 
             RectF cropRect = new RectF(x, y, x + cropWidth, y + cropHeight);
-            hv.setup(mImageView.getUnrotatedMatrix(), imageRect, cropRect, false,
+            hv.setup(mImageView.getUnrotatedMatrix(), imageRect, cropRect,
                     mAspectX != 0 && mAspectY != 0);
             mImageView.add(hv);
         }
