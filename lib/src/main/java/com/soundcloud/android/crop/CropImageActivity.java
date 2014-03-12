@@ -84,9 +84,9 @@ public class CropImageActivity extends MonitoredActivity {
         super.onCreate(icicle);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.cropimage);
+        setContentView(R.layout.activity_crop);
 
-        mImageView = (CropImageView) findViewById(R.id.cropimage_image);
+        mImageView = (CropImageView) findViewById(R.id.crop_image);
         mImageView.mContext = this;
         mImageView.setRecycler(new ImageViewTouchBase.Recycler() {
             @Override
@@ -131,10 +131,7 @@ public class CropImageActivity extends MonitoredActivity {
             return;
         }
 
-        // Make UI fullscreen.
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        findViewById(R.id.cropimage_discard).setOnClickListener(
+        findViewById(R.id.btn_cancel).setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View v) {
                         setResult(RESULT_CANCELED);
@@ -142,7 +139,7 @@ public class CropImageActivity extends MonitoredActivity {
                     }
                 });
 
-        findViewById(R.id.cropimage_save).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btn_done).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 onSaveClicked();
             }
@@ -167,7 +164,7 @@ public class CropImageActivity extends MonitoredActivity {
         }
         mImageView.setImageRotateBitmapResetBase(mRotateBitmap, true);
         Util.startBackgroundJob(this, null,
-                getResources().getString(R.string.please_wait),
+                getResources().getString(R.string.wait),
                 new Runnable() {
                     public void run() {
                         final CountDownLatch latch = new CountDownLatch(1);
@@ -305,7 +302,7 @@ public class CropImageActivity extends MonitoredActivity {
             if (croppedImage != null){
                 final Bitmap b = croppedImage;
                 Util.startBackgroundJob(this, null,
-                        getResources().getString(R.string.savingImage),
+                        getResources().getString(R.string.saving),
                         new Runnable() {
                             public void run() {
                                 saveOutput(b);
