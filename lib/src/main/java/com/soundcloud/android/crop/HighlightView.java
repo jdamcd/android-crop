@@ -80,7 +80,7 @@ class HighlightView {
 
         mFocusPaint.setARGB(125, 50, 50, 50);
         mNoFocusPaint.setARGB(125, 50, 50, 50);
-        mOutlinePaint.setStrokeWidth(3F);
+        mOutlinePaint.setStrokeWidth(2F * mContext.getResources().getDisplayMetrics().density);
         mOutlinePaint.setStyle(Paint.Style.STROKE);
         mOutlinePaint.setAntiAlias(true);
 
@@ -231,7 +231,6 @@ class HighlightView {
     void moveBy(float dx, float dy) {
         Rect invalRect = new Rect(mDrawRect);
 
-
         mCropRect.offset(dx, dy);
 
         // Put the cropping rectangle inside image rectangle.
@@ -294,7 +293,7 @@ class HighlightView {
         if (r.left < mImageRect.left) {
             r.offset(mImageRect.left - r.left, 0F);
         } else if (r.right > mImageRect.right) {
-            r.offset(-(r.right - mImageRect.right), 0);
+            r.offset(-(r.right - mImageRect.right), 0F);
         }
         if (r.top < mImageRect.top) {
             r.offset(0F, mImageRect.top - r.top);

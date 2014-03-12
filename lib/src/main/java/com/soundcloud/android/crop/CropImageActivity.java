@@ -37,7 +37,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -185,7 +184,7 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
 
-    private class Cropper{
+    private class Cropper {
 
         // Create a default HighlightView if we found no face in the picture.
         private void makeDefault() {
