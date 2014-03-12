@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:exitFadeDuration="@android:integer/config_mediumAnimTime">
+
+    <item android:state_pressed="true">
+        <shape>
+            <solid android:color="@color/selector_pressed" />
+        </shape>
+    </item>
+
+    <item android:state_focused="true">
+        <shape>
+            <solid android:color="@color/selector_focused" />
+        </shape>
+    </item>
+
+    <item android:drawable="@android:color/transparent" />
+
+</selector>

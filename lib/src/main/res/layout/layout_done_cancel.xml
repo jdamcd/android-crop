@@ -1,29 +1,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/bar_height"
-    android:orientation="horizontal"
-    android:divider="?android:attr/dividerVertical"
-    android:showDividers="middle"
-    android:dividerPadding="12dp"
-    android:background="@color/button_bar">
+    style="@style/DoneCancelBar">
 
     <FrameLayout
-        style="?android:actionButtonStyle"
         android:id="@+id/btn_cancel"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-
+        style="@style/ActionButton">
         <TextView style="@style/ActionButtonText.Cancel" />
     </FrameLayout>
 
     <FrameLayout
-        style="?android:actionButtonStyle"
         android:id="@+id/btn_done"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-
+        style="@style/ActionButton">
         <TextView style="@style/ActionButtonText.Done" />
     </FrameLayout>
 
