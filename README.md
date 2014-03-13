@@ -5,6 +5,7 @@ This is yet another Android library project providing a simple image cropping `A
 ## Goals
 
 * Gradle build
+* AAR & ApkLib artifacts 
 * Backwards compatible to Gingerbread
 * Example project
 * Add tests and strip out unused complexity
@@ -20,7 +21,7 @@ This is yet another Android library project providing a simple image cropping `A
 
 `new Crop(inputUri).output(outputUri).asSquare().start(activity)`
 
-Listen for the result of the crop in `onActivityResult(...)`:
+Listen for the result of the crop:
 
     protected void onActivityResult(int requestCode, int resultCode, Intent result) {
         if (resultCode == RESULT_OK && requestCode == Crop.REQUEST_CROP) {
@@ -34,9 +35,13 @@ Listen for the result of the crop in `onActivityResult(...)`:
 
 #### Pick
 
-There is a util method to start an image picker:
+The library provides a utility method to start an image picker:
 
 `Crop.pickImage(activity)`
+
+## How does it look?
+
+![android-crop screenshot](screenshot.png)
 
 ## License & Credits
 
