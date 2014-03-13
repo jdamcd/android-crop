@@ -457,7 +457,9 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     public static int getExifRotation(File imageFile) {
-        if (imageFile == null) return -1;
+        if (imageFile == null) {
+            return ExifInterface.ORIENTATION_UNDEFINED;
+        }
         try {
             ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
             // We only recognize a subset of orientation tag values.
@@ -473,7 +475,7 @@ public class CropImageActivity extends MonitoredActivity {
             }
         } catch (IOException e) {
             Log.e(TAG, "error", e);
-            return -1;
+            return ExifInterface.ORIENTATION_UNDEFINED;
         }
     }
 
