@@ -1,8 +1,10 @@
 > I guess people are just cropping out all the sadness
 
-This is yet another Android library project providing a simple image cropping `Activity`. It's based on the same AOSP code as the others.
+This is yet another Android library project providing a simple image cropping `Activity`, based on code from AOSP.
 
 ## Goals
+
+I started this in my [hacker time](http://backstage.soundcloud.com/2011/12/stop-hacker-time/) with the intention of replacing our  dated android-cropimage fork.
 
 * Gradle build
 * AAR & ApkLib artifacts 
@@ -11,9 +13,7 @@ This is yet another Android library project providing a simple image cropping `A
 * Add tests and strip out unused complexity
 * Better programming interface
 * Modern user interface
-* Move error handling to result code
 * Fix bugs!
-* Keep improvements from SoundCloud fork of android-cropimage
 
 ## Usage
 
