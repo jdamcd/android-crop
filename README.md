@@ -17,6 +17,10 @@ This is yet another Android library project providing a simple image cropping `A
 
 ## Usage
 
+First, declare `CropImageActivity` in your manifest file:
+
+`<activity android:name="com.soundcloud.android.crop.CropImageActivity" />`
+
 #### Crop
 
 `new Crop(inputUri).output(outputUri).asSquare().start(activity)`
