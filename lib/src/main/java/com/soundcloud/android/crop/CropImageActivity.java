@@ -50,24 +50,27 @@ import java.util.concurrent.CountDownLatch;
 public class CropImageActivity extends MonitoredActivity {
 
     private static final String TAG = CropImageActivity.class.getSimpleName();
+    private static final boolean IN_MEMORY_CROP = Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1;
 
-    public static final boolean IN_MEMORY_CROP = Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1;
-
-    private int mAspectX, mAspectY;
     private final Handler mHandler = new Handler();
+
+    private int mAspectX;
+    private int mAspectY;
 
     // These options specify the output image size and whether we should
     // scale the output to fit it (or just crop it).
-    private int mMaxX, mMaxY, mExifRotation;
-    private Uri mSaveUri;
-
-    private boolean mSaving; // Whether the "save" button is already clicked.
-
-    private CropImageView mImageView;
-    private RotateBitmap mRotateBitmap;
-    private HighlightView mCrop;
+    private int mMaxX;
+    private int mMaxY;
+    private int mExifRotation;
 
     private Uri mSourceUri;
+    private Uri mSaveUri;
+
+    private boolean mIsSaving; // When the save button has been clicked
+
+    private RotateBitmap mRotateBitmap;
+    private CropImageView mImageView;
+    private HighlightView mCrop;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -138,16 +141,6 @@ public class CropImageActivity extends MonitoredActivity {
         startCrop();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     private void startCrop() {
         if (isFinishing()) {
             return;
@@ -179,7 +172,6 @@ public class CropImageActivity extends MonitoredActivity {
 
     private class Cropper {
 
-        // Create a default HighlightView if we found no face in the picture.
         private void makeDefault() {
             if (mRotateBitmap == null) return;
 
@@ -189,9 +181,9 @@ public class CropImageActivity extends MonitoredActivity {
 
             Rect imageRect = new Rect(0, 0, width, height);
 
-            // make the default size about 4/5 of the width or height
+            // Make the default size about 4/5 of the width or height
             int cropWidth = Math.min(width, height) * 4 / 5;
-            //noinspection SuspiciousNameCombination
+            // Noinspection SuspiciousNameCombination
             int cropHeight = cropWidth;
 
             if (mAspectX != 0 && mAspectY != 0) {
@@ -225,17 +217,16 @@ public class CropImageActivity extends MonitoredActivity {
         }
     };
 
+    /*
+     * TODO
+     * This should use the decode/crop/encode single step API so that the whole
+     * (possibly large) Bitmap doesn't need to be read into memory
+     */
     private void onSaveClicked() {
-        // TODO this code needs to change to use the decode/crop/encode single
-        // step api so that we don't require that the whole (possibly large)
-        // bitmap doesn't have to be read into memory
-        if (mCrop == null) {
+        if (mCrop == null || mIsSaving) {
             return;
         }
-
-        if (mSaving)
-            return;
-        mSaving = true;
+        mIsSaving = true;
 
         Bitmap croppedImage = null;
         Rect r = mCrop.getCropRect();
@@ -277,7 +268,7 @@ public class CropImageActivity extends MonitoredActivity {
             }
         }
 
-        // Return the cropped image directly or save it to the specified URI.
+        // Return the cropped image directly or save it to the specified URI
         Bundle myExtras = getIntent().getExtras();
         if (myExtras != null && (myExtras.getParcelable("data") != null
                 || myExtras.getBoolean("return-data"))) {
@@ -305,15 +296,9 @@ public class CropImageActivity extends MonitoredActivity {
         }
     }
 
-    /**
-     * @param croppedImage the cropped image
-     * @param rect rectangle to crop
-     * @return the bitmap
-     * @throws IllegalArgumentException if the rectangle is outside of the image
-     */
     @TargetApi(10)
     private Bitmap decodeRegionCrop(Bitmap croppedImage, Rect rect) {
-        // release memory now
+        // Release memory now
         clearImageView();
 
         InputStream is = null;
@@ -325,14 +310,14 @@ public class CropImageActivity extends MonitoredActivity {
 
             if (mExifRotation != 0) {
 
-                // adjust crop area to account for image rotation
+                // Adjust crop area to account for image rotation
                 Matrix matrix = new Matrix();
                 matrix.setRotate(-mExifRotation);
 
                 RectF adjusted = new RectF();
                 matrix.mapRect(adjusted, new RectF(rect));
 
-                // adjust to account for origin at 0,0
+                // Adjust to account for origin at 0,0
                 adjusted.offset(adjusted.left < 0 ? width : 0, adjusted.top < 0 ? height : 0);
                 rect = new Rect((int) adjusted.left, (int) adjusted.top, (int) adjusted.right, (int) adjusted.bottom);
             }
@@ -341,7 +326,7 @@ public class CropImageActivity extends MonitoredActivity {
                 croppedImage = decoder.decodeRegion(rect, new BitmapFactory.Options());
 
             } catch (IllegalArgumentException e) {
-                // rethrow with some extra information
+                // Rethrow with some extra information
                 throw new IllegalArgumentException(
                         "rectangle "+rect+" is outside of the image ("+width+","+height+","+mExifRotation+")", e);
             }
@@ -359,7 +344,7 @@ public class CropImageActivity extends MonitoredActivity {
                                 Bitmap croppedImage,
                                 Rect r,
                                 int width, int height, int outWidth, int outHeight) {
-        // in memory crop, potential OOM errors,
+        // In-memory crop, potential OOM errors,
         // but we have no choice as we can't selectively decode a bitmap with this sdk
         System.gc();
 
@@ -409,14 +394,13 @@ public class CropImageActivity extends MonitoredActivity {
             }
 
             if (!IN_MEMORY_CROP){
-                // in memory crop negates the rotation
+                // In-memory crop negates the rotation
                 copyExifRotation(
                         getFromMediaUri(getContentResolver(), mSourceUri),
                         getFromMediaUri(getContentResolver(), mSaveUri)
                 );
             }
 
-            // success
             setResultByUri(mSaveUri);
         }
 
@@ -440,7 +424,7 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     public boolean isSaving() {
-        return mSaving;
+        return mIsSaving;
     }
 
     @Override
@@ -462,7 +446,7 @@ public class CropImageActivity extends MonitoredActivity {
         }
         try {
             ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
-            // We only recognize a subset of orientation tag values.
+            // We only recognize a subset of orientation tag values
             switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)) {
                 case ExifInterface.ORIENTATION_ROTATE_90:
                     return 90;
@@ -515,7 +499,7 @@ public class CropImageActivity extends MonitoredActivity {
                     }
                 }
             } catch (SecurityException ignored) {
-                // nothing to be done
+                // Nothing we can do
             } finally {
                 if (cursor != null) cursor.close();
             }
