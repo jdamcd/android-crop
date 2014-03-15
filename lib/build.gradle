@@ -1,5 +1,7 @@
 apply plugin: 'android-library'
 
+archivesBaseName = 'android-crop'
+
 android {
     compileSdkVersion 19
     buildToolsVersion '19.0.3'
@@ -10,11 +12,23 @@ android {
         versionCode 1
         versionName "1.0"
     }
+}
 
-    buildTypes {
-        release {
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
+task apklib(type: Zip) {
+    dependsOn 'packageReleaseJar'
+    destinationDir = file('build/libs')
+    extension = 'apklib'
+
+    from 'AndroidManifest.xml'
+    into('res') {
+        from 'res'
+    }
+    into('src') {
+        from 'src'
     }
 }
+
+artifacts {
+    archives apklib
+}
+
