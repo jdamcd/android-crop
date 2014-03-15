@@ -12,12 +12,16 @@ public class Crop {
     public static final int REQUEST_CROP = 10;
     public static final int REQUEST_PICK = 11;
 
+    public static final String INLINE_DATA = "inline_data";
+
     static interface Extra {
         String ASPECT_X = "aspect_x";
         String ASPECT_Y = "aspect_y";
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
         String ERROR = "error";
+        String RETURN_DATA = "return_data";
+        String IMAGE_DATA = "data";
     }
 
     private Intent cropIntent;
@@ -29,6 +33,11 @@ public class Crop {
 
     public Crop output(Uri output) {
         cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, output);
+        return this;
+    }
+
+    public Crop returnData() {
+        cropIntent.putExtra(INLINE_DATA, true);
         return this;
     }
 

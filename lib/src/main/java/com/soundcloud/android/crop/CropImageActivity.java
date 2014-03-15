@@ -261,31 +261,32 @@ public class CropImageActivity extends MonitoredActivity {
                 mImageView.mHighlightViews.clear();
             }
         }
+        returnCroppedImage(croppedImage);
+    }
 
-        // Return the cropped image directly or save it to the specified URI
-        Bundle myExtras = getIntent().getExtras();
-        if (myExtras != null && (myExtras.getParcelable("data") != null
-                || myExtras.getBoolean("return-data"))) {
-            Bundle extras = new Bundle();
+    private void returnCroppedImage(Bitmap croppedImage) {
+        Bundle inputExtras = getIntent().getExtras();
+        if (inputExtras != null && (inputExtras.getParcelable(Crop.Extra.IMAGE_DATA) != null
+                || inputExtras.getBoolean(Crop.Extra.RETURN_DATA))) {
+            Bundle outputExtras = new Bundle();
             if (croppedImage != null) {
-                extras.putParcelable("data", croppedImage);
+                outputExtras.putParcelable(Crop.Extra.IMAGE_DATA, croppedImage);
             }
-            setResult(RESULT_OK, (new Intent()).setAction("inline-data").putExtras(extras));
+            setResult(RESULT_OK, (new Intent()).setAction(Crop.INLINE_DATA).putExtras(outputExtras));
             finish();
         } else {
-            if (croppedImage != null){
+            if (croppedImage != null) {
                 final Bitmap b = croppedImage;
-                Util.startBackgroundJob(this, null,
-                        getResources().getString(R.string.saving),
+                Util.startBackgroundJob(this, null, getResources().getString(R.string.saving),
                         new Runnable() {
                             public void run() {
                                 saveOutput(b);
                             }
-                        }, mHandler);
+                        }, mHandler
+                );
             } else {
                 finish();
             }
-
         }
     }
 
@@ -302,7 +303,6 @@ public class CropImageActivity extends MonitoredActivity {
             final int height = decoder.getHeight();
 
             if (mExifRotation != 0) {
-
                 // Adjust crop area to account for image rotation
                 Matrix matrix = new Matrix();
                 matrix.setRotate(-mExifRotation);
@@ -335,8 +335,8 @@ public class CropImageActivity extends MonitoredActivity {
 
     private Bitmap inMemoryCrop(RotateBitmap rotateBitmap, Bitmap croppedImage, Rect r,
                                 int width, int height, int outWidth, int outHeight) {
-        // In-memory crop, potential OOM errors,
-        // but we have no choice as we can't selectively decode a bitmap with this sdk
+        // In-memory crop means potential OOM errors,
+        // but we have no choice as we can't selectively decode a bitmap with this API level
         System.gc();
 
         try {

@@ -37,12 +37,15 @@ public class Util {
 
     public static final String TAG = "android-crop";
 
+    private static final String SCHEME_FILE = "file";
+    private static final String SCHEME_CONTENT = "content";
+
     public static void closeSilently(Closeable c) {
         if (c == null) return;
         try {
             c.close();
         } catch (Throwable t) {
-            // do nothing
+            // Do nothing
         }
     }
 
@@ -84,9 +87,9 @@ public class Util {
     public static File getFromMediaUri(ContentResolver resolver, Uri uri) {
         if (uri == null) return null;
 
-        if ("file".equals(uri.getScheme())) {
+        if (SCHEME_FILE.equals(uri.getScheme())) {
             return new File(uri.getPath());
-        } else if ("content".equals(uri.getScheme())) {
+        } else if (SCHEME_CONTENT.equals(uri.getScheme())) {
             final String[] filePathColumn = { MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DISPLAY_NAME };
             Cursor cursor = null;
             try {
@@ -115,7 +118,7 @@ public class Util {
     public static void startBackgroundJob(MonitoredActivity activity,
             String title, String message, Runnable job, Handler handler) {
         // Make the progress dialog uncancelable, so that we can gurantee
-        // the thread will be done before the activity getting destroyed.
+        // the thread will be done before the activity getting destroyed
         ProgressDialog dialog = ProgressDialog.show(
                 activity, title, message, true, false);
         new Thread(new BackgroundJob(activity, job, dialog, handler)).start();
