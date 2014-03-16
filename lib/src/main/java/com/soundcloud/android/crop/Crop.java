@@ -12,6 +12,7 @@ public class Crop {
 
     public static final int REQUEST_CROP = 10;
     public static final int REQUEST_PICK = 11;
+    public static final int RESULT_ERROR = 404;
 
     static interface Extra {
         String ASPECT_X = "aspect_x";
@@ -75,16 +76,8 @@ public class Crop {
         return (Bitmap) result.getParcelableExtra(Extra.IMAGE_DATA);
     }
 
-    public static boolean isError(Intent result) {
-        return result.hasExtra(Extra.ERROR);
-    }
-
-    public static Exception getError(Intent result) {
-        if (isError(result)) {
-            return (Exception) result.getSerializableExtra(Extra.ERROR);
-        } else {
-            throw new RuntimeException("Trying to get exception from result without checking!");
-        }
+    public static Throwable getError(Intent result) {
+        return (Throwable) result.getSerializableExtra(Extra.ERROR);
     }
 
     public static void pickImage(Activity activity) {

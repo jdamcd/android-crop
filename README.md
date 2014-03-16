@@ -23,15 +23,12 @@ First, declare `CropImageActivity` in your manifest file:
 
 `new Crop(inputUri).output(outputUri).asSquare().start(activity)`
 
-Listen for the result of the crop:
+Listen for the result of the crop (see example project if you want to do some error handling):
 
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent result) {
-        if (resultCode == RESULT_OK && requestCode == Crop.REQUEST_CROP) {
-            if (Crop.isError(result)) {
-            	// Do some error handling with Crop.getError(result)
-        	} else {
-            	// Do something with your cropped image!
-        	}
+        if (requestCode == Crop.REQUEST_CROP && resultCode == RESULT_OK) {
+            doSomethingWithCroppedImage(outputUri);
         }
     }
 

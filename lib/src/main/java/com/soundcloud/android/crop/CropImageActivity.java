@@ -128,10 +128,10 @@ public class CropImageActivity extends MonitoredActivity {
                 mRotateBitmap = new RotateBitmap(BitmapFactory.decodeStream(is), mExifRotation);
             } catch (IOException e) {
                 Log.e(Util.TAG, "Error reading picture: " + e.getMessage(), e);
-                setResultByUriWithException(mSourceUri, e);
+                setResultException(e);
             } catch (OutOfMemoryError e) {
                 Log.e(Util.TAG, "OOM while reading picture: " + e.getMessage(), e);
-                setResultByUri(mSourceUri);
+                setResultException(e);
             } finally{
                 Util.closeSilently(is);
             }
@@ -250,7 +250,7 @@ public class CropImageActivity extends MonitoredActivity {
             try {
                 croppedImage = decodeRegionCrop(croppedImage, r);
             } catch (IllegalArgumentException e) {
-                setResultByUriWithException(mSourceUri, e);
+                setResultException(e);
                 finish();
                 return;
             }
@@ -399,7 +399,7 @@ public class CropImageActivity extends MonitoredActivity {
                 );
             }
 
-            setResultByUri(mSaveUri);
+            setResultUri(mSaveUri);
         }
 
         final Bitmap b = croppedImage;
@@ -430,12 +430,12 @@ public class CropImageActivity extends MonitoredActivity {
         return false;
     }
 
-    private void setResultByUri(Uri uri) {
+    private void setResultUri(Uri uri) {
         setResult(RESULT_OK, new Intent().putExtra(MediaStore.EXTRA_OUTPUT, uri));
     }
 
-    private void setResultByUriWithException(Uri uri, Exception exception){
-        setResult(RESULT_OK, new Intent().putExtra(MediaStore.EXTRA_OUTPUT, uri).putExtra(Crop.Extra.ERROR, exception));
+    private void setResultException(Throwable throwable){
+        setResult(Crop.RESULT_ERROR, new Intent().putExtra(Crop.Extra.ERROR, throwable));
     }
 
 }

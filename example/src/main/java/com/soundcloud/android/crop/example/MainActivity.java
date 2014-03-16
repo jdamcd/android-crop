@@ -16,14 +16,14 @@ import java.io.File;
 
 public class MainActivity extends Activity {
 
-    private Uri output;
+    private Uri outputUri;
     private ImageView resultView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        output = Uri.fromFile(new File(getCacheDir(), "cropped"));
+        outputUri = Uri.fromFile(new File(getCacheDir(), "cropped"));
         resultView = (ImageView) findViewById(R.id.result_image);
     }
 
@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_select) {
+            resultView.setImageDrawable(null);
             Crop.pickImage(this);
             return true;
         }
@@ -44,21 +45,17 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent result) {
-        if (resultCode != RESULT_OK) return;
-        switch (requestCode) {
-            case Crop.REQUEST_PICK:
-                new Crop(result.getData()).output(output).asSquare().start(this);
-                break;
-            case Crop.REQUEST_CROP:
-                setImage(result);
+        if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
+            new Crop(result.getData()).output(outputUri).asSquare().start(this);
+        } else if (requestCode == Crop.REQUEST_CROP) {
+            handleCrop(resultCode, result);
         }
     }
 
-    private void setImage(Intent result) {
-        if (!Crop.isError(result)) {
-            resultView.setImageDrawable(null);
-            resultView.setImageURI(output);
-        } else {
+    private void handleCrop(int resultCode, Intent result) {
+        if (resultCode == RESULT_OK) {
+            resultView.setImageURI(outputUri);
+        } else if (resultCode == Crop.RESULT_ERROR) {
             Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
