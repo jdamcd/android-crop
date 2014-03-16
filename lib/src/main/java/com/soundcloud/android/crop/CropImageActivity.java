@@ -261,32 +261,39 @@ public class CropImageActivity extends MonitoredActivity {
                 mImageView.mHighlightViews.clear();
             }
         }
-        returnCroppedImage(croppedImage);
+        handleResult(croppedImage);
     }
 
-    private void returnCroppedImage(Bitmap croppedImage) {
+    private void handleResult(Bitmap croppedImage) {
         Bundle inputExtras = getIntent().getExtras();
-        if (inputExtras != null && (inputExtras.getParcelable(Crop.Extra.IMAGE_DATA) != null
-                || inputExtras.getBoolean(Crop.Extra.RETURN_DATA))) {
-            Bundle outputExtras = new Bundle();
-            if (croppedImage != null) {
-                outputExtras.putParcelable(Crop.Extra.IMAGE_DATA, croppedImage);
-            }
-            setResult(RESULT_OK, (new Intent()).setAction(Crop.INLINE_DATA).putExtras(outputExtras));
-            finish();
+        if (inputExtras != null && inputExtras.getBoolean(Crop.Extra.RETURN_DATA)) {
+            returnImageData(croppedImage);
         } else {
-            if (croppedImage != null) {
-                final Bitmap b = croppedImage;
-                Util.startBackgroundJob(this, null, getResources().getString(R.string.saving),
-                        new Runnable() {
-                            public void run() {
-                                saveOutput(b);
-                            }
-                        }, mHandler
-                );
-            } else {
-                finish();
-            }
+            saveImage(croppedImage);
+        }
+    }
+
+    private void returnImageData(Bitmap croppedImage) {
+        Bundle outputExtras = new Bundle();
+        if (croppedImage != null) {
+            outputExtras.putParcelable(Crop.Extra.IMAGE_DATA, croppedImage);
+            setResult(RESULT_OK, (new Intent()).putExtras(outputExtras));
+        }
+        finish();
+    }
+
+    private void saveImage(Bitmap croppedImage) {
+        if (croppedImage != null) {
+            final Bitmap b = croppedImage;
+            Util.startBackgroundJob(this, null, getResources().getString(R.string.saving),
+                    new Runnable() {
+                        public void run() {
+                            saveOutput(b);
+                        }
+                    }, mHandler
+            );
+        } else {
+            finish();
         }
     }
 

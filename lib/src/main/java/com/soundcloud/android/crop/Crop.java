@@ -3,6 +3,7 @@ package com.soundcloud.android.crop;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
@@ -11,8 +12,6 @@ public class Crop {
 
     public static final int REQUEST_CROP = 10;
     public static final int REQUEST_PICK = 11;
-
-    public static final String INLINE_DATA = "inline_data";
 
     static interface Extra {
         String ASPECT_X = "aspect_x";
@@ -36,8 +35,8 @@ public class Crop {
         return this;
     }
 
-    public Crop returnData() {
-        cropIntent.putExtra(INLINE_DATA, true);
+    public Crop returnBitmap() {
+        cropIntent.putExtra(Extra.RETURN_DATA, true);
         return this;
     }
 
@@ -72,13 +71,8 @@ public class Crop {
         activity.startActivityForResult(cropIntent, REQUEST_CROP);
     }
 
-    public static void pickImage(Activity activity) {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
-        try {
-            activity.startActivityForResult(intent, REQUEST_PICK);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(activity, R.string.error_pick_image, Toast.LENGTH_SHORT).show();
-        }
+    public static Bitmap getBitmap(Intent result) {
+        return (Bitmap) result.getParcelableExtra(Extra.IMAGE_DATA);
     }
 
     public static boolean isError(Intent result) {
@@ -90,6 +84,15 @@ public class Crop {
             return (Exception) result.getSerializableExtra(Extra.ERROR);
         } else {
             throw new RuntimeException("Trying to get exception from result without checking!");
+        }
+    }
+
+    public static void pickImage(Activity activity) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
+        try {
+            activity.startActivityForResult(intent, REQUEST_PICK);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(activity, R.string.error_pick_image, Toast.LENGTH_SHORT).show();
         }
     }
 
