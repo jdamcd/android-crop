@@ -384,9 +384,9 @@ public class CropImageActivity extends MonitoredActivity {
                     croppedImage.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
                 }
 
-            } catch (IOException ex) {
-                // TODO: report error to caller
-                Log.e(Util.TAG, "Cannot open file: " + mSaveUri, ex);
+            } catch (IOException e) {
+                setResultException(e);
+                Log.e(Util.TAG, "Cannot open file: " + mSaveUri, e);
             } finally {
                 Util.closeSilently(outputStream);
             }
