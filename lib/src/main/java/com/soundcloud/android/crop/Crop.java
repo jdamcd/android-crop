@@ -87,7 +87,7 @@ public class Crop {
      * @param width Max width
      * @param height Max height
      */
-    public Crop withMazSize(int width, int height) {
+    public Crop withMaxSize(int width, int height) {
         cropIntent.putExtra(Extra.MAX_X, width);
         cropIntent.putExtra(Extra.MAX_Y, height);
         return this;

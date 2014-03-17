@@ -65,7 +65,7 @@ public class CropBuilderTest extends BaseTestCase {
     }
 
     public void testMaxSizeSetAsExtras() {
-        builder.withMazSize(400, 300);
+        builder.withMaxSize(400, 300);
 
         Intent intent = builder.getIntent(activity);
 
@@ -74,7 +74,7 @@ public class CropBuilderTest extends BaseTestCase {
     }
 
     public void testBuildsIntentWithMultipleOptions() {
-        builder.asSquare().withMazSize(200, 200);
+        builder.asSquare().withMaxSize(200, 200);
 
         Intent intent = builder.getIntent(activity);
 
