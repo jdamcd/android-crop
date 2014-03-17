@@ -90,8 +90,8 @@ class HighlightView {
 
     private void initResources() {
         android.content.res.Resources resources = mContext.getResources();
-        mResizeDrawableWidth = resources.getDrawable(R.drawable.camera_crop_width);
-        mResizeDrawableHeight = resources.getDrawable(R.drawable.camera_crop_height);
+        mResizeDrawableWidth = resources.getDrawable(R.drawable.crop_width);
+        mResizeDrawableHeight = resources.getDrawable(R.drawable.crop_height);
     }
 
     protected void draw(Canvas canvas) {

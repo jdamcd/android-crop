@@ -209,7 +209,7 @@ public class CropImageActivity extends MonitoredActivity {
                 }
             });
         }
-    };
+    }
 
     /*
      * TODO
@@ -327,8 +327,8 @@ public class CropImageActivity extends MonitoredActivity {
 
             } catch (IllegalArgumentException e) {
                 // Rethrow with some extra information
-                throw new IllegalArgumentException(
-                        "rectangle "+rect+" is outside of the image ("+width+","+height+","+mExifRotation+")", e);
+                throw new IllegalArgumentException("rectangle " + rect + " is outside of the image ("
+                        + width + "," + height + "," + mExifRotation + ")", e);
             }
 
         } catch (IOException e) {
@@ -357,7 +357,7 @@ public class CropImageActivity extends MonitoredActivity {
             m.preConcat(rotateBitmap.getRotateMatrix());
             canvas.drawBitmap(rotateBitmap.getBitmap(), m, null);
 
-        } catch (OutOfMemoryError e){
+        } catch (OutOfMemoryError e) {
             Log.e(Util.TAG, "Error cropping picture: " + e.getMessage(), e);
             System.gc();
         }
@@ -421,13 +421,13 @@ public class CropImageActivity extends MonitoredActivity {
         }
     }
 
-    public boolean isSaving() {
-        return mIsSaving;
-    }
-
     @Override
     public boolean onSearchRequested() {
         return false;
+    }
+
+    public boolean isSaving() {
+        return mIsSaving;
     }
 
     private void setResultUri(Uri uri) {
