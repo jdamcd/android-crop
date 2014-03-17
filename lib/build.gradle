@@ -1,4 +1,5 @@
 apply plugin: 'android-library'
+apply plugin: 'maven'
 
 archivesBaseName = 'android-crop'
 
@@ -9,11 +10,9 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 19
-        versionCode 1
-        versionName "1.0"
 
-        testPackageName "com.soundcloud.android.crop.test"
-        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        testPackageName 'com.soundcloud.android.crop.test'
+        testInstrumentationRunner 'android.test.InstrumentationTestRunner'
     }
 }
 
@@ -29,6 +28,7 @@ dependencies {
 task apklib(type: Zip) {
     dependsOn 'packageReleaseJar'
     destinationDir = file('build/libs')
+    appendix = 'apklib'
     extension = 'apklib'
 
     from 'AndroidManifest.xml'
@@ -44,3 +44,38 @@ artifacts {
     archives apklib
 }
 
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: 'http://maven.int.s-cloud.net/content/repositories/releases')
+
+            modifyPom(addFilter('aar') { artifact, file ->
+                artifact.name == archivesBaseName
+            })
+
+            modifyPom(addFilter('apklib') { artifact, file ->
+                artifact.name == archivesBaseName + '-apklib'
+            })
+        }
+    }
+}
+
+def modifyPom(pom) {
+    pom.project {
+        name 'android-crop'
+        description 'A simple Activity for cropping images'
+        url 'https://github.com/jdamcd/android-crop'
+
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
+        }
+
+        organization {
+            name 'SoundCloud'
+            url 'http://developers.soundcloud.com'
+        }
+    }
+}
