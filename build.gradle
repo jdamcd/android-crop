@@ -8,7 +8,7 @@ buildscript {
 }
 
 allprojects {
-    group = 'com.soundcloud.android.crop'
+    group = 'com.soundcloud.android'
     version = '0.9.0'
 
     repositories {
