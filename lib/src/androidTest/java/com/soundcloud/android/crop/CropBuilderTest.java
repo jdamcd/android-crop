@@ -73,4 +73,15 @@ public class CropBuilderTest extends BaseTestCase {
         assertThat(intent.getIntExtra("max_y", 0)).isEqualTo(300);
     }
 
+    public void testBuildsIntentWithMultipleOptions() {
+        builder.asSquare().withMazSize(200, 200);
+
+        Intent intent = builder.getIntent(activity);
+
+        assertThat(intent.getIntExtra("aspect_x", 0)).isEqualTo(1);
+        assertThat(intent.getIntExtra("aspect_y", 0)).isEqualTo(1);
+        assertThat(intent.getIntExtra("max_x", 0)).isEqualTo(200);
+        assertThat(intent.getIntExtra("max_y", 0)).isEqualTo(200);
+    }
+
 }
