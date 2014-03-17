@@ -11,7 +11,19 @@ android {
         targetSdkVersion 19
         versionCode 1
         versionName "1.0"
+
+        testPackageName "com.soundcloud.android.crop.test"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
+}
+
+dependencies {
+    compile 'org.easytesting:fest-util:1.2.5'
+    androidTestCompile 'com.squareup:fest-android:1.0.7'
+    androidTestCompile 'com.android.support:support-v4:19.0.+'
+    androidTestCompile 'org.mockito:mockito-core:1.9.5'
+    androidTestCompile 'com.google.dexmaker:dexmaker:1.0'
+    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
 }
 
 task apklib(type: Zip) {
