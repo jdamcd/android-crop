@@ -2,6 +2,8 @@
 
 This is another Android library project providing a simple image cropping `Activity`, based on code from AOSP.
 
+[![Build Status](https://travis-ci.org/jdamcd/android-crop.png)](https://travis-ci.org/jdamcd/android-crop)
+
 ## Goals
 
 I started this in my [hacker time](http://backstage.soundcloud.com/2011/12/stop-hacker-time/) with the intention of replacing our dated [android-cropimage fork](https://github.com/soundcloud/android-cropimage).
