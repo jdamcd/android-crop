@@ -8,8 +8,6 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
-import org.fest.util.VisibleForTesting;
-
 /**
  * Builder for crop Intents and utils for handling result
  */
@@ -104,7 +102,7 @@ public class Crop {
         activity.startActivityForResult(getIntent(activity), REQUEST_CROP);
     }
 
-    @VisibleForTesting
+    //VisibleForTesting
     Intent getIntent(Activity activity) {
         cropIntent.setClass(activity, CropImageActivity.class);
         return cropIntent;
