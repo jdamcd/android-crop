@@ -1,6 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="DoneCancelBar">
+    <style name="Crop"></style>
+
+    <style name="Crop.DoneCancelBar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/crop__bar_height</item>
         <item name="android:orientation">horizontal</item>
@@ -10,14 +12,14 @@
         <item name="android:background">@color/crop__button_bar</item>
     </style>
 
-    <style name="ActionButton">
+    <style name="Crop.ActionButton">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/crop__selectable_background</item>
     </style>
 
-    <style name="ActionButtonText">
+    <style name="Crop.ActionButtonText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
@@ -29,12 +31,12 @@
         <item name="android:textSize">13sp</item>
     </style>
 
-    <style name="ActionButtonText.Done">
+    <style name="Crop.ActionButtonText.Done">
         <item name="android:drawableLeft">@drawable/crop__ic_done</item>
         <item name="android:text">@string/crop__done</item>
     </style>
 
-    <style name="ActionButtonText.Cancel">
+    <style name="Crop.ActionButtonText.Cancel">
         <item name="android:drawableLeft">@drawable/crop__ic_cancel</item>
         <item name="android:text">@string/crop__cancel</item>
     </style>
