@@ -1,5 +1,5 @@
 <resources>
 
-    <dimen name="bar_height">40dp</dimen>
+    <dimen name="crop__bar_height">40dp</dimen>
 
 </resources>

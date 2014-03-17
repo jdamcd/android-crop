@@ -2,19 +2,19 @@
 
     <style name="DoneCancelBar">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/bar_height</item>
+        <item name="android:layout_height">@dimen/crop__bar_height</item>
         <item name="android:orientation">horizontal</item>
-        <item name="android:divider">@drawable/divider</item>
+        <item name="android:divider">@drawable/crop__divider</item>
         <item name="android:showDividers" tools:ignore="NewApi">middle</item>
         <item name="android:dividerPadding" tools:ignore="NewApi">12dp</item>
-        <item name="android:background">@color/button_bar</item>
+        <item name="android:background">@color/crop__button_bar</item>
     </style>
 
     <style name="ActionButton">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:background">@drawable/selectable_background</item>
+        <item name="android:background">@drawable/crop__selectable_background</item>
     </style>
 
     <style name="ActionButtonText">
@@ -24,19 +24,19 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingRight">20dp</item> <!-- Offsets left drawable -->
         <item name="android:drawablePadding">8dp</item>
-        <item name="android:textColor">@color/button_text</item>
+        <item name="android:textColor">@color/crop__button_text</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">13sp</item>
     </style>
 
     <style name="ActionButtonText.Done">
-        <item name="android:drawableLeft">@drawable/ic_action_done</item>
-        <item name="android:text">@string/done</item>
+        <item name="android:drawableLeft">@drawable/crop__ic_done</item>
+        <item name="android:text">@string/crop__done</item>
     </style>
 
     <style name="ActionButtonText.Cancel">
-        <item name="android:drawableLeft">@drawable/ic_action_cancel</item>
-        <item name="android:text">@string/cancel</item>
+        <item name="android:drawableLeft">@drawable/crop__ic_cancel</item>
+        <item name="android:text">@string/crop__cancel</item>
     </style>
 
 </resources>

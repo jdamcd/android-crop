@@ -5,13 +5,13 @@
 
     <item android:state_pressed="true">
         <shape>
-            <solid android:color="@color/selector_pressed" />
+            <solid android:color="@color/crop__selector_pressed" />
         </shape>
     </item>
 
     <item android:state_focused="true">
         <shape>
-            <solid android:color="@color/selector_focused" />
+            <solid android:color="@color/crop__selector_focused" />
         </shape>
     </item>
 

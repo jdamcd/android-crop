@@ -138,7 +138,7 @@ public class Crop {
         try {
             activity.startActivityForResult(intent, REQUEST_PICK);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(activity, R.string.error_pick_image, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, R.string.crop__pick_error, Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -70,7 +70,7 @@ public class CropImageActivity extends MonitoredActivity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_crop);
+        setContentView(R.layout.crop__activity_crop);
         initViews();
 
         setupFromIntent();
@@ -143,7 +143,7 @@ public class CropImageActivity extends MonitoredActivity {
             return;
         }
         mImageView.setImageRotateBitmapResetBase(mRotateBitmap, true);
-        Util.startBackgroundJob(this, null, getResources().getString(R.string.wait),
+        Util.startBackgroundJob(this, null, getResources().getString(R.string.crop__wait),
                 new Runnable() {
                     public void run() {
                         final CountDownLatch latch = new CountDownLatch(1);
@@ -285,7 +285,7 @@ public class CropImageActivity extends MonitoredActivity {
     private void saveImage(Bitmap croppedImage) {
         if (croppedImage != null) {
             final Bitmap b = croppedImage;
-            Util.startBackgroundJob(this, null, getResources().getString(R.string.saving),
+            Util.startBackgroundJob(this, null, getResources().getString(R.string.crop__saving),
                     new Runnable() {
                         public void run() {
                             saveOutput(b);
