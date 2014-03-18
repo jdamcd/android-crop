@@ -27,8 +27,7 @@ before_install:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
 
-install:
- - ./gradlew :lib:build
+install: true
 
 before_script:
   - adb wait-for-device
