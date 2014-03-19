@@ -22,7 +22,7 @@ import android.graphics.Matrix;
 /*
  * Modified from original in AOSP.
  */
-public class RotateBitmap {
+class RotateBitmap {
 
     private Bitmap mBitmap;
     private int mRotation;

@@ -13,8 +13,8 @@ import android.widget.Toast;
  */
 public class Crop {
 
-    public static final int REQUEST_CROP = 10;
-    public static final int REQUEST_PICK = 11;
+    public static final int REQUEST_CROP = 6709;
+    public static final int REQUEST_PICK = 9162;
     public static final int RESULT_ERROR = 404;
 
     static interface Extra {
@@ -23,8 +23,6 @@ public class Crop {
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
         String ERROR = "error";
-        String RETURN_DATA = "return_data";
-        String IMAGE_DATA = "data";
     }
 
     private Intent cropIntent;
@@ -46,17 +44,6 @@ public class Crop {
      */
     public Crop output(Uri output) {
         cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, output);
-        return this;
-    }
-
-    /**
-     * Request that the Bitmap data is sent in the return Intent
-     *
-     * Note: This is only useful for debugging or if you have a small max crop size. Trying to
-     * return large Bitmaps will fail. The image will not be written to the output URI in this case.
-     */
-    public Crop returnBitmap() {
-        cropIntent.putExtra(Extra.RETURN_DATA, true);
         return this;
     }
 
@@ -109,6 +96,15 @@ public class Crop {
     }
 
     /**
+     * Retrieve URI for cropped image, as set in the Intent builder
+     *
+     * @param result Output Image URI
+     */
+    public static Uri getOutput(Intent result) {
+        return result.getParcelableExtra(MediaStore.EXTRA_OUTPUT);
+    }
+
+    /**
      * Retrieve error that caused crop to fail
      *
      * @param result Result Intent
@@ -116,16 +112,6 @@ public class Crop {
      */
     public static Throwable getError(Intent result) {
         return (Throwable) result.getSerializableExtra(Extra.ERROR);
-    }
-
-    /**
-     * Retrieve the Bitmap data when using returnBitmap() option
-     *
-     * @param result Result Intent
-     * @return Cropped image as Bitmap
-     */
-    public static Bitmap getBitmap(Intent result) {
-        return (Bitmap) result.getParcelableExtra(Extra.IMAGE_DATA);
     }
 
     /**

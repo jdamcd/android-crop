@@ -51,8 +51,7 @@ public class CropImageActivity extends MonitoredActivity {
     private int mAspectX;
     private int mAspectY;
 
-    // These options specify the output image size and whether we should
-    // scale the output to fit it (or just crop it).
+    // Output image size
     private int mMaxX;
     private int mMaxY;
     private int mExifRotation;
@@ -261,25 +260,7 @@ public class CropImageActivity extends MonitoredActivity {
                 mImageView.mHighlightViews.clear();
             }
         }
-        handleResult(croppedImage);
-    }
-
-    private void handleResult(Bitmap croppedImage) {
-        Bundle inputExtras = getIntent().getExtras();
-        if (inputExtras != null && inputExtras.getBoolean(Crop.Extra.RETURN_DATA)) {
-            returnImageData(croppedImage);
-        } else {
-            saveImage(croppedImage);
-        }
-    }
-
-    private void returnImageData(Bitmap croppedImage) {
-        Bundle outputExtras = new Bundle();
-        if (croppedImage != null) {
-            outputExtras.putParcelable(Crop.Extra.IMAGE_DATA, croppedImage);
-            setResult(RESULT_OK, (new Intent()).putExtras(outputExtras));
-        }
-        finish();
+        saveImage(croppedImage);
     }
 
     private void saveImage(Bitmap croppedImage) {

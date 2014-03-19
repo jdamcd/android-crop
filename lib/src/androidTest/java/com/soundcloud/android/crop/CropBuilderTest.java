@@ -38,14 +38,6 @@ public class CropBuilderTest extends BaseTestCase {
         assertThat(output.toString()).isEqualTo("image:output");
     }
 
-    public void testReturnBitmapSetAsExtra() {
-        builder.returnBitmap();
-
-        Intent intent = builder.getIntent(activity);
-
-        assertThat(intent.getBooleanExtra("return_data", false)).isTrue();
-    }
-
     public void testAspectRatioSetAsExtras() {
         builder.withAspect(16, 10);
 

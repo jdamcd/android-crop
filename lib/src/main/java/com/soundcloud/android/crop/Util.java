@@ -33,7 +33,7 @@ import java.io.IOException;
 /*
  * Modified from original in AOSP.
  */
-public class Util {
+class Util {
 
     public static final String TAG = "android-crop";
 

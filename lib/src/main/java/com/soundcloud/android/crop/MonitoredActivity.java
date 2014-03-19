@@ -24,7 +24,7 @@ import java.util.ArrayList;
 /*
  * Modified from original in AOSP.
  */
-public abstract class MonitoredActivity extends Activity {
+abstract class MonitoredActivity extends Activity {
 
     private final ArrayList<LifeCycleListener> mListeners = new ArrayList<LifeCycleListener>();
 

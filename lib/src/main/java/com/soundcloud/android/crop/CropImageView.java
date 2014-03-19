@@ -8,7 +8,7 @@ import android.view.MotionEvent;
 
 import java.util.ArrayList;
 
-public class CropImageView extends ImageViewTouchBase {
+class CropImageView extends ImageViewTouchBase {
 
     ArrayList<HighlightView> mHighlightViews = new ArrayList<HighlightView>();
     HighlightView mMotionHighlightView;
