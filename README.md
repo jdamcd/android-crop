@@ -44,8 +44,9 @@ The library provides a utility method to start an image picker:
 
 ![android-crop screenshot](screenshot.png)
 
-## License & Credits
+## License
 
-Apache License, version 2.  
-Most of the cropping code originates from AOSP.  
-Thanks to android-cropimage contributors.
+This project is based on the [AOSP](https://source.android.com) camera image cropper via [android-cropimage](https://github.com/lvillani/android-cropimage).
+
+Copyright 2014 [SoundCloud](https://soundcloud.com)  
+Apache License, Version 2.0 
