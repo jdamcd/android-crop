@@ -99,9 +99,9 @@ public class CropImageView extends ImageViewTouchBase {
                     mMotionHighlightView = hv;
                     mLastX = event.getX();
                     mLastY = event.getY();
-                    mMotionHighlightView
-                            .setMode((edge == HighlightView.MOVE) ? HighlightView.ModifyMode.Move
-                                    : HighlightView.ModifyMode.Grow);
+                    mMotionHighlightView.setMode((edge == HighlightView.MOVE)
+                            ? HighlightView.ModifyMode.Move
+                            : HighlightView.ModifyMode.Grow);
                     break;
                 }
             }
@@ -179,8 +179,7 @@ public class CropImageView extends ImageViewTouchBase {
         zoom = Math.max(1F, zoom);
 
         if ((Math.abs(zoom - getScale()) / zoom) > .1) {
-            float[] coordinates = new float[] { hv.mCropRect.centerX(),
-                    hv.mCropRect.centerY() };
+            float[] coordinates = new float[] { hv.mCropRect.centerX(), hv.mCropRect.centerY() };
             getUnrotatedMatrix().mapPoints(coordinates);
             zoomTo(zoom, coordinates[0], coordinates[1], 300F);
         }

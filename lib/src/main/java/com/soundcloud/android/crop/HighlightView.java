@@ -108,8 +108,7 @@ class HighlightView {
             mOutlinePaint.setColor(0xFF33B5E5);
 
             canvas.clipPath(path, Region.Op.DIFFERENCE);
-            canvas.drawRect(viewDrawingRect,
-                    hasFocus() ? mFocusPaint : mNoFocusPaint);
+            canvas.drawRect(viewDrawingRect, hasFocus() ? mFocusPaint : mNoFocusPaint);
 
             canvas.restore();
             canvas.drawPath(path, mOutlinePaint);
@@ -120,19 +119,13 @@ class HighlightView {
                 int top     = mDrawRect.top    + 4;
                 int bottom  = mDrawRect.bottom + 3;
 
-                int widthWidth   =
-                        mResizeDrawableWidth.getIntrinsicWidth() / 2;
-                int widthHeight  =
-                        mResizeDrawableWidth.getIntrinsicHeight() / 2;
-                int heightHeight =
-                        mResizeDrawableHeight.getIntrinsicHeight() / 2;
-                int heightWidth  =
-                        mResizeDrawableHeight.getIntrinsicWidth() / 2;
+                int widthWidth = mResizeDrawableWidth.getIntrinsicWidth() / 2;
+                int widthHeight = mResizeDrawableWidth.getIntrinsicHeight() / 2;
+                int heightHeight = mResizeDrawableHeight.getIntrinsicHeight() / 2;
+                int heightWidth = mResizeDrawableHeight.getIntrinsicWidth() / 2;
 
-                int xMiddle = mDrawRect.left
-                        + ((mDrawRect.right  - mDrawRect.left) / 2);
-                int yMiddle = mDrawRect.top
-                        + ((mDrawRect.bottom - mDrawRect.top) / 2);
+                int xMiddle = mDrawRect.left + ((mDrawRect.right  - mDrawRect.left) / 2);
+                int yMiddle = mDrawRect.top + ((mDrawRect.bottom - mDrawRect.top) / 2);
 
                 mResizeDrawableWidth.setBounds(left - widthWidth,
                                                yMiddle - widthHeight,
@@ -168,7 +161,7 @@ class HighlightView {
         }
     }
 
-    // Determines which edges are hit by touching at (x, y).
+    // Determines which edges are hit by touching at (x, y)
     public int getHit(float x, float y) {
         Rect r = computeLayout();
         final float hysteresis = 20F;
@@ -181,7 +174,7 @@ class HighlightView {
         boolean horizCheck = (x >= r.left - hysteresis)
                 && (x < r.right + hysteresis);
 
-        // Check whether the position is near some edge(s).
+        // Check whether the position is near some edge(s)
         if ((Math.abs(r.left - x)     < hysteresis)  &&  verticalCheck) {
             retval |= GROW_LEFT_EDGE;
         }
@@ -195,7 +188,7 @@ class HighlightView {
             retval |= GROW_BOTTOM_EDGE;
         }
 
-        // Not near any edge but inside the rectangle: move.
+        // Not near any edge but inside the rectangle: move
         if (retval == GROW_NONE && r.contains((int) x, (int) y)) {
             retval = MOVE;
         }
@@ -207,7 +200,7 @@ class HighlightView {
     void handleMotion(int edge, float dx, float dy) {
         Rect r = computeLayout();
         if (edge == MOVE) {
-            // Convert to image space before sending to moveBy().
+            // Convert to image space before sending to moveBy()
             moveBy(dx * (mCropRect.width() / r.width()),
                    dy * (mCropRect.height() / r.height()));
         } else {
@@ -219,7 +212,7 @@ class HighlightView {
                 dy = 0;
             }
 
-            // Convert to image space before sending to growBy().
+            // Convert to image space before sending to growBy()
             float xDelta = dx * (mCropRect.width() / r.width());
             float yDelta = dy * (mCropRect.height() / r.height());
             growBy((((edge & GROW_LEFT_EDGE) != 0) ? -1 : 1) * xDelta,
@@ -227,13 +220,13 @@ class HighlightView {
         }
     }
 
-    // Grows the cropping rectangle by (dx, dy) in image space.
+    // Grows the cropping rectangle by (dx, dy) in image space
     void moveBy(float dx, float dy) {
         Rect invalRect = new Rect(mDrawRect);
 
         mCropRect.offset(dx, dy);
 
-        // Put the cropping rectangle inside image rectangle.
+        // Put the cropping rectangle inside image rectangle
         mCropRect.offset(
                 Math.max(0, mImageRect.left - mCropRect.left),
                 Math.max(0, mImageRect.top  - mCropRect.top));
@@ -277,7 +270,7 @@ class HighlightView {
 
         r.inset(-dx, -dy);
 
-        // Don't let the cropping rectangle shrink too fast.
+        // Don't let the cropping rectangle shrink too fast
         final float widthCap = 25F;
         if (r.width() < widthCap) {
             r.inset(-(widthCap - r.width()) / 2F, 0F);
@@ -289,7 +282,7 @@ class HighlightView {
             r.inset(0F, -(heightCap - r.height()) / 2F);
         }
 
-        // Put the cropping rectangle inside the image rectangle.
+        // Put the cropping rectangle inside the image rectangle
         if (r.left < mImageRect.left) {
             r.offset(mImageRect.left - r.left, 0F);
         } else if (r.right > mImageRect.right) {
@@ -306,13 +299,13 @@ class HighlightView {
         mContext.invalidate();
     }
 
-    // Returns the cropping rectangle in image space.
+    // Returns the cropping rectangle in image space
     public Rect getCropRect() {
         return new Rect((int) mCropRect.left, (int) mCropRect.top,
                         (int) mCropRect.right, (int) mCropRect.bottom);
     }
 
-    // Maps the cropping rectangle from image space to screen space.
+    // Maps the cropping rectangle from image space to screen space
     private Rect computeLayout() {
         RectF r = new RectF(mCropRect.left, mCropRect.top,
                             mCropRect.right, mCropRect.bottom);

@@ -124,8 +124,7 @@ public class Util {
         new Thread(new BackgroundJob(activity, job, dialog, handler)).start();
     }
 
-    private static class BackgroundJob
-            extends MonitoredActivity.LifeCycleAdapter implements Runnable {
+    private static class BackgroundJob extends MonitoredActivity.LifeCycleAdapter implements Runnable {
 
         private final MonitoredActivity mActivity;
         private final ProgressDialog mDialog;

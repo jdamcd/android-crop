@@ -23,6 +23,7 @@ import android.graphics.Matrix;
  * Modified from original in AOSP.
  */
 public class RotateBitmap {
+
     private Bitmap mBitmap;
     private int mRotation;
 
@@ -48,7 +49,7 @@ public class RotateBitmap {
     }
 
     public Matrix getRotateMatrix() {
-        // By default this is an identity matrix.
+        // By default this is an identity matrix
         Matrix matrix = new Matrix();
         if (mBitmap != null && mRotation != 0) {
             // We want to do the rotation at origin, but since the bounding

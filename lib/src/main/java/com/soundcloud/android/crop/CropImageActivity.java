@@ -327,7 +327,7 @@ public class CropImageActivity extends MonitoredActivity {
 
             } catch (IllegalArgumentException e) {
                 // Rethrow with some extra information
-                throw new IllegalArgumentException("rectangle " + rect + " is outside of the image ("
+                throw new IllegalArgumentException("Rectangle " + rect + " is outside of the image ("
                         + width + "," + height + "," + mExifRotation + ")", e);
             }
 
