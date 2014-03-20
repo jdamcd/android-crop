@@ -44,11 +44,15 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent result) {
         if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
-            Uri outputUri = Uri.fromFile(new File(getCacheDir(), "cropped"));
-            new Crop(result.getData()).output(outputUri).asSquare().start(this);
+            beginCrop(result.getData());
         } else if (requestCode == Crop.REQUEST_CROP) {
             handleCrop(resultCode, result);
         }
+    }
+
+    private void beginCrop(Uri source) {
+        Uri outputUri = Uri.fromFile(new File(getCacheDir(), "cropped"));
+        new Crop(source).output(outputUri).asSquare().withGuides().start(this);
     }
 
     private void handleCrop(int resultCode, Intent result) {

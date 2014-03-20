@@ -22,6 +22,7 @@ public class Crop {
         String ASPECT_Y = "aspect_y";
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
+        String GUIDES = "show_guides";
         String ERROR = "error";
     }
 
@@ -77,6 +78,14 @@ public class Crop {
     public Crop withMaxSize(int width, int height) {
         cropIntent.putExtra(Extra.MAX_X, width);
         cropIntent.putExtra(Extra.MAX_Y, height);
+        return this;
+    }
+
+    /**
+     * Highlight thirds during crop selection
+     */
+    public Crop withGuides() {
+        cropIntent.putExtra(Extra.GUIDES, true);
         return this;
     }
 

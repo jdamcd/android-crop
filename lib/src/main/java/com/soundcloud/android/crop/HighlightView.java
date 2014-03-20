@@ -60,14 +60,18 @@ class HighlightView {
     private final Paint mHandlePaint = new Paint();
 
     private View mContext; // View displaying image
+    private boolean mShowGuides;
+
     private ModifyMode mMode = ModifyMode.None;
     private boolean mMaintainAspectRatio;
     private float mInitialAspectRatio;
     private float mHandleRadius;
+    private float mOutlineWidth;
     private boolean mIsFocused;
 
-    public HighlightView(View context) {
+    public HighlightView(View context, boolean showGuides) {
         mContext = context;
+        mShowGuides = showGuides;
     }
 
     public void setup(Matrix m, Rect imageRect, RectF cropRect, boolean maintainAspectRatio) {
@@ -82,9 +86,9 @@ class HighlightView {
 
         mFocusPaint.setARGB(125, 50, 50, 50);
         mNoFocusPaint.setARGB(125, 50, 50, 50);
-        mOutlinePaint.setStrokeWidth(dpToPx(OUTLINE_DP));
         mOutlinePaint.setStyle(Paint.Style.STROKE);
         mOutlinePaint.setAntiAlias(true);
+        mOutlineWidth = dpToPx(OUTLINE_DP);
 
         mHandlePaint.setColor(HIGHLIGHT_COLOR);
         mHandlePaint.setStyle(Paint.Style.FILL);
@@ -101,6 +105,7 @@ class HighlightView {
     protected void draw(Canvas canvas) {
         canvas.save();
         Path path = new Path();
+        mOutlinePaint.setStrokeWidth(mOutlineWidth);
         if (!hasFocus()) {
             mOutlinePaint.setColor(Color.BLACK);
             canvas.drawRect(mDrawRect, mOutlinePaint);
@@ -117,6 +122,9 @@ class HighlightView {
             canvas.restore();
             canvas.drawPath(path, mOutlinePaint);
 
+            if (mShowGuides) {
+                drawGuides(canvas);
+            }
             if (mMode == ModifyMode.Grow) {
                 drawHandles(canvas);
             }
@@ -125,12 +133,27 @@ class HighlightView {
 
     private void drawHandles(Canvas canvas) {
         int xMiddle = mDrawRect.left + ((mDrawRect.right  - mDrawRect.left) / 2);
-        int yMiddle = mDrawRect.top + ((mDrawRect.bottom - mDrawRect.top) / 2);;
+        int yMiddle = mDrawRect.top + ((mDrawRect.bottom - mDrawRect.top) / 2);
 
         canvas.drawCircle(mDrawRect.left, yMiddle, mHandleRadius, mHandlePaint);
         canvas.drawCircle(xMiddle, mDrawRect.top, mHandleRadius, mHandlePaint);
         canvas.drawCircle(mDrawRect.right, yMiddle, mHandleRadius, mHandlePaint);
         canvas.drawCircle(xMiddle, mDrawRect.bottom, mHandleRadius, mHandlePaint);
+    }
+
+    private void drawGuides(Canvas canvas) {
+        mOutlinePaint.setStrokeWidth(1);
+        float xThird = (mDrawRect.right - mDrawRect.left) / 3;
+        float yThird = (mDrawRect.bottom - mDrawRect.top) / 3;
+        
+        canvas.drawLine(mDrawRect.left + xThird, mDrawRect.top,
+                mDrawRect.left + xThird, mDrawRect.bottom, mOutlinePaint);
+        canvas.drawLine(mDrawRect.left + xThird * 2, mDrawRect.top,
+                mDrawRect.left + xThird * 2, mDrawRect.bottom, mOutlinePaint);
+        canvas.drawLine(mDrawRect.left, mDrawRect.top + yThird,
+                mDrawRect.right, mDrawRect.top + yThird, mOutlinePaint);
+        canvas.drawLine(mDrawRect.left, mDrawRect.top + yThird * 2,
+                mDrawRect.right, mDrawRect.top + yThird * 2, mOutlinePaint);
     }
 
     public void setMode(ModifyMode mode) {

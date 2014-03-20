@@ -59,6 +59,7 @@ public class CropImageActivity extends MonitoredActivity {
     private Uri mSourceUri;
     private Uri mSaveUri;
 
+    private boolean mShowGuides;
     private boolean mIsSaving; // When the save button has been clicked
 
     private RotateBitmap mRotateBitmap;
@@ -115,6 +116,7 @@ public class CropImageActivity extends MonitoredActivity {
             mMaxX = extras.getInt(Crop.Extra.MAX_X);
             mMaxY = extras.getInt(Crop.Extra.MAX_Y);
             mSaveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);
+            mShowGuides = extras.getBoolean(Crop.Extra.GUIDES);
         }
 
         mSourceUri = intent.getData();
@@ -169,7 +171,7 @@ public class CropImageActivity extends MonitoredActivity {
         private void makeDefault() {
             if (mRotateBitmap == null) return;
 
-            HighlightView hv = new HighlightView(mImageView);
+            HighlightView hv = new HighlightView(mImageView, mShowGuides);
             final int width  = mRotateBitmap.getWidth();
             final int height = mRotateBitmap.getHeight();
 
