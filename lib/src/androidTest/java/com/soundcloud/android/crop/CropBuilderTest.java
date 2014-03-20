@@ -65,14 +65,6 @@ public class CropBuilderTest extends BaseTestCase {
         assertThat(intent.getIntExtra("max_y", 0)).isEqualTo(300);
     }
 
-    public void testGuidesSwitchSetAsExtra() {
-        builder.withGuides();
-
-        Intent intent = builder.getIntent(activity);
-
-        ANDROID.assertThat(intent).hasExtra("show_guides");
-    }
-
     public void testBuildsIntentWithMultipleOptions() {
         builder.asSquare().withMaxSize(200, 200);
 

@@ -1,0 +1,10 @@
+<resources>
+
+    <attr name="cropImageStyle" format="reference" />
+
+    <declare-styleable name="CropImageView">
+        <attr name="highlightColor" format="reference|color" />
+        <attr name="showThirds" format="boolean" />
+    </declare-styleable>
+
+</resources>

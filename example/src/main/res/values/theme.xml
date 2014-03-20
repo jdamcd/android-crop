@@ -1,0 +1,12 @@
+<resources>
+
+    <style name="CustomTheme" parent="android:Theme.DeviceDefault">
+        <item name="cropImageStyle">@style/Widget.CropImageView</item>
+    </style>
+
+    <style name="Widget.CropImageView" parent="android:Widget">
+        <item name="showThirds">true</item>
+        <item name="highlightColor">@color/highlight</item>
+    </style>
+
+</resources>

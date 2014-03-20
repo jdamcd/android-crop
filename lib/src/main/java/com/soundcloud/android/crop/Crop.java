@@ -82,14 +82,6 @@ public class Crop {
     }
 
     /**
-     * Highlight thirds during crop selection
-     */
-    public Crop withGuides() {
-        cropIntent.putExtra(Extra.GUIDES, true);
-        return this;
-    }
-
-    /**
      * Send the crop Intent!
      *
      * @param activity Activity that will receive result
