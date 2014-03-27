@@ -7,7 +7,7 @@ This is another Android library project providing a simple image cropping `Activ
 ## Equivalent Eclipse Project
 If you are using eclipse to develop android apps, use the following fork of this libary.
 
-[hacker time](https://github.com/jaydeepw/android-crop)
+[Android Crop for Eclipse](https://github.com/jaydeepw/android-crop)
 
 ## Goals
 
