@@ -24,7 +24,8 @@ import android.net.Uri;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
+
+import com.soundcloud.android.crop.util.Log;
 
 import java.io.Closeable;
 import java.io.File;
@@ -33,9 +34,7 @@ import java.io.IOException;
 /*
  * Modified from original in AOSP.
  */
-class Util {
-
-    public static final String TAG = "android-crop";
+class CropUtil {
 
     private static final String SCHEME_FILE = "file";
     private static final String SCHEME_CONTENT = "content";
@@ -65,7 +64,7 @@ class Util {
                     return ExifInterface.ORIENTATION_UNDEFINED;
             }
         } catch (IOException e) {
-            Log.e(TAG, "Error getting Exif data", e);
+            Log.e("Error getting Exif data", e);
             return 0;
         }
     }
@@ -79,7 +78,7 @@ class Util {
             exifDest.saveAttributes();
             return true;
         } catch (IOException e) {
-            Log.e(TAG, "Error copying Exif data", e);
+            Log.e("Error copying Exif data", e);
             return false;
         }
     }

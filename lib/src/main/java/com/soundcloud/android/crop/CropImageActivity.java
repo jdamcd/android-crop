@@ -30,9 +30,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
+
+import com.soundcloud.android.crop.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -119,20 +120,20 @@ public class CropImageActivity extends MonitoredActivity {
 
         mSourceUri = intent.getData();
         if (mSourceUri != null) {
-            mExifRotation = Util.getExifRotation(Util.getFromMediaUri(getContentResolver(), mSourceUri));
+            mExifRotation = CropUtil.getExifRotation(CropUtil.getFromMediaUri(getContentResolver(), mSourceUri));
 
             InputStream is = null;
             try {
                 is = getContentResolver().openInputStream(mSourceUri);
                 mRotateBitmap = new RotateBitmap(BitmapFactory.decodeStream(is), mExifRotation);
             } catch (IOException e) {
-                Log.e(Util.TAG, "Error reading picture: " + e.getMessage(), e);
+                Log.e("Error reading picture: " + e.getMessage(), e);
                 setResultException(e);
             } catch (OutOfMemoryError e) {
-                Log.e(Util.TAG, "OOM while reading picture: " + e.getMessage(), e);
+                Log.e("OOM while reading picture: " + e.getMessage(), e);
                 setResultException(e);
             } finally{
-                Util.closeSilently(is);
+                CropUtil.closeSilently(is);
             }
         }
     }
@@ -142,7 +143,7 @@ public class CropImageActivity extends MonitoredActivity {
             return;
         }
         mImageView.setImageRotateBitmapResetBase(mRotateBitmap, true);
-        Util.startBackgroundJob(this, null, getResources().getString(R.string.crop__wait),
+        CropUtil.startBackgroundJob(this, null, getResources().getString(R.string.crop__wait),
                 new Runnable() {
                     public void run() {
                         final CountDownLatch latch = new CountDownLatch(1);
@@ -266,7 +267,7 @@ public class CropImageActivity extends MonitoredActivity {
     private void saveImage(Bitmap croppedImage) {
         if (croppedImage != null) {
             final Bitmap b = croppedImage;
-            Util.startBackgroundJob(this, null, getResources().getString(R.string.crop__saving),
+            CropUtil.startBackgroundJob(this, null, getResources().getString(R.string.crop__saving),
                     new Runnable() {
                         public void run() {
                             saveOutput(b);
@@ -313,10 +314,10 @@ public class CropImageActivity extends MonitoredActivity {
             }
 
         } catch (IOException e) {
-            Log.e(Util.TAG, "Error cropping picture: " + e.getMessage(), e);
+            Log.e("Error cropping picture: " + e.getMessage(), e);
             finish();
         } finally {
-            Util.closeSilently(is);
+            CropUtil.closeSilently(is);
         }
         return croppedImage;
     }
@@ -339,7 +340,7 @@ public class CropImageActivity extends MonitoredActivity {
             canvas.drawBitmap(rotateBitmap.getBitmap(), m, null);
 
         } catch (OutOfMemoryError e) {
-            Log.e(Util.TAG, "Error cropping picture: " + e.getMessage(), e);
+            Log.e("Error cropping picture: " + e.getMessage(), e);
             System.gc();
         }
 
@@ -367,16 +368,16 @@ public class CropImageActivity extends MonitoredActivity {
 
             } catch (IOException e) {
                 setResultException(e);
-                Log.e(Util.TAG, "Cannot open file: " + mSaveUri, e);
+                Log.e("Cannot open file: " + mSaveUri, e);
             } finally {
-                Util.closeSilently(outputStream);
+                CropUtil.closeSilently(outputStream);
             }
 
             if (!IN_MEMORY_CROP){
                 // In-memory crop negates the rotation
-                Util.copyExifRotation(
-                        Util.getFromMediaUri(getContentResolver(), mSourceUri),
-                        Util.getFromMediaUri(getContentResolver(), mSaveUri)
+                CropUtil.copyExifRotation(
+                        CropUtil.getFromMediaUri(getContentResolver(), mSourceUri),
+                        CropUtil.getFromMediaUri(getContentResolver(), mSaveUri)
                 );
             }
 

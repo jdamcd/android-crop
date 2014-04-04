@@ -11,6 +11,8 @@ import android.os.Build;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
+import com.soundcloud.android.crop.util.VisibleForTesting;
+
 /**
  * Builder for crop Intents and utils for handling result
  */
@@ -103,7 +105,7 @@ public class Crop {
         fragment.startActivityForResult(getIntent(context), REQUEST_CROP);
     }
 
-    //VisibleForTesting
+    @VisibleForTesting
     Intent getIntent(Context context) {
         cropIntent.setClass(context, CropImageActivity.class);
         return cropIntent;
@@ -129,7 +131,7 @@ public class Crop {
     }
 
     /**
-     *  Utility method that starts an image picker. Often preceded a crop.
+     * Utility method that starts an image picker since that often precedes a crop
      *
      * @param activity Activity that will receive result
      */
