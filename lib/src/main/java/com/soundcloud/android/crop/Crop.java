@@ -25,7 +25,6 @@ public class Crop {
         String ASPECT_Y = "aspect_y";
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
-        String GUIDES = "show_guides";
         String ERROR = "error";
     }
 
