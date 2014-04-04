@@ -4,6 +4,11 @@ This is another Android library project providing a simple image cropping `Activ
 
 [![Build Status](https://travis-ci.org/jdamcd/android-crop.png)](https://travis-ci.org/jdamcd/android-crop)
 
+## Equivalent Eclipse Project
+If you are using eclipse to develop android apps, use the following fork of this libary.
+
+[Android Crop for Eclipse](https://github.com/jaydeepw/android-crop)
+
 ## Goals
 
 I started this in my [hacker time](http://backstage.soundcloud.com/2011/12/stop-hacker-time/) with the intention of replacing our dated [android-cropimage fork](https://github.com/soundcloud/android-cropimage).
