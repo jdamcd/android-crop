@@ -16,6 +16,7 @@
 
 package com.soundcloud.android.crop;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -26,6 +27,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
+import android.os.Build;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -57,8 +59,7 @@ class HighlightView {
     Matrix mMatrix;
     private RectF mImageRect; // Image space
 
-    private final Paint mFocusPaint = new Paint();
-    private final Paint mNoFocusPaint = new Paint();
+    private final Paint mOutsidePaint = new Paint();
     private final Paint mOutlinePaint = new Paint();
     private final Paint mHandlePaint = new Paint();
 
@@ -101,8 +102,7 @@ class HighlightView {
         mInitialAspectRatio = mCropRect.width() / mCropRect.height();
         mDrawRect = computeLayout();
 
-        mFocusPaint.setARGB(125, 50, 50, 50);
-        mNoFocusPaint.setARGB(125, 50, 50, 50);
+        mOutsidePaint.setARGB(125, 50, 50, 50);
         mOutlinePaint.setStyle(Paint.Style.STROKE);
         mOutlinePaint.setAntiAlias(true);
         mOutlineWidth = dpToPx(OUTLINE_DP);
@@ -133,8 +133,10 @@ class HighlightView {
             path.addRect(new RectF(mDrawRect), Path.Direction.CW);
             mOutlinePaint.setColor(mHighlightColor);
 
-            canvas.clipPath(path, Region.Op.DIFFERENCE);
-            canvas.drawRect(viewDrawingRect, hasFocus() ? mFocusPaint : mNoFocusPaint);
+            if (isClipPathSupported(canvas)) {
+                canvas.clipPath(path, Region.Op.DIFFERENCE);
+                canvas.drawRect(viewDrawingRect, mOutsidePaint);
+            }
 
             canvas.restore();
             canvas.drawPath(path, mOutlinePaint);
@@ -145,6 +147,16 @@ class HighlightView {
             if (mMode == ModifyMode.Grow) {
                 drawHandles(canvas);
             }
+        }
+    }
+
+    @SuppressLint("NewApi")
+    private boolean isClipPathSupported(Canvas canvas) {
+        if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+            || Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            return true;
+        } else {
+            return !canvas.isHardwareAccelerated();
         }
     }
 
