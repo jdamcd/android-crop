@@ -28,10 +28,18 @@ uploadArchives {
     repositories {
         mavenDeployer {
             repository(url: 'http://maven.int.s-cloud.net/content/repositories/releases')
+
             pom.project {
                 name 'android-crop'
+                packaging 'aar'
                 description 'A simple Activity for cropping images'
                 url 'https://github.com/jdamcd/android-crop'
+
+                scm {
+                    url 'https://github.com/jdamcd/android-crop'
+                    connection 'scm:git@github.com:jdamcd/android-crop.git'
+                    developerConnection 'scm:git@github.com:jdamcd/android-crop.git'
+                }
 
                 licenses {
                     license {
@@ -43,6 +51,13 @@ uploadArchives {
                 organization {
                     name 'SoundCloud'
                     url 'http://developers.soundcloud.com'
+                }
+
+                developers {
+                    developer {
+                        id 'jdamcd'
+                        name 'Jamie McDonald'
+                    }
                 }
             }
         }
