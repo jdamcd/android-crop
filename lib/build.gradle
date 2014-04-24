@@ -24,55 +24,28 @@ dependencies {
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
 }
 
-task apklib(type: Zip) {
-    destinationDir = file('build/libs')
-    appendix = extension = 'apklib'
-
-    from 'src/main/AndroidManifest.xml'
-    into('res') {
-        from 'src/main/res'
-    }
-    into('src') {
-        from 'src/main/java'
-    }
-}
-
-artifacts {
-    archives apklib
-}
-
 uploadArchives {
     repositories {
         mavenDeployer {
             repository(url: 'http://maven.int.s-cloud.net/content/repositories/releases')
+            pom.project {
+                name 'android-crop'
+                description 'A simple Activity for cropping images'
+                url 'https://github.com/jdamcd/android-crop'
 
-            modifyPom(addFilter('aar') { artifact, file ->
-                artifact.name == archivesBaseName
-            })
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
 
-            modifyPom(addFilter('apklib') { artifact, file ->
-                artifact.name == archivesBaseName + '-apklib'
-            })
-        }
-    }
-}
-
-def modifyPom(pom) {
-    pom.project {
-        name 'android-crop'
-        description 'A simple Activity for cropping images'
-        url 'https://github.com/jdamcd/android-crop'
-
-        licenses {
-            license {
-                name 'The Apache Software License, Version 2.0'
-                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                organization {
+                    name 'SoundCloud'
+                    url 'http://developers.soundcloud.com'
+                }
             }
         }
-
-        organization {
-            name 'SoundCloud'
-            url 'http://developers.soundcloud.com'
-        }
     }
 }
+

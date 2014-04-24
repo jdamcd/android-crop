@@ -6,9 +6,9 @@ This is another Android library project providing a simple image cropping `Activ
 
 ## Goals
 
-I started this in my [hacker time](http://backstage.soundcloud.com/2011/12/stop-hacker-time/) with the intention of replacing our dated [android-cropimage fork](https://github.com/soundcloud/android-cropimage).
+I put this together in my [hacker time](http://backstage.soundcloud.com/2011/12/stop-hacker-time/) as a replacement for our old [android-cropimage fork](https://github.com/soundcloud/android-cropimage).
 
-* Gradle build with AAR & ApkLib artifacts
+* Gradle build with AAR
 * Modern UI
 * Backwards compatible to Gingerbread
 * Simple builder for configuration
