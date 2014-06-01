@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <item type="id" name="request_croped_photo"/>
+  <item type="id" name="result_croped_photo_fail_no_sdcard"/>
+  <item type="id" name="request_take_photo"/>
+</resources>

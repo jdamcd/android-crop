@@ -24,73 +24,78 @@ import android.graphics.Matrix;
  */
 class RotateBitmap {
 
-    private Bitmap mBitmap;
-    private int mRotation;
+  private Bitmap mBitmap;
 
-    public RotateBitmap(Bitmap bitmap, int rotation) {
-        mBitmap = bitmap;
-        mRotation = rotation % 360;
-    }
+  private int mRotation;
 
-    public void setRotation(int rotation) {
-        mRotation = rotation;
-    }
+  public RotateBitmap(Bitmap bitmap, int rotation) {
+    mBitmap = bitmap;
+    mRotation = rotation % 360;
+  }
 
-    public int getRotation() {
-        return mRotation;
-    }
+  public void setRotation(int rotation) {
+    mRotation = rotation;
+  }
 
-    public Bitmap getBitmap() {
-        return mBitmap;
-    }
+  public int getRotation() {
+    return mRotation;
+  }
 
-    public void setBitmap(Bitmap bitmap) {
-        mBitmap = bitmap;
-    }
+  public Bitmap getBitmap() {
+    return mBitmap;
+  }
 
-    public Matrix getRotateMatrix() {
-        // By default this is an identity matrix
-        Matrix matrix = new Matrix();
-        if (mBitmap != null && mRotation != 0) {
-            // We want to do the rotation at origin, but since the bounding
-            // rectangle will be changed after rotation, so the delta values
-            // are based on old & new width/height respectively.
-            int cx = mBitmap.getWidth() / 2;
-            int cy = mBitmap.getHeight() / 2;
-            matrix.preTranslate(-cx, -cy);
-            matrix.postRotate(mRotation);
-            matrix.postTranslate(getWidth() / 2, getHeight() / 2);
-        }
-        return matrix;
-    }
+  public void setBitmap(Bitmap bitmap) {
+    mBitmap = bitmap;
+  }
 
-    public boolean isOrientationChanged() {
-        return (mRotation / 90) % 2 != 0;
+  public Matrix getRotateMatrix() {
+    // By default this is an identity matrix
+    Matrix matrix = new Matrix();
+    if (mBitmap != null && mRotation != 0) {
+      // We want to do the rotation at origin, but since the bounding
+      // rectangle will be changed after rotation, so the delta values
+      // are based on old & new width/height respectively.
+      int cx = mBitmap.getWidth() / 2;
+      int cy = mBitmap.getHeight() / 2;
+      matrix.preTranslate(-cx, -cy);
+      matrix.postRotate(mRotation);
+      matrix.postTranslate(getWidth() / 2, getHeight() / 2);
     }
+    return matrix;
+  }
 
-    public int getHeight() {
-        if (mBitmap == null) return 0;
-        if (isOrientationChanged()) {
-            return mBitmap.getWidth();
-        } else {
-            return mBitmap.getHeight();
-        }
-    }
+  public boolean isOrientationChanged() {
+    return (mRotation / 90) % 2 != 0;
+  }
 
-    public int getWidth() {
-        if (mBitmap == null) return 0;
-        if (isOrientationChanged()) {
-            return mBitmap.getHeight();
-        } else {
-            return mBitmap.getWidth();
-        }
+  public int getHeight() {
+    if (mBitmap == null) {
+      return 0;
     }
+    if (isOrientationChanged()) {
+      return mBitmap.getWidth();
+    } else {
+      return mBitmap.getHeight();
+    }
+  }
 
-    public void recycle() {
-        if (mBitmap != null) {
-            mBitmap.recycle();
-            mBitmap = null;
-        }
+  public int getWidth() {
+    if (mBitmap == null) {
+      return 0;
     }
+    if (isOrientationChanged()) {
+      return mBitmap.getHeight();
+    } else {
+      return mBitmap.getWidth();
+    }
+  }
+
+  public void recycle() {
+    if (mBitmap != null) {
+      mBitmap.recycle();
+      mBitmap = null;
+    }
+  }
 }
 
