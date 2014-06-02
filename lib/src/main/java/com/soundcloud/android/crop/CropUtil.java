@@ -20,7 +20,12 @@ import com.soundcloud.android.crop.util.Log;
 
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Handler;
@@ -30,6 +35,7 @@ import android.text.TextUtils;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 /*
  * Modified from original in AOSP.
@@ -189,4 +195,100 @@ class CropUtil {
     }
   }
 
+  /**
+   * Decode and rotate a new Bitmap from a file. The size of the decoded bitmap is limited by the
+   * given amount of pixels.
+   */
+  public static Bitmap decodeUri(Context context, Uri uri, int width, int height) {
+    BitmapFactory.Options o = new BitmapFactory.Options();
+    // Decode image size
+    o.inJustDecodeBounds = true;
+    try {
+      decodeBitmapFromStream(context.getContentResolver().openInputStream(uri), null, o);
+    } catch (OutOfMemoryError e) {
+      return null;
+    } catch (Exception e) {
+      return null;
+    }
+
+    // Find the correct scale value, should be the power of 2
+    int widthTmp = o.outWidth, heightTmp = o.outHeight;
+    int scale = 1;
+    // Math.max(width_tmp / width, height_tmp / height);
+    while (widthTmp > width && heightTmp > height) {
+      widthTmp >>= 1;
+      heightTmp >>= 1;
+      scale <<= 1;
+    }
+
+    Bitmap bmp = null;
+    if (scale > 1) {
+      // Decode with inSampleSize
+      BitmapFactory.Options o2 = new BitmapFactory.Options();
+      o2.inSampleSize = scale;
+      o2.inScaled = false;
+      o2.inDither = false;
+      o2.inPurgeable = true;
+      try {
+        bmp = decodeBitmapFromStream(context.getContentResolver().openInputStream(uri), null, o2);
+      } catch (Exception e) {
+
+      }
+    } else {
+      BitmapFactory.Options o3 = new BitmapFactory.Options();
+      o3.inPurgeable = true;
+      try {
+        bmp = decodeBitmapFromStream(context.getContentResolver().openInputStream(uri), null, o3);
+      } catch (Exception e) {
+      }
+    }
+    return bmp;
+  }
+
+  /**
+   * Rotate and return a new bitmap.
+   */
+  public static Bitmap rotateBitmap(Bitmap bmp, int degrees) {
+    if (bmp == null || degrees % 360 == 0) {
+      return bmp;
+    }
+    int w = bmp.getWidth();
+    int h = bmp.getHeight();
+    try {
+      Matrix mtx = new Matrix();
+      mtx.postRotate(degrees, w >> 1, h >> 1);
+      return Bitmap.createBitmap(bmp, 0, 0, w, h, mtx, true);
+    } catch (OutOfMemoryError e) {
+      return bmp;
+    } catch (Exception e) {
+      return bmp;
+    }
+  }
+
+  /**
+   * Decode a new Bitmap from an InputStream then close the stream. This InputStream was obtained
+   * from resources, which we pass to be able to scale the bitmap accordingly.
+   *
+   * @param is         Decode a new Bitmap from an InputStream. This InputStream was obtained from
+   *                   resources, which we pass to be able to scale the bitmap accordingly.
+   * @param outPadding Decode a new Bitmap from an InputStream. This InputStream was obtained from
+   *                   resources, which we pass to be able to scale the bitmap accordingly.
+   * @param options    Decode a new Bitmap from an InputStream. This InputStream was obtained from
+   *                   resources, which we pass to be able to scale the bitmap accordingly.
+   * @return Decode a new Bitmap from an InputStream. This InputStream was obtained from
+   * resources, which we pass to be able to scale the bitmap accordingly.
+   * @throws java.io.IOException If an error occurs when closing the given {@link java.io.InputStream}.
+   */
+  public static Bitmap decodeBitmapFromStream(InputStream is, Rect outPadding, BitmapFactory.Options options)
+      throws IOException {
+    try {
+      return BitmapFactory.decodeStream(is, outPadding, options);
+    } finally {
+      try {
+        is.close();
+      } catch (Exception e) {
+
+      }
+    }
+  }
 }

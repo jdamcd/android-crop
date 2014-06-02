@@ -21,6 +21,8 @@ public class TakeAndCropPhotoActivity extends Activity {
 
   public static final String EXTRA_HEIGHT = "height";
 
+  public static final String EXTRA_REQUEST = "request";
+
   private static Uri outputFileUri;
 
   private static final String URL_PHOTOS = "Photos/%d.png";
@@ -29,22 +31,26 @@ public class TakeAndCropPhotoActivity extends Activity {
 
   public static final int TYPE_CUSTOM = 1;
 
+  public static final int REQUEST_TAKE = 0;
+
+  public static final int REQUEST_STORAGE = 1;
+
   private static final int DEFAULT_SIZE = 200;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    Boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
+    boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
     if (isSDPresent) {
-      startTakePhoto();
+      startGetPhoto();
     } else {
       setResult(R.id.result_croped_photo_fail_no_sdcard);
       finish();
     }
   }
 
-  private void startTakePhoto() {
-    //get uri user
+  private void startGetPhoto() {
+    int request = getIntent().getIntExtra(EXTRA_REQUEST, REQUEST_TAKE);
     outputFileUri = getIntent().getData();
     if (outputFileUri == null) {
       //if null, create default uri
@@ -56,6 +62,15 @@ public class TakeAndCropPhotoActivity extends Activity {
       f.getParentFile().mkdirs();
     }
     outputFileUri = Uri.fromFile(f);
+    if (request == REQUEST_TAKE) {
+      startTakePhoto();
+    } else {
+      Crop.pickImage(this);
+    }
+  }
+
+
+  private void startTakePhoto() {
     Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
     cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
     startActivityForResult(cameraIntent, R.id.request_take_photo);
@@ -64,8 +79,12 @@ public class TakeAndCropPhotoActivity extends Activity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (resultCode == RESULT_OK) {
-      if (requestCode == R.id.request_take_photo) {
-        Crop crop = new Crop(outputFileUri).output(outputFileUri);
+      if (requestCode == R.id.request_take_photo || requestCode == Crop.REQUEST_PICK) {
+        Uri inputUri = outputFileUri;
+        if (requestCode == Crop.REQUEST_PICK) {
+          inputUri = data.getData();
+        }
+        Crop crop = new Crop(inputUri).output(outputFileUri);
         int type = getIntent().getIntExtra(EXTRA_TYPE, TYPE_SQUARE);
         switch (type) {
           case TYPE_SQUARE:

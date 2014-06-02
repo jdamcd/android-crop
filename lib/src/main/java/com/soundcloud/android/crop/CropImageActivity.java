@@ -32,6 +32,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.Window;
 
@@ -127,14 +128,12 @@ public class CropImageActivity extends MonitoredActivity {
     mSourceUri = intent.getData();
     if (mSourceUri != null) {
       mExifRotation = CropUtil.getExifRotation(CropUtil.getFromMediaUri(getContentResolver(), mSourceUri));
-      Log.e("rotation:"+mExifRotation);
+      Log.e("rotation:" + mExifRotation);
       InputStream is = null;
       try {
-        is = getContentResolver().openInputStream(mSourceUri);
-        mRotateBitmap = new RotateBitmap(BitmapFactory.decodeStream(is), mExifRotation);
-      } catch (IOException e) {
-        Log.e("Error reading picture: " + e.getMessage(), e);
-        setResultException(e);
+        DisplayMetrics display = getResources().getDisplayMetrics();
+        mRotateBitmap = new RotateBitmap(CropUtil.decodeUri(this,
+            mSourceUri, display.widthPixels, display.heightPixels), mExifRotation);
       } catch (OutOfMemoryError e) {
         Log.e("OOM while reading picture: " + e.getMessage(), e);
         setResultException(e);
@@ -292,14 +291,12 @@ public class CropImageActivity extends MonitoredActivity {
   private Bitmap decodeRegionCrop(Bitmap croppedImage, Rect rect) {
     // Release memory now
     clearImageView();
-
     InputStream is = null;
     try {
       is = getContentResolver().openInputStream(mSourceUri);
       BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(is, false);
       final int width = decoder.getWidth();
       final int height = decoder.getHeight();
-      Log.e("rotation:"+mExifRotation);
       if (mExifRotation != 0) {
         // Adjust crop area to account for image rotation
         Matrix matrix = new Matrix();
@@ -324,7 +321,6 @@ public class CropImageActivity extends MonitoredActivity {
       }
 
     } catch (IOException e) {
-      Log.e("Error cropping picture: " + e.getMessage(), e);
       finish();
     } finally {
       CropUtil.closeSilently(is);
@@ -373,13 +369,14 @@ public class CropImageActivity extends MonitoredActivity {
       try {
         outputStream = getContentResolver().openOutputStream(mSaveUri);
         if (outputStream != null) {
-          if(mExifRotation != 0){
-            Matrix matrix = new Matrix();
-            matrix.postRotate(mExifRotation);
-            Bitmap rotateBitmap = Bitmap.createBitmap(croppedImage,0,0,croppedImage.getWidth(),
-                croppedImage.getHeight(),matrix,false);
-            croppedImage.recycle();
-            croppedImage = rotateBitmap;
+          if (mExifRotation != 0) {
+//            Matrix matrix = new Matrix();
+//            matrix.postRotate(mExifRotation);
+//            Bitmap rotateBitmap = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(),
+//                croppedImage.getHeight(), matrix, false);
+//            croppedImage.recycle();
+//            croppedImage = rotateBitmap;
+            croppedImage = CropUtil.rotateBitmap(croppedImage, mExifRotation);
           }
           croppedImage.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
         }
