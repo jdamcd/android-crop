@@ -370,12 +370,6 @@ public class CropImageActivity extends MonitoredActivity {
         outputStream = getContentResolver().openOutputStream(mSaveUri);
         if (outputStream != null) {
           if (mExifRotation != 0) {
-//            Matrix matrix = new Matrix();
-//            matrix.postRotate(mExifRotation);
-//            Bitmap rotateBitmap = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(),
-//                croppedImage.getHeight(), matrix, false);
-//            croppedImage.recycle();
-//            croppedImage = rotateBitmap;
             croppedImage = CropUtil.rotateBitmap(croppedImage, mExifRotation);
           }
           croppedImage.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
