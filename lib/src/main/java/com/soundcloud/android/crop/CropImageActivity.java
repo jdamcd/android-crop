@@ -18,21 +18,15 @@ package com.soundcloud.android.crop;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapRegionDecoder;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.net.Uri;
+import android.opengl.GLES10;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
-
 import com.soundcloud.android.crop.util.Log;
 
 import java.io.IOException;
@@ -62,6 +56,7 @@ public class CropImageActivity extends MonitoredActivity {
 
     private boolean mIsSaving; // When the save button has been clicked
 
+    private int mSampleSize;
     private RotateBitmap mRotateBitmap;
     private CropImageView mImageView;
     private HighlightView mCrop;
@@ -124,8 +119,11 @@ public class CropImageActivity extends MonitoredActivity {
 
             InputStream is = null;
             try {
+                mSampleSize = calcBitmapSampleSize(mSourceUri);
                 is = getContentResolver().openInputStream(mSourceUri);
-                mRotateBitmap = new RotateBitmap(BitmapFactory.decodeStream(is), mExifRotation);
+                BitmapFactory.Options option = new BitmapFactory.Options();
+                option.inSampleSize = mSampleSize;
+                mRotateBitmap = new RotateBitmap(BitmapFactory.decodeStream(is, null, option), mExifRotation);
             } catch (IOException e) {
                 Log.e("Error reading picture: " + e.getMessage(), e);
                 setResultException(e);
@@ -136,6 +134,25 @@ public class CropImageActivity extends MonitoredActivity {
                 CropUtil.closeSilently(is);
             }
         }
+    }
+
+    private int calcBitmapSampleSize(Uri bitmapUri) throws IOException {
+        InputStream is = getContentResolver().openInputStream(bitmapUri);
+        // read image size
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(is, null, options);
+        is.close();
+
+        // Get max texture size of OpenGL as it limits bitmap size drawn on Imageview
+        int[] maxSize = new int[1];
+        GLES10.glGetIntegerv(GLES10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
+
+        int sampleSize = 1;
+        while (options.outHeight / sampleSize > maxSize[0] || options.outWidth / sampleSize > maxSize[0]) {
+            sampleSize = sampleSize << 1;
+        }
+        return sampleSize;
     }
 
     private void startCrop() {
@@ -223,7 +240,7 @@ public class CropImageActivity extends MonitoredActivity {
         mIsSaving = true;
 
         Bitmap croppedImage = null;
-        Rect r = mCrop.getCropRect();
+        Rect r = mCrop.getScaledCropRect(mSampleSize);
         int width = r.width();
         int height = r.height();
 
