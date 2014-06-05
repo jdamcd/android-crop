@@ -195,6 +195,16 @@ class CropUtil {
     }
   }
 
+  public static int getScale(int fromWidth,int fromHeight,int toWidth,int toHeight){
+    int scale = 1;
+    while (fromWidth > toWidth && fromHeight > toHeight) {
+      fromWidth >>= 1;
+      fromHeight >>= 1;
+      scale <<= 1;
+    }
+    return scale;
+  }
+
   /**
    * Decode and rotate a new Bitmap from a file. The size of the decoded bitmap is limited by the
    * given amount of pixels.
@@ -212,15 +222,7 @@ class CropUtil {
     }
 
     // Find the correct scale value, should be the power of 2
-    int widthTmp = o.outWidth, heightTmp = o.outHeight;
-    int scale = 1;
-    // Math.max(width_tmp / width, height_tmp / height);
-    while (widthTmp > width && heightTmp > height) {
-      widthTmp >>= 1;
-      heightTmp >>= 1;
-      scale <<= 1;
-    }
-
+    int scale = getScale(o.outWidth,o.outHeight,width,height);
     Bitmap bmp = null;
     if (scale > 1) {
       // Decode with inSampleSize
