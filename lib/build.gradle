@@ -4,63 +4,41 @@ apply plugin: 'maven'
 archivesBaseName = 'android-crop'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.0.3'
+  compileSdkVersion 19
+  buildToolsVersion '19.1.0'
 
-    defaultConfig {
-        minSdkVersion 9
-        targetSdkVersion 19
+  defaultConfig {
+    minSdkVersion 8
+    targetSdkVersion 19
 
-        testPackageName 'com.soundcloud.android.crop.test'
-        testInstrumentationRunner 'android.test.InstrumentationTestRunner'
-    }
+    testPackageName 'com.soundcloud.android.crop.test'
+    testInstrumentationRunner 'android.test.InstrumentationTestRunner'
+  }
 }
 
 dependencies {
-    androidTestCompile 'com.squareup:fest-android:1.0.7'
-    androidTestCompile 'com.android.support:support-v4:19.0.+'
-    androidTestCompile 'org.mockito:mockito-core:1.9.5'
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.0'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
+  androidTestCompile 'com.squareup:fest-android:1.0.7'
+  androidTestCompile 'org.mockito:mockito-core:1.9.5'
+  androidTestCompile 'com.google.dexmaker:dexmaker:1.0'
+  androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
 }
+
+group = 'com.soundcloud.android.crop'
+version = '1.0.0'
 
 uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: 'http://maven.int.s-cloud.net/content/repositories/releases')
-
-            pom.project {
-                name 'android-crop'
-                packaging 'aar'
-                description 'A simple Activity for cropping images'
-                url 'https://github.com/jdamcd/android-crop'
-
-                scm {
-                    url 'https://github.com/jdamcd/android-crop'
-                    connection 'scm:git@github.com:jdamcd/android-crop.git'
-                    developerConnection 'scm:git@github.com:jdamcd/android-crop.git'
-                }
-
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-
-                organization {
-                    name 'SoundCloud'
-                    url 'http://developers.soundcloud.com'
-                }
-
-                developers {
-                    developer {
-                        id 'jdamcd'
-                        name 'Jamie McDonald'
-                    }
-                }
-            }
-        }
+  repositories {
+    mavenDeployer {
+      repository(url: "$MVN_REPO")
     }
+  }
 }
 
+task sourcesJar(type: Jar) {
+  from android.sourceSets.main.java
+  classifier = 'sources'
+}
+
+artifacts {
+  archives sourcesJar
+}

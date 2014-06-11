@@ -5,15 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/done_cancel_bar"
-        layout="@layout/crop__layout_done_cancel" />
+  <include
+      android:id="@+id/done_cancel_bar"
+      layout="@layout/crop__layout_done_cancel"/>
 
-    <com.soundcloud.android.crop.CropImageView
-        android:id="@+id/crop_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/crop__texture"
-        android:layout_below="@id/done_cancel_bar" />
+  <com.soundcloud.android.crop.CropImageView
+      android:id="@+id/crop_image"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@drawable/crop__texture"
+      android:layout_below="@id/done_cancel_bar"/>
 
 </RelativeLayout>

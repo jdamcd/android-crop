@@ -26,61 +26,75 @@ import java.util.ArrayList;
  */
 abstract class MonitoredActivity extends Activity {
 
-    private final ArrayList<LifeCycleListener> mListeners = new ArrayList<LifeCycleListener>();
+  private final ArrayList<LifeCycleListener> mListeners = new ArrayList<LifeCycleListener>();
 
-    public static interface LifeCycleListener {
-        public void onActivityCreated(MonitoredActivity activity);
-        public void onActivityDestroyed(MonitoredActivity activity);
-        public void onActivityStarted(MonitoredActivity activity);
-        public void onActivityStopped(MonitoredActivity activity);
+  public static interface LifeCycleListener {
+
+    public void onActivityCreated(MonitoredActivity activity);
+
+    public void onActivityDestroyed(MonitoredActivity activity);
+
+    public void onActivityStarted(MonitoredActivity activity);
+
+    public void onActivityStopped(MonitoredActivity activity);
+  }
+
+  public static class LifeCycleAdapter implements LifeCycleListener {
+
+    public void onActivityCreated(MonitoredActivity activity) {
     }
 
-    public static class LifeCycleAdapter implements LifeCycleListener {
-        public void onActivityCreated(MonitoredActivity activity) {}
-        public void onActivityDestroyed(MonitoredActivity activity) {}
-        public void onActivityStarted(MonitoredActivity activity) {}
-        public void onActivityStopped(MonitoredActivity activity) {}
+    public void onActivityDestroyed(MonitoredActivity activity) {
     }
 
-    public void addLifeCycleListener(LifeCycleListener listener) {
-        if (mListeners.contains(listener)) return;
-        mListeners.add(listener);
+    public void onActivityStarted(MonitoredActivity activity) {
     }
 
-    public void removeLifeCycleListener(LifeCycleListener listener) {
-        mListeners.remove(listener);
+    public void onActivityStopped(MonitoredActivity activity) {
     }
+  }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        for (LifeCycleListener listener : mListeners) {
-            listener.onActivityCreated(this);
-        }
+  public void addLifeCycleListener(LifeCycleListener listener) {
+    if (mListeners.contains(listener)) {
+      return;
     }
+    mListeners.add(listener);
+  }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        for (LifeCycleListener listener : mListeners) {
-            listener.onActivityDestroyed(this);
-        }
-    }
+  public void removeLifeCycleListener(LifeCycleListener listener) {
+    mListeners.remove(listener);
+  }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        for (LifeCycleListener listener : mListeners) {
-            listener.onActivityStarted(this);
-        }
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    for (LifeCycleListener listener : mListeners) {
+      listener.onActivityCreated(this);
     }
+  }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        for (LifeCycleListener listener : mListeners) {
-            listener.onActivityStopped(this);
-        }
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    for (LifeCycleListener listener : mListeners) {
+      listener.onActivityDestroyed(this);
     }
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+    for (LifeCycleListener listener : mListeners) {
+      listener.onActivityStarted(this);
+    }
+  }
+
+  @Override
+  protected void onStop() {
+    super.onStop();
+    for (LifeCycleListener listener : mListeners) {
+      listener.onActivityStopped(this);
+    }
+  }
 
 }
