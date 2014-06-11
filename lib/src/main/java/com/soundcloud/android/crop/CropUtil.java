@@ -122,6 +122,7 @@ class CropUtil {
         }
       } catch (SecurityException ignored) {
         // Nothing we can do
+      } catch (Exception others) {
       } finally {
         if (cursor != null) {
           cursor.close();
@@ -195,7 +196,7 @@ class CropUtil {
     }
   }
 
-  public static int getScale(int fromWidth,int fromHeight,int toWidth,int toHeight){
+  public static int getScale(int fromWidth, int fromHeight, int toWidth, int toHeight) {
     int scale = 1;
     while (fromWidth > toWidth && fromHeight > toHeight) {
       fromWidth >>= 1;
@@ -222,7 +223,7 @@ class CropUtil {
     }
 
     // Find the correct scale value, should be the power of 2
-    int scale = getScale(o.outWidth,o.outHeight,width,height);
+    int scale = getScale(o.outWidth, o.outHeight, width, height);
     Bitmap bmp = null;
     if (scale > 1) {
       // Decode with inSampleSize

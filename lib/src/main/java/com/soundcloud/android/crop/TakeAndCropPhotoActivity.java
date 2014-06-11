@@ -44,7 +44,7 @@ public class TakeAndCropPhotoActivity extends Activity {
     if (isSDPresent) {
       startGetPhoto();
     } else {
-      setResult(R.id.result_croped_photo_fail_no_sdcard);
+      setResult(Const.RESULT_CROPPED_PHOTO_FAIL_NO_SDCARD);
       finish();
     }
   }
@@ -73,13 +73,13 @@ public class TakeAndCropPhotoActivity extends Activity {
   private void startTakePhoto() {
     Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
     cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-    startActivityForResult(cameraIntent, R.id.request_take_photo);
+    startActivityForResult(cameraIntent, Const.REQUEST_TAKE_PHOTO);
   }
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (resultCode == RESULT_OK) {
-      if (requestCode == R.id.request_take_photo || requestCode == Crop.REQUEST_PICK) {
+      if (requestCode == Const.REQUEST_TAKE_PHOTO || requestCode == Crop.REQUEST_PICK) {
         Uri inputUri = outputFileUri;
         if (requestCode == Crop.REQUEST_PICK) {
           inputUri = data.getData();

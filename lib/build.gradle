@@ -5,7 +5,7 @@ archivesBaseName = 'android-crop'
 
 android {
   compileSdkVersion 19
-  buildToolsVersion '19.0.3'
+  buildToolsVersion '19.1.0'
 
   defaultConfig {
     minSdkVersion 8
@@ -24,7 +24,7 @@ dependencies {
 }
 
 group = 'com.soundcloud.android.crop'
-version = '0.9.9'
+version = '1.0.0'
 
 uploadArchives {
   repositories {
@@ -35,11 +35,10 @@ uploadArchives {
 }
 
 task sourcesJar(type: Jar) {
-  from android.sourceSets.main.allJava
+  from android.sourceSets.main.java
   classifier = 'sources'
 }
 
 artifacts {
   archives sourcesJar
 }
-

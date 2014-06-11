@@ -3,17 +3,17 @@ apply plugin: 'android'
 archivesBaseName = 'android-crop-example'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.0.3'
+  compileSdkVersion 19
+  buildToolsVersion '19.1.0'
 
-    defaultConfig {
-        minSdkVersion 9
-        targetSdkVersion 19
-        versionCode Integer.parseInt(project.VERSION_CODE)
-        versionName project.VERSION
-    }
+  defaultConfig {
+    minSdkVersion 9
+    targetSdkVersion 19
+    versionCode Integer.parseInt(project.VERSION_CODE)
+    versionName project.VERSION
+  }
 }
 
 dependencies {
-    compile project(':lib')
+  compile project(':lib')
 }
