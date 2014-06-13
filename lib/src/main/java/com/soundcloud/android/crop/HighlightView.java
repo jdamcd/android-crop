@@ -36,7 +36,7 @@ import android.view.View;
  *
  * This class is used to display a highlighted cropping rectangle
  * overlayed on the image. There are two coordinate spaces in use. One is
- * image, another is screen. computeLayout() uses mMatrix to map from image
+ * image, another is screen. computeLayout() uses matrix to map from image
  * space to screen space.
  */
 class HighlightView {
@@ -55,29 +55,29 @@ class HighlightView {
     enum ModifyMode { None, Move, Grow }
     enum HandleMode { Changing, Always, Never }
 
-    RectF mCropRect; // Image space
-    Rect mDrawRect; // Screen space
-    Matrix mMatrix;
-    private RectF mImageRect; // Image space
+    RectF cropRect; // Image space
+    Rect drawRect; // Screen space
+    Matrix matrix;
+    private RectF imageRect; // Image space
 
-    private final Paint mOutsidePaint = new Paint();
-    private final Paint mOutlinePaint = new Paint();
-    private final Paint mHandlePaint = new Paint();
+    private final Paint outsidePaint = new Paint();
+    private final Paint outlinePaint = new Paint();
+    private final Paint handlePaint = new Paint();
 
-    private View mContext; // View displaying image
-    private boolean mShowThirds;
-    private int mHighlightColor;
+    private View viewContext; // View displaying image
+    private boolean showThirds;
+    private int highlightColor;
 
-    private ModifyMode mMode = ModifyMode.None;
-    private HandleMode mHandleMode = HandleMode.Changing;
-    private boolean mMaintainAspectRatio;
-    private float mInitialAspectRatio;
-    private float mHandleRadius;
-    private float mOutlineWidth;
-    private boolean mIsFocused;
+    private ModifyMode modifyMode = ModifyMode.None;
+    private HandleMode handleMode = HandleMode.Changing;
+    private boolean maintainAspectRatio;
+    private float initialAspectRatio;
+    private float handleRadius;
+    private float outlineWidth;
+    private boolean isFocused;
 
     public HighlightView(View context) {
-        mContext = context;
+        viewContext = context;
         initStyles(context.getContext());
     }
 
@@ -86,70 +86,70 @@ class HighlightView {
         context.getTheme().resolveAttribute(R.attr.cropImageStyle, outValue, true);
         TypedArray attributes = context.obtainStyledAttributes(outValue.resourceId, R.styleable.CropImageView);
         try {
-            mShowThirds = attributes.getBoolean(R.styleable.CropImageView_showThirds, false);
-            mHighlightColor = attributes.getColor(R.styleable.CropImageView_highlightColor,
+            showThirds = attributes.getBoolean(R.styleable.CropImageView_showThirds, false);
+            highlightColor = attributes.getColor(R.styleable.CropImageView_highlightColor,
                     DEFAULT_HIGHLIGHT_COLOR);
-            mHandleMode = HandleMode.values()[attributes.getInt(R.styleable.CropImageView_showHandles, 0)];
+            handleMode = HandleMode.values()[attributes.getInt(R.styleable.CropImageView_showHandles, 0)];
         } finally {
             attributes.recycle();
         }
     }
 
     public void setup(Matrix m, Rect imageRect, RectF cropRect, boolean maintainAspectRatio) {
-        mMatrix = new Matrix(m);
+        matrix = new Matrix(m);
 
-        mCropRect = cropRect;
-        mImageRect = new RectF(imageRect);
-        mMaintainAspectRatio = maintainAspectRatio;
+        this.cropRect = cropRect;
+        this.imageRect = new RectF(imageRect);
+        this.maintainAspectRatio = maintainAspectRatio;
 
-        mInitialAspectRatio = mCropRect.width() / mCropRect.height();
-        mDrawRect = computeLayout();
+        initialAspectRatio = this.cropRect.width() / this.cropRect.height();
+        drawRect = computeLayout();
 
-        mOutsidePaint.setARGB(125, 50, 50, 50);
-        mOutlinePaint.setStyle(Paint.Style.STROKE);
-        mOutlinePaint.setAntiAlias(true);
-        mOutlineWidth = dpToPx(OUTLINE_DP);
+        outsidePaint.setARGB(125, 50, 50, 50);
+        outlinePaint.setStyle(Paint.Style.STROKE);
+        outlinePaint.setAntiAlias(true);
+        outlineWidth = dpToPx(OUTLINE_DP);
 
-        mHandlePaint.setColor(mHighlightColor);
-        mHandlePaint.setStyle(Paint.Style.FILL);
-        mHandlePaint.setAntiAlias(true);
-        mHandleRadius = dpToPx(HANDLE_RADIUS_DP);
+        handlePaint.setColor(highlightColor);
+        handlePaint.setStyle(Paint.Style.FILL);
+        handlePaint.setAntiAlias(true);
+        handleRadius = dpToPx(HANDLE_RADIUS_DP);
 
-        mMode = ModifyMode.None;
+        modifyMode = ModifyMode.None;
     }
 
     private float dpToPx(float dp) {
-        return dp * mContext.getResources().getDisplayMetrics().density;
+        return dp * viewContext.getResources().getDisplayMetrics().density;
     }
 
     protected void draw(Canvas canvas) {
         canvas.save();
         Path path = new Path();
-        mOutlinePaint.setStrokeWidth(mOutlineWidth);
+        outlinePaint.setStrokeWidth(outlineWidth);
         if (!hasFocus()) {
-            mOutlinePaint.setColor(Color.BLACK);
-            canvas.drawRect(mDrawRect, mOutlinePaint);
+            outlinePaint.setColor(Color.BLACK);
+            canvas.drawRect(drawRect, outlinePaint);
         } else {
             Rect viewDrawingRect = new Rect();
-            mContext.getDrawingRect(viewDrawingRect);
+            viewContext.getDrawingRect(viewDrawingRect);
 
-            path.addRect(new RectF(mDrawRect), Path.Direction.CW);
-            mOutlinePaint.setColor(mHighlightColor);
+            path.addRect(new RectF(drawRect), Path.Direction.CW);
+            outlinePaint.setColor(highlightColor);
 
             if (isClipPathSupported(canvas)) {
                 canvas.clipPath(path, Region.Op.DIFFERENCE);
-                canvas.drawRect(viewDrawingRect, mOutsidePaint);
+                canvas.drawRect(viewDrawingRect, outsidePaint);
             }
 
             canvas.restore();
-            canvas.drawPath(path, mOutlinePaint);
+            canvas.drawPath(path, outlinePaint);
 
-            if (mShowThirds) {
+            if (showThirds) {
                 drawThirds(canvas);
             }
 
-            if (mHandleMode == HandleMode.Always ||
-                    (mHandleMode == HandleMode.Changing && mMode == ModifyMode.Grow)) {
+            if (handleMode == HandleMode.Always ||
+                    (handleMode == HandleMode.Changing && modifyMode == ModifyMode.Grow)) {
                 drawHandles(canvas);
             }
         }
@@ -166,34 +166,34 @@ class HighlightView {
     }
 
     private void drawHandles(Canvas canvas) {
-        int xMiddle = mDrawRect.left + ((mDrawRect.right  - mDrawRect.left) / 2);
-        int yMiddle = mDrawRect.top + ((mDrawRect.bottom - mDrawRect.top) / 2);
+        int xMiddle = drawRect.left + ((drawRect.right  - drawRect.left) / 2);
+        int yMiddle = drawRect.top + ((drawRect.bottom - drawRect.top) / 2);
 
-        canvas.drawCircle(mDrawRect.left, yMiddle, mHandleRadius, mHandlePaint);
-        canvas.drawCircle(xMiddle, mDrawRect.top, mHandleRadius, mHandlePaint);
-        canvas.drawCircle(mDrawRect.right, yMiddle, mHandleRadius, mHandlePaint);
-        canvas.drawCircle(xMiddle, mDrawRect.bottom, mHandleRadius, mHandlePaint);
+        canvas.drawCircle(drawRect.left, yMiddle, handleRadius, handlePaint);
+        canvas.drawCircle(xMiddle, drawRect.top, handleRadius, handlePaint);
+        canvas.drawCircle(drawRect.right, yMiddle, handleRadius, handlePaint);
+        canvas.drawCircle(xMiddle, drawRect.bottom, handleRadius, handlePaint);
     }
 
     private void drawThirds(Canvas canvas) {
-        mOutlinePaint.setStrokeWidth(1);
-        float xThird = (mDrawRect.right - mDrawRect.left) / 3;
-        float yThird = (mDrawRect.bottom - mDrawRect.top) / 3;
+        outlinePaint.setStrokeWidth(1);
+        float xThird = (drawRect.right - drawRect.left) / 3;
+        float yThird = (drawRect.bottom - drawRect.top) / 3;
         
-        canvas.drawLine(mDrawRect.left + xThird, mDrawRect.top,
-                mDrawRect.left + xThird, mDrawRect.bottom, mOutlinePaint);
-        canvas.drawLine(mDrawRect.left + xThird * 2, mDrawRect.top,
-                mDrawRect.left + xThird * 2, mDrawRect.bottom, mOutlinePaint);
-        canvas.drawLine(mDrawRect.left, mDrawRect.top + yThird,
-                mDrawRect.right, mDrawRect.top + yThird, mOutlinePaint);
-        canvas.drawLine(mDrawRect.left, mDrawRect.top + yThird * 2,
-                mDrawRect.right, mDrawRect.top + yThird * 2, mOutlinePaint);
+        canvas.drawLine(drawRect.left + xThird, drawRect.top,
+                drawRect.left + xThird, drawRect.bottom, outlinePaint);
+        canvas.drawLine(drawRect.left + xThird * 2, drawRect.top,
+                drawRect.left + xThird * 2, drawRect.bottom, outlinePaint);
+        canvas.drawLine(drawRect.left, drawRect.top + yThird,
+                drawRect.right, drawRect.top + yThird, outlinePaint);
+        canvas.drawLine(drawRect.left, drawRect.top + yThird * 2,
+                drawRect.right, drawRect.top + yThird * 2, outlinePaint);
     }
 
     public void setMode(ModifyMode mode) {
-        if (mode != mMode) {
-            mMode = mode;
-            mContext.invalidate();
+        if (mode != modifyMode) {
+            modifyMode = mode;
+            viewContext.invalidate();
         }
     }
 
@@ -237,8 +237,8 @@ class HighlightView {
         Rect r = computeLayout();
         if (edge == MOVE) {
             // Convert to image space before sending to moveBy()
-            moveBy(dx * (mCropRect.width() / r.width()),
-                   dy * (mCropRect.height() / r.height()));
+            moveBy(dx * (cropRect.width() / r.width()),
+                   dy * (cropRect.height() / r.height()));
         } else {
             if (((GROW_LEFT_EDGE | GROW_RIGHT_EDGE) & edge) == 0) {
                 dx = 0;
@@ -249,8 +249,8 @@ class HighlightView {
             }
 
             // Convert to image space before sending to growBy()
-            float xDelta = dx * (mCropRect.width() / r.width());
-            float yDelta = dy * (mCropRect.height() / r.height());
+            float xDelta = dx * (cropRect.width() / r.width());
+            float yDelta = dy * (cropRect.height() / r.height());
             growBy((((edge & GROW_LEFT_EDGE) != 0) ? -1 : 1) * xDelta,
                     (((edge & GROW_TOP_EDGE) != 0) ? -1 : 1) * yDelta);
         }
@@ -258,49 +258,49 @@ class HighlightView {
 
     // Grows the cropping rectangle by (dx, dy) in image space
     void moveBy(float dx, float dy) {
-        Rect invalRect = new Rect(mDrawRect);
+        Rect invalRect = new Rect(drawRect);
 
-        mCropRect.offset(dx, dy);
+        cropRect.offset(dx, dy);
 
         // Put the cropping rectangle inside image rectangle
-        mCropRect.offset(
-                Math.max(0, mImageRect.left - mCropRect.left),
-                Math.max(0, mImageRect.top  - mCropRect.top));
+        cropRect.offset(
+                Math.max(0, imageRect.left - cropRect.left),
+                Math.max(0, imageRect.top  - cropRect.top));
 
-        mCropRect.offset(
-                Math.min(0, mImageRect.right  - mCropRect.right),
-                Math.min(0, mImageRect.bottom - mCropRect.bottom));
+        cropRect.offset(
+                Math.min(0, imageRect.right  - cropRect.right),
+                Math.min(0, imageRect.bottom - cropRect.bottom));
 
-        mDrawRect = computeLayout();
-        invalRect.union(mDrawRect);
-        invalRect.inset(-(int) mHandleRadius, -(int) mHandleRadius);
-        mContext.invalidate(invalRect);
+        drawRect = computeLayout();
+        invalRect.union(drawRect);
+        invalRect.inset(-(int) handleRadius, -(int) handleRadius);
+        viewContext.invalidate(invalRect);
     }
 
     // Grows the cropping rectangle by (dx, dy) in image space.
     void growBy(float dx, float dy) {
-        if (mMaintainAspectRatio) {
+        if (maintainAspectRatio) {
             if (dx != 0) {
-                dy = dx / mInitialAspectRatio;
+                dy = dx / initialAspectRatio;
             } else if (dy != 0) {
-                dx = dy * mInitialAspectRatio;
+                dx = dy * initialAspectRatio;
             }
         }
 
         // Don't let the cropping rectangle grow too fast.
         // Grow at most half of the difference between the image rectangle and
         // the cropping rectangle.
-        RectF r = new RectF(mCropRect);
-        if (dx > 0F && r.width() + 2 * dx > mImageRect.width()) {
-            dx = (mImageRect.width() - r.width()) / 2F;
-            if (mMaintainAspectRatio) {
-                dy = dx / mInitialAspectRatio;
+        RectF r = new RectF(cropRect);
+        if (dx > 0F && r.width() + 2 * dx > imageRect.width()) {
+            dx = (imageRect.width() - r.width()) / 2F;
+            if (maintainAspectRatio) {
+                dy = dx / initialAspectRatio;
             }
         }
-        if (dy > 0F && r.height() + 2 * dy > mImageRect.height()) {
-            dy = (mImageRect.height() - r.height()) / 2F;
-            if (mMaintainAspectRatio) {
-                dx = dy * mInitialAspectRatio;
+        if (dy > 0F && r.height() + 2 * dy > imageRect.height()) {
+            dy = (imageRect.height() - r.height()) / 2F;
+            if (maintainAspectRatio) {
+                dx = dy * initialAspectRatio;
             }
         }
 
@@ -311,55 +311,55 @@ class HighlightView {
         if (r.width() < widthCap) {
             r.inset(-(widthCap - r.width()) / 2F, 0F);
         }
-        float heightCap = mMaintainAspectRatio
-                ? (widthCap / mInitialAspectRatio)
+        float heightCap = maintainAspectRatio
+                ? (widthCap / initialAspectRatio)
                 : widthCap;
         if (r.height() < heightCap) {
             r.inset(0F, -(heightCap - r.height()) / 2F);
         }
 
         // Put the cropping rectangle inside the image rectangle
-        if (r.left < mImageRect.left) {
-            r.offset(mImageRect.left - r.left, 0F);
-        } else if (r.right > mImageRect.right) {
-            r.offset(-(r.right - mImageRect.right), 0F);
+        if (r.left < imageRect.left) {
+            r.offset(imageRect.left - r.left, 0F);
+        } else if (r.right > imageRect.right) {
+            r.offset(-(r.right - imageRect.right), 0F);
         }
-        if (r.top < mImageRect.top) {
-            r.offset(0F, mImageRect.top - r.top);
-        } else if (r.bottom > mImageRect.bottom) {
-            r.offset(0F, -(r.bottom - mImageRect.bottom));
+        if (r.top < imageRect.top) {
+            r.offset(0F, imageRect.top - r.top);
+        } else if (r.bottom > imageRect.bottom) {
+            r.offset(0F, -(r.bottom - imageRect.bottom));
         }
 
-        mCropRect.set(r);
-        mDrawRect = computeLayout();
-        mContext.invalidate();
+        cropRect.set(r);
+        drawRect = computeLayout();
+        viewContext.invalidate();
     }
 
     // Returns the cropping rectangle in image space with specified scale
     public Rect getScaledCropRect(float scale) {
-        return new Rect((int) (mCropRect.left * scale), (int) (mCropRect.top * scale),
-                (int) (mCropRect.right * scale), (int) (mCropRect.bottom * scale));
+        return new Rect((int) (cropRect.left * scale), (int) (cropRect.top * scale),
+                (int) (cropRect.right * scale), (int) (cropRect.bottom * scale));
     }
 
     // Maps the cropping rectangle from image space to screen space
     private Rect computeLayout() {
-        RectF r = new RectF(mCropRect.left, mCropRect.top,
-                            mCropRect.right, mCropRect.bottom);
-        mMatrix.mapRect(r);
+        RectF r = new RectF(cropRect.left, cropRect.top,
+                            cropRect.right, cropRect.bottom);
+        matrix.mapRect(r);
         return new Rect(Math.round(r.left), Math.round(r.top),
                         Math.round(r.right), Math.round(r.bottom));
     }
 
     public void invalidate() {
-        mDrawRect = computeLayout();
+        drawRect = computeLayout();
     }
 
     public boolean hasFocus() {
-        return mIsFocused;
+        return isFocused;
     }
 
     public void setFocus(boolean isFocused) {
-        mIsFocused = isFocused;
+        this.isFocused = isFocused;
     }
 
 }

@@ -26,7 +26,7 @@ import java.util.ArrayList;
  */
 abstract class MonitoredActivity extends Activity {
 
-    private final ArrayList<LifeCycleListener> mListeners = new ArrayList<LifeCycleListener>();
+    private final ArrayList<LifeCycleListener> listeners = new ArrayList<LifeCycleListener>();
 
     public static interface LifeCycleListener {
         public void onActivityCreated(MonitoredActivity activity);
@@ -43,18 +43,18 @@ abstract class MonitoredActivity extends Activity {
     }
 
     public void addLifeCycleListener(LifeCycleListener listener) {
-        if (mListeners.contains(listener)) return;
-        mListeners.add(listener);
+        if (listeners.contains(listener)) return;
+        listeners.add(listener);
     }
 
     public void removeLifeCycleListener(LifeCycleListener listener) {
-        mListeners.remove(listener);
+        listeners.remove(listener);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        for (LifeCycleListener listener : mListeners) {
+        for (LifeCycleListener listener : listeners) {
             listener.onActivityCreated(this);
         }
     }
@@ -62,7 +62,7 @@ abstract class MonitoredActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        for (LifeCycleListener listener : mListeners) {
+        for (LifeCycleListener listener : listeners) {
             listener.onActivityDestroyed(this);
         }
     }
@@ -70,7 +70,7 @@ abstract class MonitoredActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        for (LifeCycleListener listener : mListeners) {
+        for (LifeCycleListener listener : listeners) {
             listener.onActivityStarted(this);
         }
     }
@@ -78,7 +78,7 @@ abstract class MonitoredActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        for (LifeCycleListener listener : mListeners) {
+        for (LifeCycleListener listener : listeners) {
             listener.onActivityStopped(this);
         }
     }
