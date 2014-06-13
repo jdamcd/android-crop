@@ -42,6 +42,10 @@ The library provides a utility method to start an image picker:
 
 ![android-crop screenshot](screenshot.png)
 
+## Implementations
+
+Apps that use this library include: [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android), [Depop](https://play.google.com/store/apps/details?id=com.depop)
+
 ## License
 
 This project is based on the [AOSP](https://source.android.com) camera image cropper via [android-cropimage](https://github.com/lvillani/android-cropimage).
