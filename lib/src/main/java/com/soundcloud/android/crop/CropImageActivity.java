@@ -125,7 +125,7 @@ public class CropImageActivity extends MonitoredActivity {
 
             InputStream is = null;
             try {
-                sampleSize = calcBitmapSampleSize(sourceUri);
+                sampleSize = calculateBitmapSampleSize(sourceUri);
                 is = getContentResolver().openInputStream(sourceUri);
                 BitmapFactory.Options option = new BitmapFactory.Options();
                 option.inSampleSize = sampleSize;
@@ -142,15 +142,18 @@ public class CropImageActivity extends MonitoredActivity {
         }
     }
 
-    private int calcBitmapSampleSize(Uri bitmapUri) throws IOException {
-        InputStream is = getContentResolver().openInputStream(bitmapUri);
-        // read image size
+    private int calculateBitmapSampleSize(Uri bitmapUri) throws IOException {
+        InputStream is = null;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(is, null, options);
-        is.close();
+        try {
+            is = getContentResolver().openInputStream(bitmapUri);
+            BitmapFactory.decodeStream(is, null, options); // Just get image size
+        } finally {
+            CropUtil.closeSilently(is);
+        }
 
-        // Get max texture size of OpenGL as it limits bitmap size drawn on Imageview
+        // Get max texture size of OpenGL as it limits bitmap size drawn on ImageView
         int[] maxSize = new int[1];
         GLES10.glGetIntegerv(GLES10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
 
