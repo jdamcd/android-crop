@@ -335,10 +335,10 @@ class HighlightView {
         mContext.invalidate();
     }
 
-    // Returns the cropping rectangle in image space
-    public Rect getCropRect() {
-        return new Rect((int) mCropRect.left, (int) mCropRect.top,
-                        (int) mCropRect.right, (int) mCropRect.bottom);
+    // Returns the cropping rectangle in image space with specified scale
+    public Rect getScaledCropRect(float scale) {
+        return new Rect((int) (mCropRect.left * scale), (int) (mCropRect.top * scale),
+                (int) (mCropRect.right * scale), (int) (mCropRect.bottom * scale));
     }
 
     // Maps the cropping rectangle from image space to screen space
