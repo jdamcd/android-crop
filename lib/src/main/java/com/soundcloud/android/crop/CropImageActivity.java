@@ -136,7 +136,7 @@ public class CropImageActivity extends MonitoredActivity {
             } catch (OutOfMemoryError e) {
                 Log.e("OOM while reading picture: " + e.getMessage(), e);
                 setResultException(e);
-            } finally{
+            } finally {
                 CropUtil.closeSilently(is);
             }
         }
@@ -191,10 +191,12 @@ public class CropImageActivity extends MonitoredActivity {
     private class Cropper {
 
         private void makeDefault() {
-            if (mRotateBitmap == null) return;
+            if (mRotateBitmap == null) {
+                return;
+            }
 
             HighlightView hv = new HighlightView(mImageView);
-            final int width  = mRotateBitmap.getWidth();
+            final int width = mRotateBitmap.getWidth();
             final int height = mRotateBitmap.getHeight();
 
             Rect imageRect = new Rect(0, 0, width, height);
@@ -311,7 +313,7 @@ public class CropImageActivity extends MonitoredActivity {
         try {
             is = getContentResolver().openInputStream(mSourceUri);
             BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(is, false);
-            final int width  = decoder.getWidth();
+            final int width = decoder.getWidth();
             final int height = decoder.getHeight();
 
             if (mExifRotation != 0) {
@@ -396,7 +398,7 @@ public class CropImageActivity extends MonitoredActivity {
                 CropUtil.closeSilently(outputStream);
             }
 
-            if (!IN_MEMORY_CROP){
+            if (!IN_MEMORY_CROP) {
                 // In-memory crop negates the rotation
                 CropUtil.copyExifRotation(
                         CropUtil.getFromMediaUri(getContentResolver(), mSourceUri),
@@ -439,7 +441,7 @@ public class CropImageActivity extends MonitoredActivity {
         setResult(RESULT_OK, new Intent().putExtra(MediaStore.EXTRA_OUTPUT, uri));
     }
 
-    private void setResultException(Throwable throwable){
+    private void setResultException(Throwable throwable) {
         setResult(Crop.RESULT_ERROR, new Intent().putExtra(Crop.Extra.ERROR, throwable));
     }
 
