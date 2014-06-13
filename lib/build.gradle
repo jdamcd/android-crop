@@ -5,20 +5,20 @@ archivesBaseName = 'android-crop'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion '19.0.3'
+    buildToolsVersion '19.1.0'
 
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 19
 
-        testPackageName 'com.soundcloud.android.crop.test'
+        testApplicationId 'com.soundcloud.android.crop.test'
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'
     }
 }
 
 dependencies {
     androidTestCompile 'com.squareup:fest-android:1.0.7'
-    androidTestCompile 'com.android.support:support-v4:19.0.+'
+    androidTestCompile 'com.android.support:support-v4:19.1.0'
     androidTestCompile 'org.mockito:mockito-core:1.9.5'
     androidTestCompile 'com.google.dexmaker:dexmaker:1.0'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
