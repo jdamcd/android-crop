@@ -53,6 +53,7 @@ class HighlightView {
     private static final float OUTLINE_DP = 2f;
 
     enum ModifyMode { None, Move, Grow }
+    enum HandleMode { Changing, Always, Never }
 
     RectF mCropRect; // Image space
     Rect mDrawRect; // Screen space
@@ -68,6 +69,7 @@ class HighlightView {
     private int mHighlightColor;
 
     private ModifyMode mMode = ModifyMode.None;
+    private HandleMode mHandleMode = HandleMode.Changing;
     private boolean mMaintainAspectRatio;
     private float mInitialAspectRatio;
     private float mHandleRadius;
@@ -87,6 +89,7 @@ class HighlightView {
             mShowThirds = attributes.getBoolean(R.styleable.CropImageView_showThirds, false);
             mHighlightColor = attributes.getColor(R.styleable.CropImageView_highlightColor,
                     DEFAULT_HIGHLIGHT_COLOR);
+            mHandleMode = HandleMode.values()[attributes.getInt(R.styleable.CropImageView_showHandles, 0)];
         } finally {
             attributes.recycle();
         }
@@ -144,7 +147,9 @@ class HighlightView {
             if (mShowThirds) {
                 drawThirds(canvas);
             }
-            if (mMode == ModifyMode.Grow) {
+
+            if (mHandleMode == HandleMode.Always ||
+                    (mHandleMode == HandleMode.Changing && mMode == ModifyMode.Grow)) {
                 drawHandles(canvas);
             }
         }
@@ -268,7 +273,7 @@ class HighlightView {
 
         mDrawRect = computeLayout();
         invalRect.union(mDrawRect);
-        invalRect.inset(-10, -10);
+        invalRect.inset(-(int) mHandleRadius, -(int) mHandleRadius);
         mContext.invalidate(invalRect);
     }
 
