@@ -139,6 +139,8 @@ class HighlightView {
             if (isClipPathSupported(canvas)) {
                 canvas.clipPath(path, Region.Op.DIFFERENCE);
                 canvas.drawRect(viewDrawingRect, outsidePaint);
+            } else {
+                drawOutsideFallback(canvas);
             }
 
             canvas.restore();
@@ -155,9 +157,26 @@ class HighlightView {
         }
     }
 
+    /*
+     * Fall back to naive method for darkening outside crop area
+     */
+    private void drawOutsideFallback(Canvas canvas) {
+        canvas.drawRect(0, 0, canvas.getWidth(), drawRect.top, outsidePaint);
+        canvas.drawRect(0, drawRect.bottom, canvas.getWidth(), canvas.getHeight(), outsidePaint);
+        canvas.drawRect(0, drawRect.top, drawRect.left, drawRect.bottom, outsidePaint);
+        canvas.drawRect(drawRect.right, drawRect.top, canvas.getWidth(), drawRect.bottom, outsidePaint);
+    }
+
+    /*
+     * Clip path is broken, unreliable or not supported on:
+     * - JellyBean MR1
+     * - ICS & ICS MR1 with hardware acceleration turned on
+     */
     @SuppressLint("NewApi")
     private boolean isClipPathSupported(Canvas canvas) {
-        if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return false;
+        } else if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
             || Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             return true;
         } else {
