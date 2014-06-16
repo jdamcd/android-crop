@@ -1,5 +1,6 @@
 apply plugin: 'android-library'
 apply plugin: 'maven'
+apply plugin: 'signing'
 
 archivesBaseName = 'android-crop'
 
@@ -24,19 +25,38 @@ dependencies {
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
 }
 
+configurations {
+    archives {
+        extendsFrom configurations.default
+    }
+}
+
+signing {
+    required { has("release") && gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
 uploadArchives {
+    configuration = configurations.archives
+
     repositories {
         mavenDeployer {
-            repository(url: 'http://maven.int.s-cloud.net/content/repositories/releases')
+            beforeDeployment {
+                MavenDeployment deployment -> signing.signPom(deployment)
+            }
+
+            repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2') {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
 
             pom.project {
-                name 'android-crop'
+                name 'Android Crop'
                 packaging 'aar'
-                description 'A simple Activity for cropping images'
+                description 'An Android library that provides an image cropping Activity'
                 url 'https://github.com/jdamcd/android-crop'
 
                 scm {
-                    url 'https://github.com/jdamcd/android-crop'
+                    url 'scm:git@github.com:jdamcd/android-crop.git'
                     connection 'scm:git@github.com:jdamcd/android-crop.git'
                     developerConnection 'scm:git@github.com:jdamcd/android-crop.git'
                 }
@@ -57,6 +77,7 @@ uploadArchives {
                     developer {
                         id 'jdamcd'
                         name 'Jamie McDonald'
+                        email 'mcdonald@soundcloud.com'
                     }
                 }
             }
