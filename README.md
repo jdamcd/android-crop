@@ -38,13 +38,19 @@ The library provides a utility method to start an image picker:
 
 `Crop.pickImage(activity)`
 
+#### Dependency
+
+The AAR is published on Maven Central:
+
+`compile 'com.soundcloud.android:android-crop:0.9.9@aar'`
+
+#### Apps
+
+Apps that use this library include: [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android), [Depop](https://play.google.com/store/apps/details?id=com.depop)
+
 ## How does it look?
 
 ![android-crop screenshot](screenshot.png)
-
-## Implementations
-
-Apps that use this library include: [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android), [Depop](https://play.google.com/store/apps/details?id=com.depop)
 
 ## License
 

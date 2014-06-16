@@ -15,5 +15,5 @@ android {
 }
 
 dependencies {
-    compile project(':lib')
+    compile 'com.soundcloud.android:android-crop:0.9.9@aar'
 }
