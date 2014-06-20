@@ -1,0 +1,59 @@
+configurations {
+    archives {
+        extendsFrom configurations.default
+    }
+}
+
+signing {
+    required { has("release") && gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+uploadArchives {
+    configuration = configurations.archives
+
+    repositories {
+        mavenDeployer {
+            beforeDeployment {
+                MavenDeployment deployment -> signing.signPom(deployment)
+            }
+
+            repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2') {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+
+            pom.project {
+                name 'Android Crop'
+                packaging 'aar'
+                description 'An Android library that provides an image cropping Activity'
+                url 'https://github.com/jdamcd/android-crop'
+
+                scm {
+                    url 'scm:git@github.com:jdamcd/android-crop.git'
+                    connection 'scm:git@github.com:jdamcd/android-crop.git'
+                    developerConnection 'scm:git@github.com:jdamcd/android-crop.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                organization {
+                    name 'SoundCloud'
+                    url 'http://developers.soundcloud.com'
+                }
+
+                developers {
+                    developer {
+                        id 'jdamcd'
+                        name 'Jamie McDonald'
+                        email 'mcdonald@soundcloud.com'
+                    }
+                }
+            }
+        }
+    }
+}
