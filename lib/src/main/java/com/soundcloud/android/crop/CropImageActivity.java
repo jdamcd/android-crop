@@ -46,6 +46,7 @@ import java.util.concurrent.CountDownLatch;
 public class CropImageActivity extends MonitoredActivity {
 
     private static final boolean IN_MEMORY_CROP = Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1;
+    private static final int SIZE_LIMIT = 4096;
 
     private final Handler handler = new Handler();
 
@@ -153,15 +154,19 @@ public class CropImageActivity extends MonitoredActivity {
             CropUtil.closeSilently(is);
         }
 
-        // Get max texture size of OpenGL as it limits bitmap size drawn on ImageView
-        int[] maxSize = new int[1];
-        GLES10.glGetIntegerv(GLES10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
-
+        int maxSize = Math.min(SIZE_LIMIT, getMaxTextureSize());
         int sampleSize = 1;
-        while (options.outHeight / sampleSize > maxSize[0] || options.outWidth / sampleSize > maxSize[0]) {
+        while (options.outHeight / sampleSize > maxSize || options.outWidth / sampleSize > maxSize) {
             sampleSize = sampleSize << 1;
         }
         return sampleSize;
+    }
+
+    private int getMaxTextureSize() {
+        // The OpenGL texture size is the maximum size that can be drawn in an ImageView
+        int[] maxSize = new int[1];
+        GLES10.glGetIntegerv(GLES10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
+        return maxSize[0];
     }
 
     private void startCrop() {
