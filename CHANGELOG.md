@@ -1,3 +1,7 @@
+## 0.9.10
+
+* Fix bug on some devices where image was displayed with 0 size
+
 ## 0.9.9
 
 * Downscale source images that are too big to load
