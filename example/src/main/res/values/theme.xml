@@ -1,6 +1,6 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="CustomTheme" parent="android:Theme.DeviceDefault">
+    <style tools:ignore="NewApi" name="CustomTheme" parent="android:Theme.DeviceDefault">
         <item name="cropImageStyle">@style/Widget.CropImageView</item>
     </style>
 
