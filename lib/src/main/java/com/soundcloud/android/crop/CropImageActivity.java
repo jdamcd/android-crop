@@ -46,6 +46,7 @@ import java.util.concurrent.CountDownLatch;
 public class CropImageActivity extends MonitoredActivity {
 
     private static final boolean IN_MEMORY_CROP = Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1;
+    private static final int SIZE_DEFAULT = 2048;
     private static final int SIZE_LIMIT = 4096;
 
     private final Handler handler = new Handler();
@@ -154,12 +155,21 @@ public class CropImageActivity extends MonitoredActivity {
             CropUtil.closeSilently(is);
         }
 
-        int maxSize = Math.min(SIZE_LIMIT, getMaxTextureSize());
+        int maxSize = getMaxImageSize();
         int sampleSize = 1;
         while (options.outHeight / sampleSize > maxSize || options.outWidth / sampleSize > maxSize) {
             sampleSize = sampleSize << 1;
         }
         return sampleSize;
+    }
+
+    private int getMaxImageSize() {
+        int textureLimit = getMaxTextureSize();
+        if (textureLimit == 0) {
+            return SIZE_DEFAULT;
+        } else {
+            return Math.min(textureLimit, SIZE_LIMIT);
+        }
     }
 
     private int getMaxTextureSize() {
