@@ -33,7 +33,7 @@ public class CropImageView extends ImageViewTouchBase {
     };
 
     private MotionEvent blockingEvent;
-    private static final int waitingMillis = 100;   // 30ms is enough in most case
+    private static final int waitingMillis = 70;   // 30ms is enough in most case
     private Handler mHandler = new Handler();
     private static float oldFingerDis = 0f;     // Finger's distance last zoom.
 
