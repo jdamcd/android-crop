@@ -91,6 +91,10 @@ public class CropImageView extends ImageViewTouchBase {
             return false;
         }
 
+        return onSingleTouchEvent(event);
+    }
+
+    private boolean onSingleTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
         case MotionEvent.ACTION_DOWN:
             for (HighlightView hv : highlightViews) {
