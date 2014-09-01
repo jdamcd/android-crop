@@ -3,6 +3,7 @@ package com.soundcloud.android.crop;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -13,6 +14,25 @@ public class CropImageView extends ImageViewTouchBase {
     ArrayList<HighlightView> highlightViews = new ArrayList<HighlightView>();
     HighlightView motionHighlightView;
     Context context;
+
+    private static enum TouchState{
+        NONE,
+        SINGLE,
+        WAITING,
+        MULTI
+    };
+    private TouchState touchState = TouchState.NONE;
+    private Runnable enterSingleTouchHandler = new Runnable() {
+        @Override
+        public void run() {
+            touchState = TouchState.SINGLE;
+            onSingleTouchEvent(blockingEvent);
+        }
+    };
+
+    private MotionEvent blockingEvent;
+    private static final int waitingMillis = 100;   // 30ms is enough in most case
+    private Handler mHandler = new Handler();
 
     private float lastX;
     private float lastY;
@@ -84,14 +104,64 @@ public class CropImageView extends ImageViewTouchBase {
         }
     }
 
-    @Override
     public boolean onTouchEvent(MotionEvent event) {
         CropImageActivity cropImageActivity = (CropImageActivity) context;
         if (cropImageActivity.isSaving()) {
             return false;
         }
 
-        return onSingleTouchEvent(event);
+        // Dispatch event
+        boolean blockEvent = false;
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+                // Fist touch point detected
+                // waiting for second point, or tiger singer touch event after a short period of time
+                touchState = TouchState.WAITING;
+                blockingEvent = MotionEvent.obtain(event);
+                blockEvent = true;
+                mHandler.postDelayed(enterSingleTouchHandler, waitingMillis);
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                // Second or more touch point detected
+                // If is waiting, then it must be multi-touch event
+                if (touchState == TouchState.WAITING) {
+                    mHandler.removeCallbacks(enterSingleTouchHandler);
+                    touchState = TouchState.MULTI;
+                    // Send blocking event now
+                    onMultiTouchEvent(blockingEvent);
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                if (touchState == TouchState.WAITING) {
+                    mHandler.removeCallbacks(enterSingleTouchHandler);
+                    onSingleTouchEvent(blockingEvent);
+                    touchState = TouchState.SINGLE;
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (touchState == TouchState.WAITING) {
+                    blockEvent = true;
+                }
+                break;
+        }
+
+        if (!blockEvent) {
+            switch (touchState) {
+                case SINGLE:
+                    return onSingleTouchEvent(event);
+                case MULTI:
+                    return onMultiTouchEvent(event);
+            }
+        }
+
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            touchState = TouchState.NONE;
+        }
+        return true;
+    }
+
+    private boolean onMultiTouchEvent(MotionEvent event) {
+        return true;
     }
 
     private boolean onSingleTouchEvent(MotionEvent event) {
