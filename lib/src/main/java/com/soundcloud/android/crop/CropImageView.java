@@ -2,9 +2,11 @@ package com.soundcloud.android.crop;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.FloatMath;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
@@ -33,10 +35,12 @@ public class CropImageView extends ImageViewTouchBase {
     private MotionEvent blockingEvent;
     private static final int waitingMillis = 100;   // 30ms is enough in most case
     private Handler mHandler = new Handler();
+    private static float oldFingerDis = 0f;     // Finger's distance last zoom.
 
     private float lastX;
     private float lastY;
     private int motionEdge;
+
 
     @SuppressWarnings("UnusedDeclaration")
     public CropImageView(Context context) {
@@ -160,8 +164,51 @@ public class CropImageView extends ImageViewTouchBase {
         return true;
     }
 
+    private static float getTwoFingerDis(MotionEvent event) {
+        float x = (event.getX(0) - event.getX(1));
+        float y = (event.getY(0) - event.getY(1));
+        return FloatMath.sqrt(x * x + y * y);
+    }
+
+    private static PointF getTwoFingerMiddle(MotionEvent event) {
+        if (event.getPointerCount() < 2) {
+            return new PointF(event.getX(), event.getY());
+        }
+
+        float x = (event.getX(0) + event.getX(1)) / 2f;
+        float y = (event.getY(0) + event.getY(1)) / 2f;
+        return new PointF(x, y);
+    }
+
     private boolean onMultiTouchEvent(MotionEvent event) {
+        if (event.getPointerCount() < 2) {
+            return true;
+        }
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_POINTER_DOWN:
+                oldFingerDis = getTwoFingerDis(event);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                tryZoom(event);
+                break;
+
+        }
         return true;
+    }
+
+    private boolean tryZoom(MotionEvent event) {
+        float curD = getTwoFingerDis(event);
+        PointF curM = getTwoFingerMiddle(event);
+
+        float shake = 5.0f;
+        if (Math.abs(curD - oldFingerDis) > shake) {
+            float scale = curD / oldFingerDis;
+            zoomTo(getScale() * scale, curM.x, curM.y);
+            oldFingerDis = curD;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private boolean onSingleTouchEvent(MotionEvent event) {
@@ -208,6 +255,7 @@ public class CropImageView extends ImageViewTouchBase {
             // the user to move the image around. This call to center puts
             // it back to the normalized location (with false meaning don't
             // animate).
+            // Now it can zoom :)
             if (getScale() == 1F) {
                 center(true, true);
             }
