@@ -41,7 +41,6 @@ public class CropImageView extends ImageViewTouchBase {
     private float lastY;
     private int motionEdge;
 
-
     @SuppressWarnings("UnusedDeclaration")
     public CropImageView(Context context) {
         super(context);
@@ -108,6 +107,7 @@ public class CropImageView extends ImageViewTouchBase {
         }
     }
 
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         CropImageActivity cropImageActivity = (CropImageActivity) context;
         if (cropImageActivity.isSaving()) {
