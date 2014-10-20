@@ -23,8 +23,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Path;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Region;
 import android.net.Uri;
 import android.opengl.GLES10;
 import android.os.Build;
@@ -46,13 +49,15 @@ import java.util.concurrent.CountDownLatch;
 public class CropImageActivity extends MonitoredActivity {
 
     private static final boolean IN_MEMORY_CROP = Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1;
-    private static final int SIZE_DEFAULT = 2048;
-    private static final int SIZE_LIMIT = 4096;
+    private static final int SIZE_DEFAULT = 512;
+    private static final int SIZE_LIMIT = 512;
 
     private final Handler handler = new Handler();
 
     private int aspectX;
     private int aspectY;
+
+    private boolean isCircle;
 
     // Output image size
     private int maxX;
@@ -68,6 +73,8 @@ public class CropImageActivity extends MonitoredActivity {
     private RotateBitmap rotateBitmap;
     private CropImageView imageView;
     private HighlightView cropView;
+
+
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -119,6 +126,7 @@ public class CropImageActivity extends MonitoredActivity {
             maxX = extras.getInt(Crop.Extra.MAX_X);
             maxY = extras.getInt(Crop.Extra.MAX_Y);
             saveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);
+            isCircle = extras.getBoolean(Crop.Extra.CIRCLE, false);
         }
 
         sourceUri = intent.getData();
@@ -237,7 +245,7 @@ public class CropImageActivity extends MonitoredActivity {
             int y = (height - cropHeight) / 2;
 
             RectF cropRect = new RectF(x, y, x + cropWidth, y + cropHeight);
-            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX != 0 && aspectY != 0);
+            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX != 0 && aspectY != 0, isCircle);
             imageView.add(hv);
         }
 
@@ -305,7 +313,32 @@ public class CropImageActivity extends MonitoredActivity {
                 imageView.highlightViews.clear();
             }
         }
-        saveImage(croppedImage);
+
+        Bitmap resizeBitmap = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), imageView.getSuppMatrix(maxX, maxY, croppedImage.getWidth(), croppedImage.getHeight()), true);
+
+        recycleBitmap(croppedImage);
+
+        Bitmap mutableBitmap;
+        if (isCircle) {
+             mutableBitmap = cropCircleBitmap(resizeBitmap);
+            recycleBitmap(resizeBitmap);
+        } else {
+            mutableBitmap = resizeBitmap;
+        }
+
+        imageView.setImageBitmap(mutableBitmap);
+
+        saveImage(mutableBitmap);
+    }
+
+    private Bitmap cropCircleBitmap(Bitmap b) {
+        Bitmap mutable = b.copy(Bitmap.Config.ARGB_8888, true);
+        Canvas c = new Canvas(mutable);
+        Path p = new Path();
+        p.addCircle(b.getWidth() / 2F, b.getHeight() / 2F, b.getWidth() / 2F, Path.Direction.CW);
+        c.clipPath(p, Region.Op.DIFFERENCE);
+        c.drawColor(0x00000000, PorterDuff.Mode.CLEAR);
+        return mutable;
     }
 
     private void saveImage(Bitmap croppedImage) {
@@ -431,14 +464,18 @@ public class CropImageActivity extends MonitoredActivity {
         }
 
         final Bitmap b = croppedImage;
+        recycleBitmap(b);
+
+        finish();
+    }
+
+    private void recycleBitmap(final Bitmap b) {
         handler.post(new Runnable() {
             public void run() {
                 imageView.clear();
                 b.recycle();
             }
         });
-
-        finish();
     }
 
     @Override

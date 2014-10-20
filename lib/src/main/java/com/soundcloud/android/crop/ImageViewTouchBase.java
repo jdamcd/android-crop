@@ -286,6 +286,19 @@ abstract class ImageViewTouchBase extends ImageView {
         return displayMatrix;
     }
 
+    public Matrix getSuppMatrix(float maxX, float maxY, float w, float h) {
+        Matrix m = new Matrix();
+        m.postConcat(bitmapDisplayed.getRotateMatrix());
+
+        if (maxX != 0 && maxY != 0 && (w > maxX || h > maxY)) {
+            float size = Math.min(maxX / w, maxY / h);
+            m.postScale(size, size);
+        }
+
+        m.postConcat(suppMatrix);
+        return m;
+    }
+
     public Matrix getUnrotatedMatrix(){
         Matrix unrotated = new Matrix();
         getProperBaseMatrix(bitmapDisplayed, unrotated, false);
