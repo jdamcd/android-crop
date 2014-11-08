@@ -410,7 +410,12 @@ public class CropImageActivity extends MonitoredActivity {
             try {
                 outputStream = getContentResolver().openOutputStream(saveUri);
                 if (outputStream != null) {
-                    croppedImage.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+                	Bitmap target = croppedImage.copy(croppedImage.getConfig(), true);
+                	Canvas canvas = new Canvas(target);
+                	Matrix matrix = new Matrix();
+                	matrix.setRotate(exifRotation, croppedImage.getWidth()/2, croppedImage.getHeight()/2);
+                	canvas.drawBitmap(croppedImage, matrix, new Paint());
+                    target.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
                 }
             } catch (IOException e) {
                 setResultException(e);
