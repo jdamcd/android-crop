@@ -42,7 +42,7 @@ The library provides a utility method to start an image picker:
 
 The AAR is published on Maven Central:
 
-`compile 'com.soundcloud.android:android-crop:0.9.9@aar'`
+`compile 'com.soundcloud.android:android-crop:0.9.10@aar'`
 
 #### Apps
 

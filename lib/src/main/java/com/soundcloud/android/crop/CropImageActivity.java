@@ -46,6 +46,8 @@ import java.util.concurrent.CountDownLatch;
 public class CropImageActivity extends MonitoredActivity {
 
     private static final boolean IN_MEMORY_CROP = Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1;
+    private static final int SIZE_DEFAULT = 2048;
+    private static final int SIZE_LIMIT = 4096;
 
     private final Handler handler = new Handler();
 
@@ -131,10 +133,10 @@ public class CropImageActivity extends MonitoredActivity {
                 option.inSampleSize = sampleSize;
                 rotateBitmap = new RotateBitmap(BitmapFactory.decodeStream(is, null, option), exifRotation);
             } catch (IOException e) {
-                Log.e("Error reading picture: " + e.getMessage(), e);
+                Log.e("Error reading image: " + e.getMessage(), e);
                 setResultException(e);
             } catch (OutOfMemoryError e) {
-                Log.e("OOM while reading picture: " + e.getMessage(), e);
+                Log.e("OOM reading image: " + e.getMessage(), e);
                 setResultException(e);
             } finally {
                 CropUtil.closeSilently(is);
@@ -153,15 +155,28 @@ public class CropImageActivity extends MonitoredActivity {
             CropUtil.closeSilently(is);
         }
 
-        // Get max texture size of OpenGL as it limits bitmap size drawn on ImageView
-        int[] maxSize = new int[1];
-        GLES10.glGetIntegerv(GLES10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
-
+        int maxSize = getMaxImageSize();
         int sampleSize = 1;
-        while (options.outHeight / sampleSize > maxSize[0] || options.outWidth / sampleSize > maxSize[0]) {
+        while (options.outHeight / sampleSize > maxSize || options.outWidth / sampleSize > maxSize) {
             sampleSize = sampleSize << 1;
         }
         return sampleSize;
+    }
+
+    private int getMaxImageSize() {
+        int textureLimit = getMaxTextureSize();
+        if (textureLimit == 0) {
+            return SIZE_DEFAULT;
+        } else {
+            return Math.min(textureLimit, SIZE_LIMIT);
+        }
+    }
+
+    private int getMaxTextureSize() {
+        // The OpenGL texture size is the maximum size that can be drawn in an ImageView
+        int[] maxSize = new int[1];
+        GLES10.glGetIntegerv(GLES10.GL_MAX_TEXTURE_SIZE, maxSize, 0);
+        return maxSize[0];
     }
 
     private void startCrop() {
@@ -349,8 +364,11 @@ public class CropImageActivity extends MonitoredActivity {
             }
 
         } catch (IOException e) {
-            Log.e("Error cropping picture: " + e.getMessage(), e);
+            Log.e("Error cropping image: " + e.getMessage(), e);
             finish();
+        } catch (OutOfMemoryError e) {
+            Log.e("OOM cropping image: " + e.getMessage(), e);
+            setResultException(e);
         } finally {
             CropUtil.closeSilently(is);
         }
@@ -373,9 +391,9 @@ public class CropImageActivity extends MonitoredActivity {
             m.setRectToRect(new RectF(r), dstRect, Matrix.ScaleToFit.FILL);
             m.preConcat(rotateBitmap.getRotateMatrix());
             canvas.drawBitmap(rotateBitmap.getBitmap(), m, null);
-
         } catch (OutOfMemoryError e) {
-            Log.e("Error cropping picture: " + e.getMessage(), e);
+            Log.e("OOM cropping image: " + e.getMessage(), e);
+            setResultException(e);
             System.gc();
         }
 
@@ -400,7 +418,6 @@ public class CropImageActivity extends MonitoredActivity {
                 if (outputStream != null) {
                     croppedImage.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
                 }
-
             } catch (IOException e) {
                 setResultException(e);
                 Log.e("Cannot open file: " + saveUri, e);
