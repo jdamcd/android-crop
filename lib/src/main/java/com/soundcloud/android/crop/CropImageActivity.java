@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.CountDownLatch;
+import android.media.ExifInterface;
 
 /*
  * Modified from original in AOSP.
@@ -417,6 +418,9 @@ public class CropImageActivity extends MonitoredActivity {
                 	matrix.setRotate(exifRotation, croppedImage.getWidth()/2, croppedImage.getHeight()/2);
                 	canvas.drawBitmap(croppedImage, matrix, new Paint());
                     target.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+                    ExifInterface newExif = new ExifInterface(sourceUri.getPath());
+                    newExif.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(exifRotation));
+                    newExif.saveAttributes();
                 }
             } catch (IOException e) {
                 setResultException(e);
