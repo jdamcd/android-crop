@@ -25,6 +25,9 @@ public class Crop {
     static interface Extra {
         String ASPECT_X = "aspect_x";
         String ASPECT_Y = "aspect_y";
+        String FIXED = "fixed";
+        String FIXED_X = "fixed_x";
+        String FIXED_Y = "fixed_y";
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
         String ERROR = "error";
@@ -70,6 +73,19 @@ public class Crop {
     public Crop asSquare() {
         cropIntent.putExtra(Extra.ASPECT_X, 1);
         cropIntent.putExtra(Extra.ASPECT_Y, 1);
+        return this;
+    }
+
+    /**
+     * Set fixed crop size
+     *
+     * @param width Min width
+     * @param height Min height
+     */
+    public Crop withFixedSize(int width, int height) {
+        cropIntent.putExtra(Extra.FIXED, true);
+        cropIntent.putExtra(Extra.FIXED_X, width);
+        cropIntent.putExtra(Extra.FIXED_Y, height);
         return this;
     }
 

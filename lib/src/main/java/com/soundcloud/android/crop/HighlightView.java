@@ -75,6 +75,7 @@ class HighlightView {
     private float handleRadius;
     private float outlineWidth;
     private boolean isFocused;
+    private boolean isFixed;
 
     public HighlightView(View context) {
         viewContext = context;
@@ -95,12 +96,14 @@ class HighlightView {
         }
     }
 
-    public void setup(Matrix m, Rect imageRect, RectF cropRect, boolean maintainAspectRatio) {
+    public void setup(Matrix m, Rect imageRect, RectF cropRect, boolean maintainAspectRatio, boolean isFixed) {
         matrix = new Matrix(m);
 
         this.cropRect = cropRect;
         this.imageRect = new RectF(imageRect);
         this.maintainAspectRatio = maintainAspectRatio;
+        this.isFixed = isFixed;
+
 
         initialAspectRatio = this.cropRect.width() / this.cropRect.height();
         drawRect = computeLayout();
@@ -177,7 +180,7 @@ class HighlightView {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN_MR1) {
             return false;
         } else if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-            || Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                || Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             return true;
         } else {
             return !canvas.isHardwareAccelerated();
@@ -198,7 +201,7 @@ class HighlightView {
         outlinePaint.setStrokeWidth(1);
         float xThird = (drawRect.right - drawRect.left) / 3;
         float yThird = (drawRect.bottom - drawRect.top) / 3;
-        
+
         canvas.drawLine(drawRect.left + xThird, drawRect.top,
                 drawRect.left + xThird, drawRect.bottom, outlinePaint);
         canvas.drawLine(drawRect.left + xThird * 2, drawRect.top,
@@ -257,7 +260,7 @@ class HighlightView {
         if (edge == MOVE) {
             // Convert to image space before sending to moveBy()
             moveBy(dx * (cropRect.width() / r.width()),
-                   dy * (cropRect.height() / r.height()));
+                    dy * (cropRect.height() / r.height()));
         } else {
             if (((GROW_LEFT_EDGE | GROW_RIGHT_EDGE) & edge) == 0) {
                 dx = 0;
@@ -270,8 +273,10 @@ class HighlightView {
             // Convert to image space before sending to growBy()
             float xDelta = dx * (cropRect.width() / r.width());
             float yDelta = dy * (cropRect.height() / r.height());
-            growBy((((edge & GROW_LEFT_EDGE) != 0) ? -1 : 1) * xDelta,
-                    (((edge & GROW_TOP_EDGE) != 0) ? -1 : 1) * yDelta);
+            if(!isFixed) {
+                growBy((((edge & GROW_LEFT_EDGE) != 0) ? -1 : 1) * xDelta,
+                        (((edge & GROW_TOP_EDGE) != 0) ? -1 : 1) * yDelta);
+            }
         }
     }
 
@@ -363,10 +368,10 @@ class HighlightView {
     // Maps the cropping rectangle from image space to screen space
     private Rect computeLayout() {
         RectF r = new RectF(cropRect.left, cropRect.top,
-                            cropRect.right, cropRect.bottom);
+                cropRect.right, cropRect.bottom);
         matrix.mapRect(r);
         return new Rect(Math.round(r.left), Math.round(r.top),
-                        Math.round(r.right), Math.round(r.bottom));
+                Math.round(r.right), Math.round(r.bottom));
     }
 
     public void invalidate() {
