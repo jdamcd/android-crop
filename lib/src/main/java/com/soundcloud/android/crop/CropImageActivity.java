@@ -349,7 +349,7 @@ public class CropImageActivity extends MonitoredActivity {
             }
 
             try {
-                Options options = new BitmapFactory.Options();
+                BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inSampleSize = width / maxX;
                 if(options.inSampleSize <= 0) {
                     options.inSampleSize = 1;
