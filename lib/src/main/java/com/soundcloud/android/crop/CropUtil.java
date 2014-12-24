@@ -19,9 +19,13 @@ package com.soundcloud.android.crop;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
@@ -29,6 +33,8 @@ import com.soundcloud.android.crop.util.Log;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /*
@@ -89,26 +95,22 @@ class CropUtil {
         if (SCHEME_FILE.equals(uri.getScheme())) {
             return new File(uri.getPath());
         } else if (SCHEME_CONTENT.equals(uri.getScheme())) {
-            final String[] filePathColumn = { MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DISPLAY_NAME };
-            Cursor cursor = null;
+            FileOutputStream outputStream = null;
+            File tempFile = null;
             try {
-                cursor = resolver.query(uri, filePathColumn, null, null, null);
-                if (cursor != null && cursor.moveToFirst()) {
-                    final int columnIndex = (uri.toString().startsWith("content://com.google.android.gallery3d")) ?
-                            cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME) :
-                            cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
-                    // Picasa image on newer devices with Honeycomb and up
-                    if (columnIndex != -1) {
-                        String filePath = cursor.getString(columnIndex);
-                        if (!TextUtils.isEmpty(filePath)) {
-                            return new File(filePath);
-                        }
-                    }
-                }
-            } catch (SecurityException ignored) {
-                // Nothing we can do
+                ParcelFileDescriptor pfd = resolver.openFileDescriptor(uri, "r");
+                Bitmap bitmap = BitmapFactory.decodeFileDescriptor(pfd.getFileDescriptor());
+
+                File pictureDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                tempFile = new File(pictureDir, Crop.TMP_FILENAME);
+                outputStream = new FileOutputStream(tempFile);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+                return tempFile;
+
+            } catch (IOException e) {
+                Log.e("Cannot open file: " + tempFile, e);
             } finally {
-                if (cursor != null) cursor.close();
+                CropUtil.closeSilently(outputStream);
             }
         }
         return null;

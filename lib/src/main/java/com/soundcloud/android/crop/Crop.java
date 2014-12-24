@@ -21,6 +21,7 @@ public class Crop {
     public static final int REQUEST_CROP = 6709;
     public static final int REQUEST_PICK = 9162;
     public static final int RESULT_ERROR = 404;
+    public static final String TMP_FILENAME = "android_crop_tmp";
 
     static interface Extra {
         String ASPECT_X = "aspect_x";
