@@ -18,6 +18,8 @@ import com.soundcloud.android.crop.util.VisibleForTesting;
  */
 public class Crop {
 
+    private static final int MAX_SIZE = 1024;
+
     public static final int REQUEST_CROP = 6709;
     public static final int REQUEST_PICK = 9162;
     public static final int RESULT_ERROR = 404;
@@ -28,6 +30,7 @@ public class Crop {
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
         String ERROR = "error";
+        String CIRCLE = "circle";
     }
 
     private Intent cropIntent;
@@ -39,6 +42,10 @@ public class Crop {
      */
     public Crop(Uri source) {
         cropIntent = new Intent();
+
+        cropIntent.putExtra(Extra.MAX_X, MAX_SIZE);
+        cropIntent.putExtra(Extra.MAX_Y, MAX_SIZE);
+
         cropIntent.setData(source);
     }
 
@@ -71,6 +78,19 @@ public class Crop {
         cropIntent.putExtra(Extra.ASPECT_X, 1);
         cropIntent.putExtra(Extra.ASPECT_Y, 1);
         return this;
+    }
+
+    /**
+     * Crop area as circle
+     */
+    public Crop asCircle() {
+        cropIntent.putExtra(Extra.CIRCLE, true);
+        return asSquare();
+    }
+
+    public Crop asCircle(int size) {
+        cropIntent.putExtra(Extra.CIRCLE, true);
+        return withAspect(size, size).withMaxSize(size, size);
     }
 
     /**
