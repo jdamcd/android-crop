@@ -1,11 +1,11 @@
 language: android
 android:
   components:
-    - build-tools-19.1.0
+    - build-tools-21.1.1
     - extra-android-support
 env:
   matrix:
-    - ANDROID_SDKS=android-19,sysimg-19  ANDROID_TARGET=android-19  ANDROID_ABI=armeabi-v7a
+    - ANDROID_SDKS=android-21,sysimg-21  ANDROID_TARGET=android-21  ANDROID_ABI=armeabi-v7a
 
 before_install:
   # Create and start emulator
