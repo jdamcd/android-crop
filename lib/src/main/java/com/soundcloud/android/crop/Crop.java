@@ -51,7 +51,7 @@ public class Crop {
         cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, output);
         return this;
     }
-    
+
     /**
      * Set fixed aspect ratio for crop area
      *
@@ -66,7 +66,6 @@ public class Crop {
 
     /**
      * Crop area with fixed 1:1 aspect ratio
-
      */
     public Crop asSquare() {
         cropIntent.putExtra(Extra.ASPECT_X, 1);
