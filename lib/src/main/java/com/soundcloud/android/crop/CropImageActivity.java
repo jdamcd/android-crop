@@ -23,6 +23,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.CountDownLatch;
+import android.media.ExifInterface;
 
 /*
  * Modified from original in AOSP.
@@ -409,7 +411,15 @@ public class CropImageActivity extends MonitoredActivity {
             try {
                 outputStream = getContentResolver().openOutputStream(saveUri);
                 if (outputStream != null) {
-                    croppedImage.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+                	Bitmap target = croppedImage.copy(croppedImage.getConfig(), true);
+                	Canvas canvas = new Canvas(target);
+                	Matrix matrix = new Matrix();
+                	matrix.setRotate(exifRotation, croppedImage.getWidth()/2, croppedImage.getHeight()/2);
+                	canvas.drawBitmap(croppedImage, matrix, new Paint());
+                    target.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+                    ExifInterface newExif = new ExifInterface(sourceUri.getPath());
+                    newExif.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(exifRotation));
+                    newExif.saveAttributes();
                 }
             } catch (IOException e) {
                 setResultException(e);
