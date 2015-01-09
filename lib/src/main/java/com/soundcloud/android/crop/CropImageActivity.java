@@ -348,7 +348,12 @@ public class CropImageActivity extends MonitoredActivity {
             }
 
             try {
-                croppedImage = decoder.decodeRegion(rect, new BitmapFactory.Options());
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = width / maxX;
+                if(options.inSampleSize <= 0) {
+                    options.inSampleSize = 1;
+                }
+                croppedImage = decoder.decodeRegion(rect, options);
 
             } catch (IllegalArgumentException e) {
                 // Rethrow with some extra information
