@@ -86,23 +86,45 @@ public class Crop {
     }
 
     /**
-     * Send the crop Intent!
+     * Send the crop Intent with default requestCode!
      *
      * @param activity Activity that will receive result
      */
     public void start(Activity activity) {
-        activity.startActivityForResult(getIntent(activity), REQUEST_CROP);
+        start(activity, REQUEST_CROP);
     }
 
     /**
-     * Send the crop Intent!
+     * Send the crop Intent with custom requestCode!
+     *
+     * @param activity Activity that will receive result
+     * @param requestCode requestCode when send Intent
+     */
+    public void start(Activity activity, int requestCode) {
+        activity.startActivityForResult(getIntent(activity), requestCode);
+    }
+
+    /**
+     * Send the crop Intent with default requestCode!
      *
      * @param context Context
      * @param fragment Fragment that will receive result
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void start(Context context, Fragment fragment) {
-        fragment.startActivityForResult(getIntent(context), REQUEST_CROP);
+        start(context, fragment, REQUEST_CROP);
+    }
+
+    /**
+     * Send the crop Intent with custom requestCode
+     *
+     * @param context Context
+     * @param fragment Fragment that will receive result
+     * @param requestCode requestCode when send Intent
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public void start(Context context, Fragment fragment, int requestCode) {
+        fragment.startActivityForResult(getIntent(context), requestCode);
     }
 
     @VisibleForTesting
@@ -136,9 +158,19 @@ public class Crop {
      * @param activity Activity that will receive result
      */
     public static void pickImage(Activity activity) {
+        pickImage(activity, REQUEST_PICK);
+    }
+
+    /**
+     * Utility method that starts an image picker since that often precedes a crop
+     *
+     * @param activity Activity that will receive result
+     * @param requestCode requestCode when send Intent
+     */
+    public static void pickImage(Activity activity, int requestCode) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
         try {
-            activity.startActivityForResult(intent, REQUEST_PICK);
+            activity.startActivityForResult(intent, requestCode);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(activity, R.string.crop__pick_error, Toast.LENGTH_SHORT).show();
         }
