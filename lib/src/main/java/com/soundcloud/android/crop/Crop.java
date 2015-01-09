@@ -51,6 +51,7 @@ public class Crop {
         cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, output);
         return this;
     }
+    
     /**
      * Set fixed aspect ratio for crop area
      *
@@ -105,7 +106,8 @@ public class Crop {
         fragment.startActivityForResult(getIntent(context), REQUEST_CROP);
     }
 
-    public Intent getIntent(Context context) {
+    @VisibleForTesting
+    Intent getIntent(Context context) {
         cropIntent.setClass(context, CropImageActivity.class);
         return cropIntent;
     }
