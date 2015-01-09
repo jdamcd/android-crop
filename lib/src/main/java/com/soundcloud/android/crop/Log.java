@@ -1,6 +1,6 @@
-package com.soundcloud.android.crop.util;
+package com.soundcloud.android.crop;
 
-public class Log {
+class Log {
 
     private static final String TAG = "android-crop";
 

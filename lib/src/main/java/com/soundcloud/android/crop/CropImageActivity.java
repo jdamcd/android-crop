@@ -33,7 +33,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
-import com.soundcloud.android.crop.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;

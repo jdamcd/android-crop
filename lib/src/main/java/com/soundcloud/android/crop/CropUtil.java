@@ -25,8 +25,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
-import com.soundcloud.android.crop.util.Log;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
