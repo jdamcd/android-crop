@@ -33,6 +33,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
+
 import com.soundcloud.android.crop.util.Log;
 
 import java.io.IOException;
@@ -55,6 +56,8 @@ public class CropImageActivity extends MonitoredActivity {
     private int aspectY;
 
     // Output image size
+    private int fixedX;
+    private int fixedY;
     private int maxX;
     private int maxY;
     private int exifRotation;
@@ -62,6 +65,7 @@ public class CropImageActivity extends MonitoredActivity {
     private Uri sourceUri;
     private Uri saveUri;
 
+    private boolean isFixed;
     private boolean isSaving;
 
     private int sampleSize;
@@ -116,6 +120,9 @@ public class CropImageActivity extends MonitoredActivity {
         if (extras != null) {
             aspectX = extras.getInt(Crop.Extra.ASPECT_X);
             aspectY = extras.getInt(Crop.Extra.ASPECT_Y);
+            isFixed = extras.getBoolean(Crop.Extra.FIXED);
+            fixedX = extras.getInt(Crop.Extra.FIXED_X);
+            fixedY = extras.getInt(Crop.Extra.FIXED_Y);
             maxX = extras.getInt(Crop.Extra.MAX_X);
             maxY = extras.getInt(Crop.Extra.MAX_Y);
             saveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);
@@ -220,10 +227,10 @@ public class CropImageActivity extends MonitoredActivity {
 
             Rect imageRect = new Rect(0, 0, width, height);
 
-            // Make the default size about 4/5 of the width or height
-            int cropWidth = Math.min(width, height) * 4 / 5;
+            // Make the default size about 4/5 of the width or height or set fixed size
+            int cropWidth = !isFixed ? Math.min(width, height) * 4 / 5 : fixedX;
             @SuppressWarnings("SuspiciousNameCombination")
-            int cropHeight = cropWidth;
+            int cropHeight = !isFixed ? cropWidth : fixedY;
 
             if (aspectX != 0 && aspectY != 0) {
                 if (aspectX > aspectY) {
@@ -237,7 +244,7 @@ public class CropImageActivity extends MonitoredActivity {
             int y = (height - cropHeight) / 2;
 
             RectF cropRect = new RectF(x, y, x + cropWidth, y + cropHeight);
-            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX != 0 && aspectY != 0);
+            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX != 0 && aspectY != 0, isFixed);
             imageView.add(hv);
         }
 
