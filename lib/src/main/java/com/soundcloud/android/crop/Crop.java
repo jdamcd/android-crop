@@ -126,7 +126,7 @@ public class Crop {
     }
 
     /**
-     * Get intent to start crop activity
+     * Get Intent to start crop Activity
      *
      * @param context Context
      * @return Intent for CropImageActivity
