@@ -86,29 +86,29 @@ public class Crop {
     }
 
     /**
-     * Send the crop Intent with default requestCode!
+     * Send the crop Intent!
      *
-     * @param activity Activity that will receive result
+     * @param activity Activity to receive result
      */
     public void start(Activity activity) {
         start(activity, REQUEST_CROP);
     }
 
     /**
-     * Send the crop Intent with custom requestCode!
+     * Send the crop Intent with a custom requestCode
      *
-     * @param activity Activity that will receive result
-     * @param requestCode requestCode when send Intent
+     * @param activity Activity to receive result
+     * @param requestCode requestCode for result
      */
     public void start(Activity activity, int requestCode) {
         activity.startActivityForResult(getIntent(activity), requestCode);
     }
 
     /**
-     * Send the crop Intent with default requestCode!
+     * Send the crop Intent!
      *
      * @param context Context
-     * @param fragment Fragment that will receive result
+     * @param fragment Fragment to receive result
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void start(Context context, Fragment fragment) {
@@ -116,11 +116,11 @@ public class Crop {
     }
 
     /**
-     * Send the crop Intent with custom requestCode
+     * Send the crop Intent with a custom requestCode
      *
      * @param context Context
-     * @param fragment Fragment that will receive result
-     * @param requestCode requestCode when send Intent
+     * @param fragment Fragment to receive result
+     * @param requestCode requestCode for result
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void start(Context context, Fragment fragment, int requestCode) {
@@ -153,7 +153,7 @@ public class Crop {
     }
 
     /**
-     * Utility method that starts an image picker since that often precedes a crop
+     * Utility to start an image picker
      *
      * @param activity Activity that will receive result
      */
@@ -162,10 +162,10 @@ public class Crop {
     }
 
     /**
-     * Utility method that starts an image picker since that often precedes a crop
+     * Utility to start an image picker with request code
      *
      * @param activity Activity that will receive result
-     * @param requestCode requestCode when send Intent
+     * @param requestCode requestCode for result
      */
     public static void pickImage(Activity activity, int requestCode) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
