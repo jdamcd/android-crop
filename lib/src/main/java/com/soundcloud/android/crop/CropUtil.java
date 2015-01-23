@@ -123,7 +123,7 @@ class CropUtil {
 
     private static String getTempFilename(Context context) throws IOException {
       File outputDir = context.getCacheDir(); // context being the Activity pointer
-      File outputFile = File.createTempFile("prefix", "extension", outputDir);
+      File outputFile = File.createTempFile("image", "tmp", outputDir);
       return outputFile.getAbsolutePath();
     }
 
