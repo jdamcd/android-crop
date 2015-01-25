@@ -124,7 +124,7 @@ public class CropImageActivity extends MonitoredActivity {
 
         sourceUri = intent.getData();
         if (sourceUri != null) {
-            exifRotation = CropUtil.getExifRotation(CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri));
+            exifRotation = CropUtil.getExifRotation(CropUtil.getFromMediaUri(getContentResolver(), sourceUri));
 
             InputStream is = null;
             try {
@@ -427,8 +427,8 @@ public class CropImageActivity extends MonitoredActivity {
             if (!IN_MEMORY_CROP) {
                 // In-memory crop negates the rotation
                 CropUtil.copyExifRotation(
-                        CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri),
-                        CropUtil.getFromMediaUri(this, getContentResolver(), saveUri)
+                        CropUtil.getFromMediaUri(getContentResolver(), sourceUri),
+                        CropUtil.getFromMediaUri(getContentResolver(), saveUri)
                 );
             }
 
