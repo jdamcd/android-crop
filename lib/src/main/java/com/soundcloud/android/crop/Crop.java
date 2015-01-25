@@ -20,11 +20,13 @@ public class Crop {
     public static final int REQUEST_PICK = 9162;
     public static final int RESULT_ERROR = 404;
 
+
     static interface Extra {
         String ASPECT_X = "aspect_x";
         String ASPECT_Y = "aspect_y";
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
+        String DEFAULT_NO_CROP = "default_no_crop";
         String ERROR = "error";
     }
 
@@ -81,6 +83,16 @@ public class Crop {
         cropIntent.putExtra(Extra.MAX_X, width);
         cropIntent.putExtra(Extra.MAX_Y, height);
         return this;
+    }
+
+    /**
+     * If true then in the UI default to no crop, eg set the crop box to bounds of image
+     *
+     * @param defaultNoCrop True if you'd like the crop box to default to the image bounds
+     */
+    public Crop withDefaultNoCrop(boolean defaultNoCrop) {
+      cropIntent.putExtra(Extra.DEFAULT_NO_CROP, defaultNoCrop);
+      return this;
     }
 
     /**

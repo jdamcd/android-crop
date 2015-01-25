@@ -52,6 +52,7 @@ public class CropImageActivity extends MonitoredActivity {
 
     private int aspectX;
     private int aspectY;
+    private boolean defaultNoCrop;
 
     // Output image size
     private int maxX;
@@ -118,11 +119,12 @@ public class CropImageActivity extends MonitoredActivity {
             maxX = extras.getInt(Crop.Extra.MAX_X);
             maxY = extras.getInt(Crop.Extra.MAX_Y);
             saveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);
+            defaultNoCrop = extras.getBoolean(Crop.Extra.DEFAULT_NO_CROP, false);
         }
 
         sourceUri = intent.getData();
         if (sourceUri != null) {
-            exifRotation = CropUtil.getExifRotation(CropUtil.getFromMediaUri(getContentResolver(), sourceUri));
+            exifRotation = CropUtil.getExifRotation(CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri));
 
             InputStream is = null;
             try {
@@ -218,24 +220,28 @@ public class CropImageActivity extends MonitoredActivity {
             final int height = rotateBitmap.getHeight();
 
             Rect imageRect = new Rect(0, 0, width, height);
+            RectF cropRect = null;
+            if (!defaultNoCrop) {
+              // Make the default size about 4/5 of the width or height
+              int cropWidth = Math.min(width, height) * 4 / 5;
+              @SuppressWarnings("SuspiciousNameCombination")
+              int cropHeight = cropWidth;
 
-            // Make the default size about 4/5 of the width or height
-            int cropWidth = Math.min(width, height) * 4 / 5;
-            @SuppressWarnings("SuspiciousNameCombination")
-            int cropHeight = cropWidth;
-
-            if (aspectX != 0 && aspectY != 0) {
+              if (aspectX != 0 && aspectY != 0) {
                 if (aspectX > aspectY) {
-                    cropHeight = cropWidth * aspectY / aspectX;
+                  cropHeight = cropWidth * aspectY / aspectX;
                 } else {
-                    cropWidth = cropHeight * aspectX / aspectY;
+                  cropWidth = cropHeight * aspectX / aspectY;
                 }
+              }
+
+              int x = (width - cropWidth) / 2;
+              int y = (height - cropHeight) / 2;
+
+              cropRect = new RectF(x, y, x + cropWidth, y + cropHeight);
+            } else {
+              cropRect = new RectF(0, 0, width, height);
             }
-
-            int x = (width - cropWidth) / 2;
-            int y = (height - cropHeight) / 2;
-
-            RectF cropRect = new RectF(x, y, x + cropWidth, y + cropHeight);
             hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX != 0 && aspectY != 0);
             imageView.add(hv);
         }
@@ -421,8 +427,8 @@ public class CropImageActivity extends MonitoredActivity {
             if (!IN_MEMORY_CROP) {
                 // In-memory crop negates the rotation
                 CropUtil.copyExifRotation(
-                        CropUtil.getFromMediaUri(getContentResolver(), sourceUri),
-                        CropUtil.getFromMediaUri(getContentResolver(), saveUri)
+                        CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri),
+                        CropUtil.getFromMediaUri(this, getContentResolver(), saveUri)
                 );
             }
 
