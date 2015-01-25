@@ -20,7 +20,6 @@ public class Crop {
     public static final int REQUEST_PICK = 9162;
     public static final int RESULT_ERROR = 404;
 
-
     static interface Extra {
         String ASPECT_X = "aspect_x";
         String ASPECT_Y = "aspect_y";
