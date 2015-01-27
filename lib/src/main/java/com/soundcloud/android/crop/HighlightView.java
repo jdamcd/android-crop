@@ -24,6 +24,8 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
@@ -47,6 +49,8 @@ class HighlightView {
     public static final int GROW_TOP_EDGE    = (1 << 3);
     public static final int GROW_BOTTOM_EDGE = (1 << 4);
     public static final int MOVE             = (1 << 5);
+    public static final int CROP_SQUARE      = 1;
+    public static final int CROP_CIRCLE      = 2;
 
     private static final int DEFAULT_HIGHLIGHT_COLOR = 0xFF33B5E5;
     private static final float HANDLE_RADIUS_DP = 12f;
@@ -122,7 +126,7 @@ class HighlightView {
         return dp * viewContext.getResources().getDisplayMetrics().density;
     }
 
-    protected void draw(Canvas canvas) {
+    protected void draw(Canvas canvas, int cropType) {
         canvas.save();
         Path path = new Path();
         outlinePaint.setStrokeWidth(outlineWidth);
@@ -133,8 +137,14 @@ class HighlightView {
             Rect viewDrawingRect = new Rect();
             viewContext.getDrawingRect(viewDrawingRect);
 
-            path.addRect(new RectF(drawRect), Path.Direction.CW);
-            outlinePaint.setColor(highlightColor);
+            if (cropType == CROP_CIRCLE) {
+                path.addCircle(drawRect.centerX(), drawRect.centerY(), drawRect.width() / 2, Path.Direction.CW);
+                outlinePaint.setColor(highlightColor);
+            }
+            else {
+                path.addRect(new RectF(drawRect), Path.Direction.CW);
+                outlinePaint.setColor(highlightColor);
+            }
 
             if (isClipPathSupported(canvas)) {
                 canvas.clipPath(path, Region.Op.DIFFERENCE);
@@ -144,10 +154,17 @@ class HighlightView {
             }
 
             canvas.restore();
-            canvas.drawPath(path, outlinePaint);
-
-            if (showThirds) {
-                drawThirds(canvas);
+            if (cropType == CROP_CIRCLE) {
+                drawCircle(canvas, drawRect, outlinePaint);
+                if (showThirds) {
+                    drawThirds(canvas);
+                }
+            }
+            else {
+                canvas.drawPath(path, outlinePaint);
+                if (showThirds) {
+                    drawThirds(canvas);
+                }
             }
 
             if (handleMode == HandleMode.Always ||
@@ -155,6 +172,11 @@ class HighlightView {
                 drawHandles(canvas);
             }
         }
+    }
+
+    private void drawCircle(Canvas canvas, Rect rect, Paint outlinePaint)
+    {
+        canvas.drawCircle(rect.centerX(),rect.centerY(),rect.centerX() - rect.left, outlinePaint);
     }
 
     /*
