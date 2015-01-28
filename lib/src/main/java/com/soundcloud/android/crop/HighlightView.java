@@ -140,17 +140,23 @@ class HighlightView {
             if (cropType == CROP_CIRCLE) {
                 path.addCircle(drawRect.centerX(), drawRect.centerY(), drawRect.width() / 2, Path.Direction.CW);
                 outlinePaint.setColor(highlightColor);
+
+                // Only do circle highlight on sdk versions for which clip path is supported
+                if (isClipPathSupported(canvas)) {
+                    canvas.clipPath(path, Region.Op.DIFFERENCE);
+                    canvas.drawRect(viewDrawingRect, outsidePaint);
+                }
             }
             else {
                 path.addRect(new RectF(drawRect), Path.Direction.CW);
                 outlinePaint.setColor(highlightColor);
-            }
 
-            if (isClipPathSupported(canvas)) {
-                canvas.clipPath(path, Region.Op.DIFFERENCE);
-                canvas.drawRect(viewDrawingRect, outsidePaint);
-            } else {
-                drawOutsideFallback(canvas);
+                if (isClipPathSupported(canvas)) {
+                    canvas.clipPath(path, Region.Op.DIFFERENCE);
+                    canvas.drawRect(viewDrawingRect, outsidePaint);
+                } else {
+                    drawOutsideFallback(canvas);
+                }
             }
 
             canvas.restore();
@@ -180,7 +186,7 @@ class HighlightView {
     }
 
     /*
-     * Fall back to naive method for darkening outside crop area
+     * Fall back to native method for darkening outside crop area
      */
     private void drawOutsideFallback(Canvas canvas) {
         canvas.drawRect(0, 0, canvas.getWidth(), drawRect.top, outsidePaint);
@@ -188,6 +194,8 @@ class HighlightView {
         canvas.drawRect(0, drawRect.top, drawRect.left, drawRect.bottom, outsidePaint);
         canvas.drawRect(drawRect.right, drawRect.top, canvas.getWidth(), drawRect.bottom, outsidePaint);
     }
+
+
 
     /*
      * Clip path is broken, unreliable or not supported on:

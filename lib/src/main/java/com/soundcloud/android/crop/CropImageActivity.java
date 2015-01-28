@@ -88,7 +88,6 @@ public class CropImageActivity extends MonitoredActivity {
 
     private void initViews() {
         imageView = (CropImageView) findViewById(R.id.crop_image);
-        imageView.cropType = cropType;
         imageView.context = this;
         imageView.setRecycler(new ImageViewTouchBase.Recycler() {
             @Override
@@ -119,15 +118,9 @@ public class CropImageActivity extends MonitoredActivity {
         if (extras != null) {
 
             cropType = extras.getInt(Crop.Extra.CROP_TYPE);
+            imageView.cropType = cropType;
             aspectX = extras.getInt(Crop.Extra.ASPECT_X);
             aspectY = extras.getInt(Crop.Extra.ASPECT_Y);
-            if (cropType == CROP_SQUARE || cropType == CROP_CIRCLE)
-            {
-                aspectX = 1;
-                aspectY = 1;
-            }
-            imageView.cropType = cropType;
-
             maxX = extras.getInt(Crop.Extra.MAX_X);
             maxY = extras.getInt(Crop.Extra.MAX_Y);
             saveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);

@@ -56,6 +56,16 @@ public class CropBuilderTest extends BaseTestCase {
         assertThat(intent.getIntExtra("aspect_y", 0)).isEqualTo(1);
     }
 
+    public void testFixedAspectRatioSetForCircleAsExtras() {
+        builder.asCircle();
+
+        Intent intent = builder.getIntent(activity);
+
+        assertThat(intent.getIntExtra("aspect_x", 0)).isEqualTo(1);
+        assertThat(intent.getIntExtra("aspect_y", 0)).isEqualTo(1);
+    }
+
+
     public void testMaxSizeSetAsExtras() {
         builder.withMaxSize(400, 300);
 

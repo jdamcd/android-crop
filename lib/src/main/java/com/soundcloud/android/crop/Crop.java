@@ -71,6 +71,8 @@ public class Crop {
      */
     public Crop asSquare() {
         cropIntent.putExtra(Extra.CROP_TYPE, CROP_SQUARE);
+        cropIntent.putExtra(Extra.ASPECT_X, 1);
+        cropIntent.putExtra(Extra.ASPECT_Y, 1);
         return this;
     }
 
@@ -79,6 +81,8 @@ public class Crop {
      */
     public Crop asCircle() {
         cropIntent.putExtra(Extra.CROP_TYPE, CROP_CIRCLE);
+        cropIntent.putExtra(Extra.ASPECT_X, 1);
+        cropIntent.putExtra(Extra.ASPECT_Y, 1);
         return this;
     }
 
