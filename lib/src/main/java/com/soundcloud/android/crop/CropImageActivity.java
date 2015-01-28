@@ -47,11 +47,14 @@ public class CropImageActivity extends MonitoredActivity {
     private static final boolean IN_MEMORY_CROP = Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1;
     private static final int SIZE_DEFAULT = 2048;
     private static final int SIZE_LIMIT = 4096;
+    public static final int CROP_SQUARE = 1;
+    public static final int CROP_CIRCLE = 2;
 
     private final Handler handler = new Handler();
 
     private int aspectX;
     private int aspectY;
+    private int cropType;
 
     // Output image size
     private int maxX;
@@ -113,6 +116,9 @@ public class CropImageActivity extends MonitoredActivity {
         Bundle extras = intent.getExtras();
 
         if (extras != null) {
+
+            cropType = extras.getInt(Crop.Extra.CROP_TYPE);
+            imageView.cropType = cropType;
             aspectX = extras.getInt(Crop.Extra.ASPECT_X);
             aspectY = extras.getInt(Crop.Extra.ASPECT_Y);
             maxX = extras.getInt(Crop.Extra.MAX_X);

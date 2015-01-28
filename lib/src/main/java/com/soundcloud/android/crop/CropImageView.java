@@ -17,6 +17,7 @@ public class CropImageView extends ImageViewTouchBase {
     private float lastX;
     private float lastY;
     private int motionEdge;
+    public int cropType;
 
     @SuppressWarnings("UnusedDeclaration")
     public CropImageView(Context context) {
@@ -192,7 +193,7 @@ public class CropImageView extends ImageViewTouchBase {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         for (HighlightView mHighlightView : highlightViews) {
-            mHighlightView.draw(canvas);
+            mHighlightView.draw(canvas, cropType);
         }
     }
 

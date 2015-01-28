@@ -19,6 +19,9 @@ public class Crop {
     public static final int REQUEST_CROP = 6709;
     public static final int REQUEST_PICK = 9162;
     public static final int RESULT_ERROR = 404;
+    public static final int CROP_SQUARE = 1;
+    public static final int CROP_CIRCLE = 2;
+
 
     static interface Extra {
         String ASPECT_X = "aspect_x";
@@ -26,6 +29,7 @@ public class Crop {
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
         String ERROR = "error";
+        String CROP_TYPE = "crop_type";
     }
 
     private Intent cropIntent;
@@ -66,6 +70,17 @@ public class Crop {
      * Crop area with fixed 1:1 aspect ratio
      */
     public Crop asSquare() {
+        cropIntent.putExtra(Extra.CROP_TYPE, CROP_SQUARE);
+        cropIntent.putExtra(Extra.ASPECT_X, 1);
+        cropIntent.putExtra(Extra.ASPECT_Y, 1);
+        return this;
+    }
+
+    /**
+     * Crop area with fixed 1:1 aspect ratio
+     */
+    public Crop asCircle() {
+        cropIntent.putExtra(Extra.CROP_TYPE, CROP_CIRCLE);
         cropIntent.putExtra(Extra.ASPECT_X, 1);
         cropIntent.putExtra(Extra.ASPECT_Y, 1);
         return this;
