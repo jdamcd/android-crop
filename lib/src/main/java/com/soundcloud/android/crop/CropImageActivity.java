@@ -53,7 +53,7 @@ public class CropImageActivity extends MonitoredActivity {
     private int aspectX;
     private int aspectY;
 
-    // Output image size
+    // Output image
     private int maxX;
     private int maxY;
     private int exifRotation;
@@ -349,7 +349,6 @@ public class CropImageActivity extends MonitoredActivity {
 
             try {
                 croppedImage = decoder.decodeRegion(rect, new BitmapFactory.Options());
-
             } catch (IllegalArgumentException e) {
                 // Rethrow with some extra information
                 throw new IllegalArgumentException("Rectangle " + rect + " is outside of the image ("
@@ -390,7 +389,7 @@ public class CropImageActivity extends MonitoredActivity {
             System.gc();
         }
 
-        // Release bitmap memory as soon as possible
+        // Release Bitmap memory as soon as possible
         clearImageView();
         return croppedImage;
     }
@@ -466,4 +465,3 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
 }
-
