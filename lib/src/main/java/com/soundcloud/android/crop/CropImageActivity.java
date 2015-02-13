@@ -283,7 +283,7 @@ public class CropImageActivity extends MonitoredActivity {
         }
 
         if (IN_MEMORY_CROP && rotateBitmap != null) {
-            croppedImage = inMemoryCrop(rotateBitmap, croppedImage, r, width, height, outWidth, outHeight);
+            croppedImage = inMemoryCrop(rotateBitmap, r, width, height, outWidth, outHeight);
             if (croppedImage != null) {
                 imageView.setImageBitmapResetBase(croppedImage, true);
                 imageView.center(true, true);
@@ -291,7 +291,7 @@ public class CropImageActivity extends MonitoredActivity {
             }
         } else {
             try {
-                croppedImage = decodeRegionCrop(croppedImage, r);
+                croppedImage = decodeRegionCrop(r);
             } catch (IllegalArgumentException e) {
                 setResultException(e);
                 finish();
@@ -323,11 +323,12 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     @TargetApi(10)
-    private Bitmap decodeRegionCrop(Bitmap croppedImage, Rect rect) {
+    private Bitmap decodeRegionCrop(Rect rect) {
         // Release memory now
         clearImageView();
 
         InputStream is = null;
+        Bitmap croppedImage = null;
         try {
             is = getContentResolver().openInputStream(sourceUri);
             BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(is, false);
@@ -367,12 +368,12 @@ public class CropImageActivity extends MonitoredActivity {
         return croppedImage;
     }
 
-    private Bitmap inMemoryCrop(RotateBitmap rotateBitmap, Bitmap croppedImage, Rect r,
-                                int width, int height, int outWidth, int outHeight) {
+    private Bitmap inMemoryCrop(RotateBitmap rotateBitmap, Rect r, int width, int height, int outWidth, int outHeight) {
         // In-memory crop means potential OOM errors,
         // but we have no choice as we can't selectively decode a bitmap with this API level
         System.gc();
 
+        Bitmap croppedImage = null;
         try {
             croppedImage = Bitmap.createBitmap(outWidth, outHeight, Bitmap.Config.RGB_565);
 
