@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.io.Closeable;
@@ -42,7 +43,7 @@ class CropUtil {
     private static final String SCHEME_FILE = "file";
     private static final String SCHEME_CONTENT = "content";
 
-    public static void closeSilently(Closeable c) {
+    public static void closeSilently(@Nullable Closeable c) {
         if (c == null) return;
         try {
             c.close();
@@ -86,6 +87,7 @@ class CropUtil {
         }
     }
 
+    @Nullable
     public static File getFromMediaUri(Context context, ContentResolver resolver, Uri uri) {
         if (uri == null) return null;
 
@@ -121,11 +123,12 @@ class CropUtil {
     }
 
     private static String getTempFilename(Context context) throws IOException {
-        File outputDir = context.getCacheDir(); // context being the Activity pointer
+        File outputDir = context.getCacheDir();
         File outputFile = File.createTempFile("image", "tmp", outputDir);
         return outputFile.getAbsolutePath();
     }
 
+    @Nullable
     private static File getFromMediaUriPfd(Context context, ContentResolver resolver, Uri uri) {
         if (uri == null) return null;
 
@@ -139,21 +142,17 @@ class CropUtil {
             String tempFilename = getTempFilename(context);
             output = new FileOutputStream(tempFilename);
 
-            int read = 0;
+            int read;
             byte[] bytes = new byte[4096];
             while ((read = input.read(bytes)) != -1) {
                 output.write(bytes, 0, read);
             }
             return new File(tempFilename);
         } catch (IOException ignored) {
-            // nothing we can do
+            // Nothing we can do
         } finally {
-            if (input != null) try {
-                input.close();
-            } catch (Exception ignored) {}
-            if (output != null) try {
-                output.close();
-            } catch (Exception ignored) {}
+            closeSilently(input);
+            closeSilently(output);
         }
         return null;
     }
