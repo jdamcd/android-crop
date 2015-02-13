@@ -265,12 +265,13 @@ public class CropImageActivity extends MonitoredActivity {
         }
         isSaving = true;
 
-        Bitmap croppedImage = null;
+        Bitmap croppedImage;
         Rect r = cropView.getScaledCropRect(sampleSize);
         int width = r.width();
         int height = r.height();
 
-        int outWidth = width, outHeight = height;
+        int outWidth = width;
+        int outHeight = height;
         if (maxX > 0 && maxY > 0 && (width > maxX || height > maxY)) {
             float ratio = (float) width / (float) height;
             if ((float) maxX / (float) maxY > ratio) {
@@ -283,7 +284,7 @@ public class CropImageActivity extends MonitoredActivity {
         }
 
         if (IN_MEMORY_CROP && rotateBitmap != null) {
-            croppedImage = inMemoryCrop(rotateBitmap, r, width, height, outWidth, outHeight);
+            croppedImage = inMemoryCrop(rotateBitmap, r, outWidth, outHeight);
             if (croppedImage != null) {
                 imageView.setImageBitmapResetBase(croppedImage, true);
                 imageView.center(true, true);
@@ -291,7 +292,7 @@ public class CropImageActivity extends MonitoredActivity {
             }
         } else {
             try {
-                croppedImage = decodeRegionCrop(r);
+                croppedImage = decodeRegionCrop(r, outWidth, outHeight);
             } catch (IllegalArgumentException e) {
                 setResultException(e);
                 finish();
@@ -323,7 +324,7 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     @TargetApi(10)
-    private Bitmap decodeRegionCrop(Rect rect) {
+    private Bitmap decodeRegionCrop(Rect rect, int outWidth, int outHeight) {
         // Release memory now
         clearImageView();
 
@@ -350,6 +351,11 @@ public class CropImageActivity extends MonitoredActivity {
 
             try {
                 croppedImage = decoder.decodeRegion(rect, new BitmapFactory.Options());
+                if (rect.width() > outWidth || rect.height() > outHeight) {
+                    Matrix matrix = new Matrix();
+                    matrix.postScale((float) outWidth / rect.width(), (float) outHeight / rect.height());
+                    croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), matrix, true);
+                }
             } catch (IllegalArgumentException e) {
                 // Rethrow with some extra information
                 throw new IllegalArgumentException("Rectangle " + rect + " is outside of the image ("
@@ -368,7 +374,7 @@ public class CropImageActivity extends MonitoredActivity {
         return croppedImage;
     }
 
-    private Bitmap inMemoryCrop(RotateBitmap rotateBitmap, Rect r, int width, int height, int outWidth, int outHeight) {
+    private Bitmap inMemoryCrop(RotateBitmap rotateBitmap, Rect rect, int outWidth, int outHeight) {
         // In-memory crop means potential OOM errors,
         // but we have no choice as we can't selectively decode a bitmap with this API level
         System.gc();
@@ -378,10 +384,10 @@ public class CropImageActivity extends MonitoredActivity {
             croppedImage = Bitmap.createBitmap(outWidth, outHeight, Bitmap.Config.RGB_565);
 
             Canvas canvas = new Canvas(croppedImage);
-            RectF dstRect = new RectF(0, 0, width, height);
+            RectF dstRect = new RectF(0, 0, rect.width(), rect.height());
 
             Matrix m = new Matrix();
-            m.setRectToRect(new RectF(r), dstRect, Matrix.ScaleToFit.FILL);
+            m.setRectToRect(new RectF(rect), dstRect, Matrix.ScaleToFit.FILL);
             m.preConcat(rotateBitmap.getRotateMatrix());
             canvas.drawBitmap(rotateBitmap.getBitmap(), m, null);
         } catch (OutOfMemoryError e) {
