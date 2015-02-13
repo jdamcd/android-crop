@@ -68,21 +68,20 @@ class CropUtil {
                     return ExifInterface.ORIENTATION_UNDEFINED;
             }
         } catch (IOException e) {
-            Log.e("Error getting Exif data", e);
+            Log.e("Error reading Exif rotation data", e);
             return 0;
         }
     }
 
-    public static boolean copyExifRotation(File sourceFile, File destFile) {
-        if (sourceFile == null || destFile == null) return false;
+    public static boolean saveExifRotation(File file, int exifRotation) {
+        if (file == null) return false;
         try {
-            ExifInterface exifSource = new ExifInterface(sourceFile.getAbsolutePath());
-            ExifInterface exifDest = new ExifInterface(destFile.getAbsolutePath());
-            exifDest.setAttribute(ExifInterface.TAG_ORIENTATION, exifSource.getAttribute(ExifInterface.TAG_ORIENTATION));
+            ExifInterface exifDest = new ExifInterface(file.getAbsolutePath());
+            exifDest.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(exifRotation));
             exifDest.saveAttributes();
             return true;
         } catch (IOException e) {
-            Log.e("Error copying Exif data", e);
+            Log.e("Error saving Exif rotation data", e);
             return false;
         }
     }

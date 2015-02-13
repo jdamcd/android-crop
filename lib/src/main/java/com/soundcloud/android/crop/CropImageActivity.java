@@ -34,6 +34,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -420,10 +421,8 @@ public class CropImageActivity extends MonitoredActivity {
 
             if (!IN_MEMORY_CROP) {
                 // In-memory crop negates the rotation
-                CropUtil.copyExifRotation(
-                        CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri),
-                        CropUtil.getFromMediaUri(this, getContentResolver(), saveUri)
-                );
+                File saveFile = CropUtil.getFromMediaUri(this, getContentResolver(), saveUri);
+                CropUtil.saveExifRotation(saveFile, exifRotation);
             }
 
             setResultUri(saveUri);
