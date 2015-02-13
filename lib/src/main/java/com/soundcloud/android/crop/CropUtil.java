@@ -31,7 +31,6 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -170,50 +169,50 @@ class CropUtil {
 
     private static class BackgroundJob extends MonitoredActivity.LifeCycleAdapter implements Runnable {
 
-        private final MonitoredActivity mActivity;
-        private final ProgressDialog mDialog;
-        private final Runnable mJob;
-        private final Handler mHandler;
-        private final Runnable mCleanupRunner = new Runnable() {
+        private final MonitoredActivity activity;
+        private final ProgressDialog dialog;
+        private final Runnable job;
+        private final Handler handler;
+        private final Runnable cleanupRunner = new Runnable() {
             public void run() {
-                mActivity.removeLifeCycleListener(BackgroundJob.this);
-                if (mDialog.getWindow() != null) mDialog.dismiss();
+                activity.removeLifeCycleListener(BackgroundJob.this);
+                if (dialog.getWindow() != null) dialog.dismiss();
             }
         };
 
         public BackgroundJob(MonitoredActivity activity, Runnable job,
                              ProgressDialog dialog, Handler handler) {
-            mActivity = activity;
-            mDialog = dialog;
-            mJob = job;
-            mActivity.addLifeCycleListener(this);
-            mHandler = handler;
+            this.activity = activity;
+            this.dialog = dialog;
+            this.job = job;
+            this.activity.addLifeCycleListener(this);
+            this.handler = handler;
         }
 
         public void run() {
             try {
-                mJob.run();
+                job.run();
             } finally {
-                mHandler.post(mCleanupRunner);
+                handler.post(cleanupRunner);
             }
         }
 
         @Override
         public void onActivityDestroyed(MonitoredActivity activity) {
             // We get here only when the onDestroyed being called before
-            // the mCleanupRunner. So, run it now and remove it from the queue
-            mCleanupRunner.run();
-            mHandler.removeCallbacks(mCleanupRunner);
+            // the cleanupRunner. So, run it now and remove it from the queue
+            cleanupRunner.run();
+            handler.removeCallbacks(cleanupRunner);
         }
 
         @Override
         public void onActivityStopped(MonitoredActivity activity) {
-            mDialog.hide();
+            dialog.hide();
         }
 
         @Override
         public void onActivityStarted(MonitoredActivity activity) {
-            mDialog.show();
+            dialog.show();
         }
     }
 
