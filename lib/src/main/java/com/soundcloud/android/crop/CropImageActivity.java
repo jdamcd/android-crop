@@ -291,7 +291,7 @@ public class CropImageActivity extends MonitoredActivity {
             }
         } else {
             try {
-                croppedImage = decodeRegionCrop(croppedImage, r);
+                croppedImage = decodeRegionCrop(croppedImage, r, outWidth, outHeight);
             } catch (IllegalArgumentException e) {
                 setResultException(e);
                 finish();
@@ -323,7 +323,7 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     @TargetApi(10)
-    private Bitmap decodeRegionCrop(Bitmap croppedImage, Rect rect) {
+    private Bitmap decodeRegionCrop(Bitmap croppedImage, Rect rect, int outWidth, int outHeight) {
         // Release memory now
         clearImageView();
 
@@ -349,6 +349,12 @@ public class CropImageActivity extends MonitoredActivity {
 
             try {
                 croppedImage = decoder.decodeRegion(rect, new BitmapFactory.Options());
+                //probably only checking one of these is enough
+                if(rect.width() != outWidth || rect.height() != outHeight){
+                    Matrix matrix = new Matrix();
+                    matrix.postScale((float)outWidth/rect.width(), (float)outHeight/rect.height());
+                    croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), matrix, true);
+                }
 
             } catch (IllegalArgumentException e) {
                 // Rethrow with some extra information
