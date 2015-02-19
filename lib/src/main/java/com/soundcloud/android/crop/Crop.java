@@ -113,6 +113,16 @@ public class Crop {
         start(context, fragment, REQUEST_CROP);
     }
 
+	/**
+	 * Send the crop Intent!
+	 *
+	 * @param context Context
+	 * @param fragment Fragment to receive result
+	 */
+	public void start(Context context, android.support.v4.app.Fragment fragment) {
+		start(context, fragment, REQUEST_CROP);
+	}
+
     /**
      * Send the crop Intent with a custom requestCode
      *
@@ -124,6 +134,17 @@ public class Crop {
     public void start(Context context, Fragment fragment, int requestCode) {
         fragment.startActivityForResult(getIntent(context), requestCode);
     }
+
+	/**
+	 * Send the crop Intent with a custom requestCode
+	 *
+	 * @param context Context
+	 * @param fragment Fragment to receive result
+	 * @param requestCode requestCode for result
+	 */
+	public void start(Context context, android.support.v4.app.Fragment fragment, int requestCode) {
+		fragment.startActivityForResult(getIntent(context), requestCode);
+	}
 
     /**
      * Get Intent to start crop Activity
