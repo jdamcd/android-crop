@@ -226,6 +226,9 @@ public class CropImageActivity extends MonitoredActivity {
             @SuppressWarnings("SuspiciousNameCombination")
             int cropHeight = cropWidth;
 
+            if (cropWidth < minX)
+                cropWidth = cropHeight = minX;
+
             if (aspectX != 0 && aspectY != 0) {
                 if (aspectX > aspectY) {
                     cropHeight = cropWidth * aspectY / aspectX;
