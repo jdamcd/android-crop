@@ -26,6 +26,7 @@ public class Crop {
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
         String ERROR = "error";
+        String MIN_X = "minimum_x";
     }
 
     private Intent cropIntent;
@@ -80,6 +81,17 @@ public class Crop {
     public Crop withMaxSize(int width, int height) {
         cropIntent.putExtra(Extra.MAX_X, width);
         cropIntent.putExtra(Extra.MAX_Y, height);
+        return this;
+    }
+
+    /**
+     * Set minimum crop size
+     *
+     * @param width
+     * @return
+     */
+    public Crop widthMinSize(int width) {
+        cropIntent.putExtra(Extra.MIN_X, width);
         return this;
     }
 

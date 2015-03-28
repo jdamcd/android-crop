@@ -75,6 +75,7 @@ class HighlightView {
     private float handleRadius;
     private float outlineWidth;
     private boolean isFocused;
+    private int minX = 25;
 
     public HighlightView(View context) {
         viewContext = context;
@@ -116,6 +117,11 @@ class HighlightView {
         handleRadius = dpToPx(HANDLE_RADIUS_DP);
 
         modifyMode = ModifyMode.None;
+    }
+
+    public void setup(Matrix m, Rect imageRect, RectF cropRect, boolean maintainAspectRatio,int minX){
+        this.minX = minX;
+        setup(m, imageRect, cropRect, maintainAspectRatio);
     }
 
     private float dpToPx(float dp) {
@@ -326,7 +332,7 @@ class HighlightView {
         r.inset(-dx, -dy);
 
         // Don't let the cropping rectangle shrink too fast
-        final float widthCap = 25F;
+        final float widthCap = minX;
         if (r.width() < widthCap) {
             r.inset(-(widthCap - r.width()) / 2F, 0F);
         }
