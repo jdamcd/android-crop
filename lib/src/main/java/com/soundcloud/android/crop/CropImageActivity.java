@@ -33,6 +33,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -78,6 +79,11 @@ public class CropImageActivity extends MonitoredActivity {
 
         setupFromIntent();
         if (rotateBitmap == null) {
+            finish();
+            return;
+        }
+        if (rotateBitmap.getWidth() < minX) {
+            Toast.makeText(this, "Image is too small", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
