@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.soundcloud.android.crop.Crop;
+import com.soundcloud.android.crop.CropImageActivity;
 
 import java.io.File;
 
@@ -62,6 +63,9 @@ public class MainActivity extends Activity {
             resultView.setImageURI(Crop.getOutput(result));
         } else if (resultCode == Crop.RESULT_ERROR) {
             Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
+        }else if (resultCode == CropImageActivity.RESULT_IMAGE_TOO_SMALL){
+            Toast.makeText(this, R.string.image_is_small, Toast.LENGTH_SHORT).show();
+            Crop.pickImage(this);
         }
     }
 

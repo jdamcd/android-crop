@@ -48,6 +48,7 @@ public class CropImageActivity extends MonitoredActivity {
     private static final boolean IN_MEMORY_CROP = Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1;
     private static final int SIZE_DEFAULT = 2048;
     private static final int SIZE_LIMIT = 4096;
+    public static final int RESULT_IMAGE_TOO_SMALL = 1587;
 
     private final Handler handler = new Handler();
 
@@ -83,7 +84,7 @@ public class CropImageActivity extends MonitoredActivity {
             return;
         }
         if (rotateBitmap.getWidth() < minX) {
-            Toast.makeText(this, R.string.crop__image_is_small, Toast.LENGTH_SHORT).show();
+            setResult(RESULT_IMAGE_TOO_SMALL);
             finish();
             return;
         }

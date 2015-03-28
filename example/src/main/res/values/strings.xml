@@ -2,5 +2,6 @@
 
     <string name="app_name">Crop Demo</string>
     <string name="action_select">Pick</string>
+    <string name="image_is_small">Image is too small</string>
 
 </resources>
