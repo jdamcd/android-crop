@@ -33,7 +33,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -233,14 +232,28 @@ public class CropImageActivity extends MonitoredActivity {
             @SuppressWarnings("SuspiciousNameCombination")
             int cropHeight = cropWidth;
 
-            if (cropWidth < minX)
-                cropWidth = cropHeight = minX;
-
             if (aspectX != 0 && aspectY != 0) {
                 if (aspectX > aspectY) {
                     cropHeight = cropWidth * aspectY / aspectX;
                 } else {
                     cropWidth = cropHeight * aspectX / aspectY;
+                }
+            }
+
+            if (cropWidth < minX || cropHeight < minX) {
+                cropWidth = cropHeight = minX;
+
+                if (aspectX != 0 && aspectY != 0) {
+                    if (aspectX > aspectY) {
+                        cropHeight = cropWidth * aspectY / aspectX;
+                    } else {
+                        cropWidth = cropHeight * aspectX / aspectY;
+                    }
+                }
+
+                if (cropHeight > height || cropWidth > width) {
+                    setResult(RESULT_IMAGE_TOO_SMALL);
+                    finish();
                 }
             }
 
