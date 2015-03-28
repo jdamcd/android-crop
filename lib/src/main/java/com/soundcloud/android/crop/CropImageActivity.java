@@ -83,7 +83,7 @@ public class CropImageActivity extends MonitoredActivity {
             return;
         }
         if (rotateBitmap.getWidth() < minX) {
-            Toast.makeText(this, "Image is too small", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.crop__image_is_small, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }

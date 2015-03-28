@@ -3,6 +3,7 @@
     <string name="crop__saving">Saving picture…</string>
     <string name="crop__wait">Please wait…</string>
     <string name="crop__pick_error">No image sources available</string>
+    <string name="crop__image_is_small">Image is too small</string>
 
     <string name="crop__done">DONE</string>
     <string name="crop__cancel" tools:ignore="ButtonCase">CANCEL</string>
