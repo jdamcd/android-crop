@@ -47,7 +47,6 @@ public class CropImageActivity extends MonitoredActivity {
     private static final boolean IN_MEMORY_CROP = Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1;
     private static final int SIZE_DEFAULT = 2048;
     private static final int SIZE_LIMIT = 4096;
-    public static final int RESULT_IMAGE_TOO_SMALL = 1587;
 
     private final Handler handler = new Handler();
 
@@ -83,7 +82,11 @@ public class CropImageActivity extends MonitoredActivity {
             return;
         }
         if (rotateBitmap.getWidth() < minX) {
-            setResult(RESULT_IMAGE_TOO_SMALL);
+            try {
+                throw new Exception("Image size is small than your minimum size.");
+            } catch (Exception e) {
+                setResultException(e);
+            }
             finish();
             return;
         }
@@ -252,7 +255,11 @@ public class CropImageActivity extends MonitoredActivity {
                 }
 
                 if (cropHeight > height || cropWidth > width) {
-                    setResult(RESULT_IMAGE_TOO_SMALL);
+                    try {
+                        throw new Exception("Image size is small than your minimum size.");
+                    } catch (Exception e) {
+                        setResultException(e);
+                    }
                     finish();
                 }
             }
