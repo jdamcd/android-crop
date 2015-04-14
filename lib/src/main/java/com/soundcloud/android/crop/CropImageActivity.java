@@ -48,10 +48,11 @@ public class CropImageActivity extends MonitoredActivity {
     private static final int SIZE_DEFAULT = 2048;
     private static final int SIZE_LIMIT = 4096;
 
+    private static final double NO_ASPECT_RATIO_SPECIFIED = Double.NaN;
+
     private final Handler handler = new Handler();
 
-    private int aspectX;
-    private int aspectY;
+    private double aspectRatio;
 
     // Output image
     private int maxX;
@@ -113,8 +114,7 @@ public class CropImageActivity extends MonitoredActivity {
         Bundle extras = intent.getExtras();
 
         if (extras != null) {
-            aspectX = extras.getInt(Crop.Extra.ASPECT_X);
-            aspectY = extras.getInt(Crop.Extra.ASPECT_Y);
+            aspectRatio = extras.getDouble(Crop.Extra.ASPECT_RATIO, NO_ASPECT_RATIO_SPECIFIED);
             maxX = extras.getInt(Crop.Extra.MAX_X);
             maxY = extras.getInt(Crop.Extra.MAX_Y);
             saveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);
@@ -224,11 +224,11 @@ public class CropImageActivity extends MonitoredActivity {
             @SuppressWarnings("SuspiciousNameCombination")
             int cropHeight = cropWidth;
 
-            if (aspectX != 0 && aspectY != 0) {
-                if (aspectX > aspectY) {
-                    cropHeight = cropWidth * aspectY / aspectX;
+            if (aspectRatio != NO_ASPECT_RATIO_SPECIFIED) {
+                if (aspectRatio > 1) {
+                    cropHeight = (int) Math.round((double)cropWidth / aspectRatio);
                 } else {
-                    cropWidth = cropHeight * aspectX / aspectY;
+                    cropWidth = (int) Math.round(cropHeight * aspectRatio);
                 }
             }
 
@@ -236,7 +236,7 @@ public class CropImageActivity extends MonitoredActivity {
             int y = (height - cropHeight) / 2;
 
             RectF cropRect = new RectF(x, y, x + cropWidth, y + cropHeight);
-            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX != 0 && aspectY != 0);
+            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectRatio != NO_ASPECT_RATIO_SPECIFIED);
             imageView.add(hv);
         }
 

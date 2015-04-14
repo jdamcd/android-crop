@@ -43,8 +43,7 @@ public class CropBuilderTest extends BaseTestCase {
 
         Intent intent = builder.getIntent(activity);
 
-        assertThat(intent.getIntExtra("aspect_x", 0)).isEqualTo(16);
-        assertThat(intent.getIntExtra("aspect_y", 0)).isEqualTo(10);
+        assertThat(intent.getDoubleExtra("aspect_ratio", 0)).isEqualTo(1.6);
     }
 
     public void testFixedAspectRatioSetAsExtras() {
@@ -52,8 +51,7 @@ public class CropBuilderTest extends BaseTestCase {
 
         Intent intent = builder.getIntent(activity);
 
-        assertThat(intent.getIntExtra("aspect_x", 0)).isEqualTo(1);
-        assertThat(intent.getIntExtra("aspect_y", 0)).isEqualTo(1);
+        assertThat(intent.getDoubleExtra("aspect_ratio", 0)).isEqualTo(1);
     }
 
     public void testMaxSizeSetAsExtras() {
@@ -70,8 +68,7 @@ public class CropBuilderTest extends BaseTestCase {
 
         Intent intent = builder.getIntent(activity);
 
-        assertThat(intent.getIntExtra("aspect_x", 0)).isEqualTo(1);
-        assertThat(intent.getIntExtra("aspect_y", 0)).isEqualTo(1);
+        assertThat(intent.getDoubleExtra("aspect_ratio", 0)).isEqualTo(1);
         assertThat(intent.getIntExtra("max_x", 0)).isEqualTo(200);
         assertThat(intent.getIntExtra("max_y", 0)).isEqualTo(200);
     }
