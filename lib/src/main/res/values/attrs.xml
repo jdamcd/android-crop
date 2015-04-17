@@ -5,6 +5,7 @@
     <declare-styleable name="CropImageView">
         <attr name="highlightColor" format="reference|color" />
         <attr name="showThirds" format="boolean" />
+        <attr name="showCircle" format="boolean" />
         <attr name="showHandles">
           <enum name="changing" value="0" />
           <enum name="always" value="1" />
