@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="crop__saving">사진을 저장중입니다...</string>
+    <string name="crop__wait">잠시만 기다려주세요...</string>
+    <string name="crop__pick_error">이미지가 존재하지 않습니다.</string>
+
+    <string name="crop__done">확인</string>
+    <string name="crop__cancel" tools:ignore="ButtonCase">취소</string>
+
+</resources>
