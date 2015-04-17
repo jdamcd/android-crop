@@ -6,11 +6,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.soundcloud.android.crop.Crop;
+import com.soundcloud.android.crop.CropImageActivity;
 
 import java.io.File;
 
@@ -52,7 +52,10 @@ public class MainActivity extends Activity {
 
     private void beginCrop(Uri source) {
         Uri outputUri = Uri.fromFile(new File(getCacheDir(), "cropped"));
-        new Crop(source).output(outputUri).asSquare().start(this);
+        Crop crop = new Crop(source);
+        crop.output(outputUri);
+        crop.widthMinSize(640);
+        crop.asSquare().start(this);
     }
 
     private void handleCrop(int resultCode, Intent result) {

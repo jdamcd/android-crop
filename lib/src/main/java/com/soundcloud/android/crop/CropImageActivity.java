@@ -52,6 +52,7 @@ public class CropImageActivity extends MonitoredActivity {
     // Output image
     private int maxX;
     private int maxY;
+    private int minX;
     private int exifRotation;
 
     private Uri sourceUri;
@@ -73,6 +74,15 @@ public class CropImageActivity extends MonitoredActivity {
 
         setupFromIntent();
         if (rotateBitmap == null) {
+            finish();
+            return;
+        }
+        if (rotateBitmap.getWidth() < minX) {
+            try {
+                throw new Exception("Image size is small than your minimum size.");
+            } catch (Exception e) {
+                setResultException(e);
+            }
             finish();
             return;
         }
@@ -113,6 +123,7 @@ public class CropImageActivity extends MonitoredActivity {
             aspectY = extras.getInt(Crop.Extra.ASPECT_Y);
             maxX = extras.getInt(Crop.Extra.MAX_X);
             maxY = extras.getInt(Crop.Extra.MAX_Y);
+            minX = extras.getInt(Crop.Extra.MIN_X, 25);
             saveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);
         }
 
@@ -228,11 +239,32 @@ public class CropImageActivity extends MonitoredActivity {
                 }
             }
 
+            if (cropWidth < minX || cropHeight < minX) {
+                cropWidth = cropHeight = minX;
+
+                if (aspectX != 0 && aspectY != 0) {
+                    if (aspectX > aspectY) {
+                        cropHeight = cropWidth * aspectY / aspectX;
+                    } else {
+                        cropWidth = cropHeight * aspectX / aspectY;
+                    }
+                }
+
+                if (cropHeight > height || cropWidth > width) {
+                    try {
+                        throw new Exception("Image size is small than your minimum size.");
+                    } catch (Exception e) {
+                        setResultException(e);
+                    }
+                    finish();
+                }
+            }
+
             int x = (width - cropWidth) / 2;
             int y = (height - cropHeight) / 2;
 
             RectF cropRect = new RectF(x, y, x + cropWidth, y + cropHeight);
-            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX != 0 && aspectY != 0);
+            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX != 0 && aspectY != 0, minX);
             imageView.add(hv);
         }
 
