@@ -1,3 +1,14 @@
+## 1.0-SNAPSHOT
+
+* Material styling
+* Drop support for Gingerbread
+* Start crop from support Fragment
+* Translations for French, Korean, Chinese, Spanish, Japanese
+* Fix max size
+* Fix issue cropping images from Google Drive
+* Optional circle crop guide
+* Optional custom request code
+
 ## 0.9.10
 
 * Fix bug on some devices where image was displayed with 0 size
