@@ -6,7 +6,7 @@
 
     <style name="Widget.CropImageView" parent="android:Widget">
         <item name="showThirds">true</item>
-        <item name="showCircle">true</item>
+        <item name="showCircle">false</item>
         <item name="showHandles">always</item>
         <item name="highlightColor">@color/highlight</item>
     </style>
