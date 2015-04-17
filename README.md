@@ -8,7 +8,7 @@ An Android library project to provide a simple image cropping `Activity`, based 
 
 * Gradle build with AAR
 * Modern UI
-* Backwards compatible to Gingerbread
+* Backwards compatible to SDK 14
 * Simple builder for configuration
 * Example project
 * More tests, less unused complexity
