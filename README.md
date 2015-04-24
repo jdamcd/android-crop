@@ -21,7 +21,7 @@ First, declare `CropImageActivity` in your manifest file:
 
 #### Crop
 
-`new Crop(inputUri).output(outputUri).asSquare().start(activity)`
+`Crop.of(inputUri, outputUri).asSquare().start(activity)`
 
 Listen for the result of the crop (see example project if you want to do some error handling):
 
