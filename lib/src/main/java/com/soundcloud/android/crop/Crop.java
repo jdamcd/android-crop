@@ -29,23 +29,19 @@ public class Crop {
     private Intent cropIntent;
 
     /**
-     * Create a crop Intent builder with source image
+     * Create a crop Intent builder with source and destination image Uris
      *
-     * @param source Source image URI
+     * @param source Uri for image to crop
+     * @param destination Uri for saving the cropped image
      */
-    public Crop(Uri source) {
-        cropIntent = new Intent();
-        cropIntent.setData(source);
+    public static Crop of(Uri source, Uri destination) {
+        return new Crop(source, destination);
     }
 
-    /**
-     * Set output URI where the cropped image will be saved
-     *
-     * @param output Output image URI
-     */
-    public Crop output(Uri output) {
-        cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, output);
-        return this;
+    private Crop(Uri source, Uri destination) {
+        cropIntent = new Intent();
+        cropIntent.setData(source);
+        cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, destination);
     }
 
     /**

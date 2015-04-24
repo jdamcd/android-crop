@@ -1,15 +1,15 @@
 package com.soundcloud.android.crop;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import org.fest.assertions.api.ANDROID;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.MediaStore;
-
-import org.fest.assertions.api.ANDROID;
-
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class CropBuilderTest extends BaseTestCase {
 
@@ -22,7 +22,7 @@ public class CropBuilderTest extends BaseTestCase {
         activity = mock(Activity.class);
         when(activity.getPackageName()).thenReturn("com.example");
 
-        builder = new Crop(Uri.parse("image:input"));
+        builder = Crop.of(Uri.parse("image:input"), Uri.parse("image:output"));
     }
 
     public void testInputUriSetAsData() {
@@ -30,8 +30,6 @@ public class CropBuilderTest extends BaseTestCase {
     }
 
     public void testOutputUriSetAsExtra() {
-        builder.output(Uri.parse("image:output"));
-
         Intent intent = builder.getIntent(activity);
         Uri output = intent.getParcelableExtra(MediaStore.EXTRA_OUTPUT);
 
