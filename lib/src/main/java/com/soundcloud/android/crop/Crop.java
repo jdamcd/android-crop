@@ -24,6 +24,8 @@ public class Crop {
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
         String ERROR = "error";
+        String FIX_X = "fix_x";
+        String FIX_Y = "fix_y";
     }
 
     private Intent cropIntent;
@@ -68,12 +70,36 @@ public class Crop {
     /**
      * Set maximum crop size
      *
+     * Incompatible with {@link #fixedRegion(int, int)}
+     *
      * @param width Max width
      * @param height Max height
      */
     public Crop withMaxSize(int width, int height) {
+        if (cropIntent.hasExtra(Extra.FIX_X)) {
+            throw new IllegalStateException("fixed dimensions specified, cannot set max size then");
+        }
         cropIntent.putExtra(Extra.MAX_X, width);
         cropIntent.putExtra(Extra.MAX_Y, height);
+        return this;
+    }
+
+    /**
+     * Enable the cropper to be used just as a image region selector, ensuring
+     * client application a desired width and height... user won't be able to resize
+     * Highlighted zone, just move it.
+     *
+     * Note: this behaviour is incompatible with {@link #withMaxSize(int, int)}
+     *
+     * @param fixedWidth the with of the result
+     * @param fixedHeight the height of the result
+     */
+    public Crop fixedRegion(int fixedWidth, int fixedHeight) {
+        if (cropIntent.hasExtra(Extra.MAX_X)) {
+            throw new IllegalStateException("maximum dimensions already defined, cannot use fixed dimensions now");
+        }
+        cropIntent.putExtra(Extra.FIX_X, fixedWidth);
+        cropIntent.putExtra(Extra.FIX_Y, fixedHeight);
         return this;
     }
 
