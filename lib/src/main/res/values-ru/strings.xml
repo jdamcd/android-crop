@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="crop__saving">Изображение сохраняется…</string>
+    <string name="crop__wait">Пожалуйста, подождите…</string>
+    <string name="crop__pick_error">Нет доступных изображений</string>
+
+    <string name="crop__done">ГОТОВО</string>
+    <string name="crop__cancel" tools:ignore="ButtonCase">ОТМЕНА</string>
+
+</resources>
