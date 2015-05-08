@@ -223,8 +223,8 @@ public class CropImageActivity extends MonitoredActivity {
             int cropWidth;
             int cropHeight;
             if (fixedY != 0 && fixedX != 0) {
-                cropWidth = Math.min(width, fixedX);
-                cropHeight = Math.min(height, fixedY);
+                cropWidth = Math.min(width, fixedX / sampleSize);
+                cropHeight = Math.min(height, fixedY / sampleSize);
             } else {
 
                 // Make the default size about 4/5 of the width or height

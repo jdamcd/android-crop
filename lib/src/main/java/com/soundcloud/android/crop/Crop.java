@@ -89,6 +89,8 @@ public class Crop {
      * client application a desired width and height... user won't be able to resize
      * Highlighted zone, just move it.
      *
+     * The region specified is the target output fixed dimension, not screen dimensions.
+     *
      * Note: this behaviour is incompatible with {@link #withMaxSize(int, int)}
      *
      * @param fixedWidth the with of the result
