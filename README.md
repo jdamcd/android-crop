@@ -42,7 +42,7 @@ The library provides a utility method to start an image picker:
 
 The AAR is published on Maven Central:
 
-`compile 'com.soundcloud.android:android-crop:0.9.10@aar'`
+`compile 'com.soundcloud.android:android-crop:1.0.0@aar'`
 
 #### Apps
 
@@ -56,5 +56,5 @@ Apps that use this library include: [SoundCloud](https://play.google.com/store/a
 
 This project is based on the [AOSP](https://source.android.com) camera image cropper via [android-cropimage](https://github.com/lvillani/android-cropimage).
 
-Copyright 2014 [SoundCloud](https://soundcloud.com)  
+Copyright 2015 [SoundCloud](https://soundcloud.com)  
 Apache License, Version 2.0 
