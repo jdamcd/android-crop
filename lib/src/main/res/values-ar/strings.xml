@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string name="crop__saving">جارى حفظ الصورة ...</string>
-    <string name="crop__wait">رجاء الأنتظار ....</string>
+    <string name="crop__saving">جارى حفظ الصورة …</string>
+    <string name="crop__wait">رجاء الأنتظار …</string>
     <string name="crop__pick_error">الصورة غير متاحة</string>
 
     <string name="crop__done">تم</string>
