@@ -1,9 +1,10 @@
-## 1.0-SNAPSHOT
+## 1.0.0
 
+* Improved builder interface: `Crop.of(in, out).start(activity)`
 * Material styling
 * Drop support for Gingerbread
 * Start crop from support Fragment
-* Translations for French, Korean, Chinese, Spanish, Japanese
+* Translations: French, Korean, Chinese, Spanish, Japanese, Arabic, Portuguese, Indonesian, Russian
 * Fix max size
 * Fix issue cropping images from Google Drive
 * Optional circle crop guide
