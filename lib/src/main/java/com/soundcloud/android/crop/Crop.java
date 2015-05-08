@@ -21,11 +21,12 @@ public class Crop {
     static interface Extra {
         String ASPECT_X = "aspect_x";
         String ASPECT_Y = "aspect_y";
-        String MAX_X = "max_x";
-        String MAX_Y = "max_y";
-        String ERROR = "error";
-        String FIX_X = "fix_x";
-        String FIX_Y = "fix_y";
+        String MAX_X    = "max_x";
+        String MAX_Y    = "max_y";
+        String ERROR    = "error";
+        String FIX_X    = "fix_x";
+        String FIX_Y    = "fix_y";
+        String FIX_MIN  = "fix_min";
     }
 
     private Intent cropIntent;
@@ -103,6 +104,17 @@ public class Crop {
         cropIntent.putExtra(Extra.FIX_X, fixedWidth);
         cropIntent.putExtra(Extra.FIX_Y, fixedHeight);
         return this;
+    }
+
+    /**
+     * Set up the crop to just crop (not resize) bound to the minimum image dimension, and as a square region.
+     */
+    public Crop fixToMin() {
+        if (cropIntent.hasExtra(Extra.MAX_X)) {
+            throw new IllegalStateException("maximum dimensions already defined, cannot use fixed dimensions now");
+        }
+        cropIntent.putExtra(Extra.FIX_MIN, true);
+        return this.asSquare();
     }
 
     /**

@@ -56,6 +56,9 @@ public class CropImageActivity extends MonitoredActivity {
     private int fixedX;
     private int fixedY;
 
+    // Extra options
+    private boolean fixToMin;
+
 
     private Uri sourceUri;
     private Uri saveUri;
@@ -118,6 +121,7 @@ public class CropImageActivity extends MonitoredActivity {
             maxY = extras.getInt(Crop.Extra.MAX_Y);
             fixedX = extras.getInt(Crop.Extra.FIX_X);
             fixedY = extras.getInt(Crop.Extra.FIX_Y);
+            fixToMin = extras.getBoolean(Crop.Extra.FIX_MIN, false);
             saveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);
         }
 
@@ -222,6 +226,11 @@ public class CropImageActivity extends MonitoredActivity {
 
             int cropWidth;
             int cropHeight;
+
+            if (fixToMin) {
+                fixedX = fixedY = sampleSize * Math.min(width, height);
+            }
+
             if (fixedY != 0 && fixedX != 0) {
                 cropWidth = Math.min(width, fixedX / sampleSize);
                 cropHeight = Math.min(height, fixedY / sampleSize);
