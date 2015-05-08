@@ -4,7 +4,7 @@ archivesBaseName = 'android-crop-example'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.0.3'
+    buildToolsVersion '21.1.2'
 
     defaultConfig {
         minSdkVersion 14
