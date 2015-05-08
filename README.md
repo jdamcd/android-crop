@@ -4,6 +4,8 @@ An Android library project to provide a simple image cropping `Activity`, based 
 
 [![Build Status](https://travis-ci.org/jdamcd/android-crop.png)](https://travis-ci.org/jdamcd/android-crop)
 
+[Changelog](CHANGELOG.md)
+
 ## Goals
 
 * Gradle build with AAR
@@ -31,6 +33,8 @@ Listen for the result of the crop (see example project if you want to do some er
             doSomethingWithCroppedImage(outputUri);
         }
     }
+    
+Some options are provided to style the crop screen. See the example project theme.
 
 #### Pick
 
