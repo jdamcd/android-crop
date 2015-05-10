@@ -2,9 +2,9 @@
 
 An Android library project to provide a simple image cropping `Activity`, based on code from AOSP.
 
-[![Build Status](https://travis-ci.org/jdamcd/android-crop.png)](https://travis-ci.org/jdamcd/android-crop)
-
-[Changelog](CHANGELOG.md)
+[![build status](https://travis-ci.org/jdamcd/android-crop.png)](https://travis-ci.org/jdamcd/android-crop) 
+[![maven central](https://img.shields.io/badge/maven%20central-1.0.0-brightgreen.svg)](http://search.maven.org/#artifactdetails%7Ccom.soundcloud.android%7Candroid-crop%7C1.0.0%7Caar.asc)
+[![changelog](https://img.shields.io/badge/changelog-1.0.0-lightgrey.svg)](CHANGELOG.md)
 
 ## Goals
 
