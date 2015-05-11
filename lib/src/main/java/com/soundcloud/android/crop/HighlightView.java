@@ -76,6 +76,7 @@ class HighlightView {
     private float handleRadius;
     private float outlineWidth;
     private boolean isFocused;
+    private boolean enableResize;
 
     public HighlightView(View context) {
         viewContext = context;
@@ -97,12 +98,13 @@ class HighlightView {
         }
     }
 
-    public void setup(Matrix m, Rect imageRect, RectF cropRect, boolean maintainAspectRatio) {
+    public void setup(Matrix m, Rect imageRect, RectF cropRect, boolean maintainAspectRatio, boolean enableResize) {
         matrix = new Matrix(m);
 
         this.cropRect = cropRect;
         this.imageRect = new RectF(imageRect);
         this.maintainAspectRatio = maintainAspectRatio;
+        this.enableResize = enableResize;
 
         initialAspectRatio = this.cropRect.width() / this.cropRect.height();
         drawRect = computeLayout();
@@ -232,6 +234,7 @@ class HighlightView {
         Rect r = computeLayout();
         final float hysteresis = 20F;
         int retval = GROW_NONE;
+        boolean allowFromEdges = false;
 
         // verticalCheck makes sure the position is between the top and
         // the bottom edge (with some tolerance). Similar for horizCheck.
@@ -254,8 +257,13 @@ class HighlightView {
             retval |= GROW_BOTTOM_EDGE;
         }
 
+        if (!enableResize && retval != GROW_NONE) {
+            // also allow movement from edges then...
+            allowFromEdges = true;
+        }
+
         // Not near any edge but inside the rectangle: move
-        if (retval == GROW_NONE && r.contains((int) x, (int) y)) {
+        if ((retval == GROW_NONE && r.contains((int) x, (int) y)) || allowFromEdges) {
             retval = MOVE;
         }
         return retval;
