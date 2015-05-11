@@ -19,8 +19,7 @@ public class Crop {
     public static final int RESULT_ERROR = 404;
 
     static interface Extra {
-        String ASPECT_X = "aspect_x";
-        String ASPECT_Y = "aspect_y";
+        String ASPECT_RATIO = "aspect_ratio";
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
         String ERROR = "error";
@@ -51,8 +50,16 @@ public class Crop {
      * @param y Aspect Y
      */
     public Crop withAspect(int x, int y) {
-        cropIntent.putExtra(Extra.ASPECT_X, x);
-        cropIntent.putExtra(Extra.ASPECT_Y, y);
+        return this.withAspect((double) x / (double) y);
+    }
+
+    /**
+     * Set fixed aspect ratio for crop area; the aspect ratio is defined as {@code width / height}.
+     *
+     * @param aspectRatio the aspect ratio for the crop area (definied as width divided by height)
+     */
+    public Crop withAspect(final double aspectRatio) {
+        cropIntent.putExtra(Extra.ASPECT_RATIO, aspectRatio);
         return this;
     }
 
@@ -60,8 +67,7 @@ public class Crop {
      * Crop area with fixed 1:1 aspect ratio
      */
     public Crop asSquare() {
-        cropIntent.putExtra(Extra.ASPECT_X, 1);
-        cropIntent.putExtra(Extra.ASPECT_Y, 1);
+        cropIntent.putExtra(Extra.ASPECT_RATIO, 1.0);
         return this;
     }
 
