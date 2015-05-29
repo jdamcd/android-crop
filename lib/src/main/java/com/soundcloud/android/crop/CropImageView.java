@@ -18,6 +18,7 @@ public class CropImageView extends ImageViewTouchBase {
     private float lastX;
     private float lastY;
     private int motionEdge;
+    private int validPointerId;
 
     public CropImageView(Context context) {
         super(context);
@@ -83,7 +84,7 @@ public class CropImageView extends ImageViewTouchBase {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
         CropImageActivity cropImageActivity = (CropImageActivity) context;
         if (cropImageActivity.isSaving()) {
             return false;
@@ -98,6 +99,8 @@ public class CropImageView extends ImageViewTouchBase {
                     motionHighlightView = hv;
                     lastX = event.getX();
                     lastY = event.getY();
+                    //Prevent multiple touches from interfering with crop area re-sizing
+                    validPointerId = event.getPointerId(event.getActionIndex());
                     motionHighlightView.setMode((edge == HighlightView.MOVE)
                             ? HighlightView.ModifyMode.Move
                             : HighlightView.ModifyMode.Grow);
@@ -113,12 +116,14 @@ public class CropImageView extends ImageViewTouchBase {
             motionHighlightView = null;
             break;
         case MotionEvent.ACTION_MOVE:
-            if (motionHighlightView != null) {
+            if (motionHighlightView != null && event.getPointerId(event.getActionIndex()) == validPointerId) {
                 motionHighlightView.handleMotion(motionEdge, event.getX()
                         - lastX, event.getY() - lastY);
                 lastX = event.getX();
                 lastY = event.getY();
-                ensureVisible(motionHighlightView);
+                //Prevent image twitching when trying to zoom back to max bounds
+                if (motionEdge == HighlightView.MOVE)
+                    ensureVisible(motionHighlightView);
             }
             break;
         }
