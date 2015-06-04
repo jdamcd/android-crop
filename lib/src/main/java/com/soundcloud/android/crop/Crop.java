@@ -187,6 +187,15 @@ public class Crop {
     }
 
     /**
+     * Utility to start an image picker from a fragment
+     *
+     * @param activity Activity that will receive result
+     */
+    public static void pickImage(Activity activity, android.support.v4.app.Fragment  fragment) {
+        pickImage(activity, fragment, REQUEST_PICK);
+    }
+
+    /**
      * Utility to start an image picker with request code
      *
      * @param activity    Activity that will receive result
@@ -209,6 +218,22 @@ public class Crop {
      * @param requestCode requestCode for result
      */
     public static void pickImage(final Activity context, final Fragment fragment, int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
+        try {
+            fragment.startActivityForResult(intent, requestCode);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(context, R.string.crop__pick_error, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Utility to start an image picker from a fragment with request code
+     *
+     * @param context     current context
+     * @param fragment    the fragment that will receive the results
+     * @param requestCode requestCode for result
+     */
+    public static void pickImage(final Activity context, final android.support.v4.app.Fragment  fragment, int requestCode) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
         try {
             fragment.startActivityForResult(intent, requestCode);
