@@ -257,9 +257,9 @@ public class CropImageActivity extends MonitoredActivity {
         isSaving = true;
 
         Bitmap croppedImage;
-        Rect r = cropView.getScaledCropRect(sampleSize);
-        int width = r.width();
-        int height = r.height();
+        Rect scaledCropRect = cropView.getScaledCropRect(sampleSize);
+        int width = scaledCropRect.width();
+        int height = scaledCropRect.height();
 
         int outWidth = width;
         int outHeight = height;
@@ -275,7 +275,7 @@ public class CropImageActivity extends MonitoredActivity {
         }
 
         try {
-            croppedImage = decodeRegionCrop(r, outWidth, outHeight);
+            croppedImage = decodeRegionCrop(scaledCropRect, outWidth, outHeight);
         } catch (IllegalArgumentException e) {
             setResultException(e);
             finish();
@@ -287,16 +287,16 @@ public class CropImageActivity extends MonitoredActivity {
             imageView.center(true, true);
             imageView.highlightViews.clear();
         }
-        saveImage(croppedImage);
+        saveImage(croppedImage, scaledCropRect);
     }
 
-    private void saveImage(Bitmap croppedImage) {
+    private void saveImage(Bitmap croppedImage, final Rect scaledCropRect) {
         if (croppedImage != null) {
             final Bitmap b = croppedImage;
             CropUtil.startBackgroundJob(this, null, getResources().getString(R.string.crop__saving),
                     new Runnable() {
                         public void run() {
-                            saveOutput(b);
+                            saveOutput(b, scaledCropRect);
                         }
                     }, handler
             );
@@ -363,7 +363,7 @@ public class CropImageActivity extends MonitoredActivity {
         System.gc();
     }
 
-    private void saveOutput(Bitmap croppedImage) {
+    private void saveOutput(Bitmap croppedImage, Rect scaledCropRect) {
         if (saveUri != null) {
             OutputStream outputStream = null;
             try {
@@ -383,7 +383,7 @@ public class CropImageActivity extends MonitoredActivity {
                     CropUtil.getFromMediaUri(this, getContentResolver(), saveUri)
             );
 
-            setResultUri(saveUri);
+            setResultUri(saveUri, scaledCropRect);
         }
 
         final Bitmap b = croppedImage;
@@ -414,8 +414,11 @@ public class CropImageActivity extends MonitoredActivity {
         return isSaving;
     }
 
-    private void setResultUri(Uri uri) {
-        setResult(RESULT_OK, new Intent().putExtra(MediaStore.EXTRA_OUTPUT, uri));
+    private void setResultUri(Uri uri, Rect scaledCropRect) {
+        Intent intent = new Intent();
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        intent.putExtra(Crop.BOUNDS, scaledCropRect);
+        setResult(RESULT_OK, intent);
     }
 
     private void setResultException(Throwable throwable) {
