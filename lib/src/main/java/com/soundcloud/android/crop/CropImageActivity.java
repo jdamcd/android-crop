@@ -325,7 +325,7 @@ public class CropImageActivity extends MonitoredActivity {
                 RectF adjusted = new RectF();
                 matrix.mapRect(adjusted, new RectF(rect));
 
-                //when your picture are not square,if the exifRotation is 90 or 270,
+                //if the cutting box are rectangle( outWidth != outHeight ),and the exifRotation is 90 or 270,
                 //the outWidth and outHeight showld be interchanged
                 if (exifRotation==90||exifRotation==270){
                     int temp=outWidth;
@@ -344,7 +344,12 @@ public class CropImageActivity extends MonitoredActivity {
                     Matrix matrix = new Matrix();
                     matrix.postScale((float) outWidth / rect.width(), (float) outHeight / rect.height());
 
-                    //if the picture's exifRotation !=0 ,they should be go to adjust
+                    //if the picture's exifRotation !=0 ,they should be rotate to 0 degrees
+                    matrix.postRotate(exifRotation);
+                    croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), matrix, true);
+                }else{
+                    //if the picture need not to be scale, they also neet to be rotate to 0 degrees
+                    Matrix matrix = new Matrix();
                     matrix.postRotate(exifRotation);
                     croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), matrix, true);
                 }
