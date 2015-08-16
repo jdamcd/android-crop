@@ -192,4 +192,30 @@ public class Crop {
         }
     }
 
+    public static void pickImage(android.support.v4.app.Fragment fragment) {
+        pickImageFragment(fragment, REQUEST_PICK);
+    }
+
+    public static void pickImageFragment(android.support.v4.app.Fragment fragment, int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
+        try {
+            fragment.startActivityForResult(intent, requestCode);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(fragment.getActivity(), R.string.crop__pick_error, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static void pickImage(Fragment fragment) {
+        pickImageFragment(fragment, REQUEST_PICK);
+    }
+
+    public static void pickImageFragment(Fragment fragment, int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
+        try {
+            fragment.startActivityForResult(intent, requestCode);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(fragment.getActivity(), R.string.crop__pick_error, Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
