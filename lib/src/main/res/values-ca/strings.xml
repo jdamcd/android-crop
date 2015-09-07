@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="crop__saving">Guardant imatge…</string>
+    <string name="crop__wait">Si us plau esperi…</string>
+    <string name="crop__pick_error">No hi ha imatges disponibles</string>
+
+    <string name="crop__done">ACCEPTAR</string>
+    <string name="crop__cancel" tools:ignore="ButtonCase">CANCEL·LAR</string>
+
+</resources>
