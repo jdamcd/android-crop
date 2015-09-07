@@ -25,11 +25,13 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.opengl.GLES10;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,11 +69,10 @@ public class CropImageActivity extends MonitoredActivity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.crop__activity_crop);
-        initViews();
+        setupWindowFlags();
+        setupViews();
 
-        setupFromIntent();
+        loadInput();
         if (rotateBitmap == null) {
             finish();
             return;
@@ -79,7 +80,16 @@ public class CropImageActivity extends MonitoredActivity {
         startCrop();
     }
 
-    private void initViews() {
+    private void setupWindowFlags() {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+    }
+
+    private void setupViews() {
+        setContentView(R.layout.crop__activity_crop);
+
         imageView = (CropImageView) findViewById(R.id.crop_image);
         imageView.context = this;
         imageView.setRecycler(new ImageViewTouchBase.Recycler() {
@@ -104,7 +114,7 @@ public class CropImageActivity extends MonitoredActivity {
         });
     }
 
-    private void setupFromIntent() {
+    private void loadInput() {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
