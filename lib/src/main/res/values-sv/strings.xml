@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="crop__saving">Sparar bild…</string>
+    <string name="crop__wait">Var god vänta…</string>
+    <string name="crop__pick_error">Inga bildkällor tillgängliga</string>
+
+    <string name="crop__done">KLAR</string>
+    <string name="crop__cancel" tools:ignore="ButtonCase">AVBRYT</string>
+
+</resources>
