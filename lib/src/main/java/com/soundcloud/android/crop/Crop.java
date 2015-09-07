@@ -18,7 +18,7 @@ public class Crop {
     public static final int REQUEST_PICK = 9162;
     public static final int RESULT_ERROR = 404;
 
-    static interface Extra {
+    interface Extra {
         String ASPECT_X = "aspect_x";
         String ASPECT_Y = "aspect_y";
         String MAX_X = "max_x";
@@ -87,7 +87,7 @@ public class Crop {
     }
 
     /**
-     * Send the crop Intent from an Activity with a custom requestCode
+     * Send the crop Intent from an Activity with a custom request code
      *
      * @param activity Activity to receive result
      * @param requestCode requestCode for result
@@ -117,7 +117,7 @@ public class Crop {
 	}
 
     /**
-     * Send the crop Intent with a custom requestCode
+     * Send the crop Intent with a custom request code
      *
      * @param context Context
      * @param fragment Fragment to receive result
@@ -128,7 +128,7 @@ public class Crop {
     }
 
 	/**
-	 * Send the crop Intent with a custom requestCode
+	 * Send the crop Intent with a custom request code
 	 *
 	 * @param context Context
 	 * @param fragment Fragment to receive result
@@ -169,53 +169,84 @@ public class Crop {
     }
 
     /**
-     * Utility to start an image picker
+     * Pick image from an Activity
      *
-     * @param activity Activity that will receive result
+     * @param activity Activity to receive result
      */
     public static void pickImage(Activity activity) {
         pickImage(activity, REQUEST_PICK);
     }
 
     /**
-     * Utility to start an image picker with request code
+     * Pick image from a Fragment
      *
-     * @param activity Activity that will receive result
+     * @param context Context
+     * @param fragment Fragment to receive result
+     */
+    public static void pickImage(Context context, Fragment fragment) {
+        pickImage(context, fragment, REQUEST_PICK);
+    }
+
+    /**
+     * Pick image from a support library Fragment
+     *
+     * @param context Context
+     * @param fragment Fragment to receive result
+     */
+    public static void pickImage(Context context, android.support.v4.app.Fragment fragment) {
+        pickImage(context, fragment, REQUEST_PICK);
+    }
+
+    /**
+     * Pick image from an Activity with a custom request code
+     *
+     * @param activity Activity to receive result
      * @param requestCode requestCode for result
      */
     public static void pickImage(Activity activity, int requestCode) {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
         try {
-            activity.startActivityForResult(intent, requestCode);
+            activity.startActivityForResult(getImagePicker(), requestCode);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(activity, R.string.crop__pick_error, Toast.LENGTH_SHORT).show();
+            showImagePickerError(activity);
         }
     }
 
-    public static void pickImage(android.support.v4.app.Fragment fragment) {
-        pickImageFragment(fragment, REQUEST_PICK);
-    }
-
-    public static void pickImageFragment(android.support.v4.app.Fragment fragment, int requestCode) {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
+    /**
+     * Pick image from a Fragment with a custom request code
+     *
+     * @param context Context
+     * @param fragment Fragment to receive result
+     * @param requestCode requestCode for result
+     */
+    public static void pickImage(Context context, Fragment fragment, int requestCode) {
         try {
-            fragment.startActivityForResult(intent, requestCode);
+            fragment.startActivityForResult(getImagePicker(), requestCode);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(fragment.getActivity(), R.string.crop__pick_error, Toast.LENGTH_SHORT).show();
+            showImagePickerError(context);
         }
     }
 
-    public static void pickImage(Fragment fragment) {
-        pickImageFragment(fragment, REQUEST_PICK);
+    /**
+     * Pick image from a support library Fragment with a custom request code
+     *
+     * @param context Context
+     * @param fragment Fragment to receive result
+     * @param requestCode requestCode for result
+     */
+    public static void pickImage(Context context, android.support.v4.app.Fragment fragment, int requestCode) {
+        try {
+            fragment.startActivityForResult(getImagePicker(), requestCode);
+        } catch (ActivityNotFoundException e) {
+            showImagePickerError(context);
+        }
     }
 
-    public static void pickImageFragment(Fragment fragment, int requestCode) {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
-        try {
-            fragment.startActivityForResult(intent, requestCode);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(fragment.getActivity(), R.string.crop__pick_error, Toast.LENGTH_SHORT).show();
-        }
+    private static Intent getImagePicker() {
+        return new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
+    }
+
+    private static void showImagePickerError(Context context) {
+        Toast.makeText(context, R.string.crop__pick_error, Toast.LENGTH_SHORT).show();
     }
 
 }
