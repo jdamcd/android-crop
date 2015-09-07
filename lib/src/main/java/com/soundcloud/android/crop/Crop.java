@@ -31,7 +31,7 @@ public class Crop {
     /**
      * Create a crop Intent builder with source and destination image Uris
      *
-     * @param source Uri for image to crop
+     * @param source      Uri for image to crop
      * @param destination Uri for saving the cropped image
      */
     public static Crop of(Uri source, Uri destination) {
@@ -68,7 +68,7 @@ public class Crop {
     /**
      * Set maximum crop size
      *
-     * @param width Max width
+     * @param width  Max width
      * @param height Max height
      */
     public Crop withMaxSize(int width, int height) {
@@ -89,7 +89,7 @@ public class Crop {
     /**
      * Send the crop Intent from an Activity with a custom request code
      *
-     * @param activity Activity to receive result
+     * @param activity    Activity to receive result
      * @param requestCode requestCode for result
      */
     public void start(Activity activity, int requestCode) {
@@ -99,44 +99,44 @@ public class Crop {
     /**
      * Send the crop Intent from a Fragment
      *
-     * @param context Context
+     * @param context  Context
      * @param fragment Fragment to receive result
      */
     public void start(Context context, Fragment fragment) {
         start(context, fragment, REQUEST_CROP);
     }
 
-	/**
-	 * Send the crop Intent from a support library Fragment
-	 *
-	 * @param context Context
-	 * @param fragment Fragment to receive result
-	 */
-	public void start(Context context, android.support.v4.app.Fragment fragment) {
-		start(context, fragment, REQUEST_CROP);
-	}
+    /**
+     * Send the crop Intent from a support library Fragment
+     *
+     * @param context  Context
+     * @param fragment Fragment to receive result
+     */
+    public void start(Context context, android.support.v4.app.Fragment fragment) {
+        start(context, fragment, REQUEST_CROP);
+    }
 
     /**
      * Send the crop Intent with a custom request code
      *
-     * @param context Context
-     * @param fragment Fragment to receive result
+     * @param context     Context
+     * @param fragment    Fragment to receive result
      * @param requestCode requestCode for result
      */
     public void start(Context context, Fragment fragment, int requestCode) {
         fragment.startActivityForResult(getIntent(context), requestCode);
     }
 
-	/**
-	 * Send the crop Intent with a custom request code
-	 *
-	 * @param context Context
-	 * @param fragment Fragment to receive result
-	 * @param requestCode requestCode for result
-	 */
-	public void start(Context context, android.support.v4.app.Fragment fragment, int requestCode) {
-		fragment.startActivityForResult(getIntent(context), requestCode);
-	}
+    /**
+     * Send the crop Intent with a custom request code
+     *
+     * @param context     Context
+     * @param fragment    Fragment to receive result
+     * @param requestCode requestCode for result
+     */
+    public void start(Context context, android.support.v4.app.Fragment fragment, int requestCode) {
+        fragment.startActivityForResult(getIntent(context), requestCode);
+    }
 
     /**
      * Get Intent to start crop Activity
@@ -180,7 +180,7 @@ public class Crop {
     /**
      * Pick image from a Fragment
      *
-     * @param context Context
+     * @param context  Context
      * @param fragment Fragment to receive result
      */
     public static void pickImage(Context context, Fragment fragment) {
@@ -190,7 +190,7 @@ public class Crop {
     /**
      * Pick image from a support library Fragment
      *
-     * @param context Context
+     * @param context  Context
      * @param fragment Fragment to receive result
      */
     public static void pickImage(Context context, android.support.v4.app.Fragment fragment) {
@@ -200,7 +200,7 @@ public class Crop {
     /**
      * Pick image from an Activity with a custom request code
      *
-     * @param activity Activity to receive result
+     * @param activity    Activity to receive result
      * @param requestCode requestCode for result
      */
     public static void pickImage(Activity activity, int requestCode) {
@@ -214,8 +214,8 @@ public class Crop {
     /**
      * Pick image from a Fragment with a custom request code
      *
-     * @param context Context
-     * @param fragment Fragment to receive result
+     * @param context     Context
+     * @param fragment    Fragment to receive result
      * @param requestCode requestCode for result
      */
     public static void pickImage(Context context, Fragment fragment, int requestCode) {
@@ -229,8 +229,8 @@ public class Crop {
     /**
      * Pick image from a support library Fragment with a custom request code
      *
-     * @param context Context
-     * @param fragment Fragment to receive result
+     * @param context     Context
+     * @param fragment    Fragment to receive result
      * @param requestCode requestCode for result
      */
     public static void pickImage(Context context, android.support.v4.app.Fragment fragment, int requestCode) {
