@@ -8,6 +8,6 @@ android:
     - extra-android-support
     - extra-android-m2repository
 
-install:
+script:
  - ./gradlew clean build
   
