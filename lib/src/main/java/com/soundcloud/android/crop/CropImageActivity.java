@@ -16,6 +16,7 @@
 
 package com.soundcloud.android.crop;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -80,6 +81,7 @@ public class CropImageActivity extends MonitoredActivity {
         startCrop();
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     private void setupWindowFlags() {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
