@@ -99,7 +99,7 @@ public class CropImageView extends ImageViewTouchBase {
                     motionHighlightView = hv;
                     lastX = event.getX();
                     lastY = event.getY();
-                    //Prevent multiple touches from interfering with crop area re-sizing
+                    // Prevent multiple touches from interfering with crop area re-sizing
                     validPointerId = event.getPointerId(event.getActionIndex());
                     motionHighlightView.setMode((edge == HighlightView.MOVE)
                             ? HighlightView.ModifyMode.Move
@@ -121,9 +121,10 @@ public class CropImageView extends ImageViewTouchBase {
                         - lastX, event.getY() - lastY);
                 lastX = event.getX();
                 lastY = event.getY();
-                //Prevent image twitching when trying to zoom back to max bounds
-                if (motionEdge == HighlightView.MOVE)
+                if (motionEdge == HighlightView.MOVE) {
+                    // Prevent image "twitching" when zooming back to max bounds
                     ensureVisible(motionHighlightView);
+                }
             }
             break;
         }
@@ -133,10 +134,8 @@ public class CropImageView extends ImageViewTouchBase {
             center(true, true);
             break;
         case MotionEvent.ACTION_MOVE:
-            // if we're not zoomed then there's no point in even allowing
-            // the user to move the image around. This call to center puts
-            // it back to the normalized location (with false meaning don't
-            // animate).
+            // If we're not zoomed then there's no point in even allowing the user to move the image around.
+            // This call to center puts it back to the normalized location (with false meaning don't animate).
             if (getScale() == 1F) {
                 center(true, true);
             }
