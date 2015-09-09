@@ -114,6 +114,7 @@ public class CropImageView extends ImageViewTouchBase {
                 motionHighlightView.setMode(HighlightView.ModifyMode.None);
             }
             motionHighlightView = null;
+            center();
             break;
         case MotionEvent.ACTION_MOVE:
             if (motionHighlightView != null && event.getPointerId(event.getActionIndex()) == validPointerId) {
@@ -126,18 +127,11 @@ public class CropImageView extends ImageViewTouchBase {
                     ensureVisible(motionHighlightView);
                 }
             }
-            break;
-        }
 
-        switch (event.getAction()) {
-        case MotionEvent.ACTION_UP:
-            center(true, true);
-            break;
-        case MotionEvent.ACTION_MOVE:
             // If we're not zoomed then there's no point in even allowing the user to move the image around.
-            // This call to center puts it back to the normalized location (with false meaning don't animate).
+            // This call to center puts it back to the normalized location.
             if (getScale() == 1F) {
-                center(true, true);
+                center();
             }
             break;
         }

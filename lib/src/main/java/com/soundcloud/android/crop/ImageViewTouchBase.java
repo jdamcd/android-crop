@@ -192,12 +192,10 @@ abstract class ImageViewTouchBase extends ImageView {
         maxZoom = calculateMaxZoom();
     }
 
-    // Center as much as possible in one or both axis.  Centering is
-    // defined as follows:  if the image is scaled down below the
-    // view's dimensions then center it (literally).  If the image
-    // is scaled larger than the view and is translated out of view
-    // then translate it back into view (i.e. eliminate black bars).
-    protected void center(boolean horizontal, boolean vertical) {
+    // Center as much as possible in one or both axis.  Centering is defined as follows:
+    // * If the image is scaled down below the view's dimensions then center it.
+    // * If the image is scaled larger than the view and is translated out of view then translate it back into view.
+    protected void center() {
         final Bitmap bitmap = bitmapDisplayed.getBitmap();
         if (bitmap == null) {
             return;
@@ -212,30 +210,35 @@ abstract class ImageViewTouchBase extends ImageView {
 
         float deltaX = 0, deltaY = 0;
 
-        if (vertical) {
-            int viewHeight = getHeight();
-            if (height < viewHeight) {
-                deltaY = (viewHeight - height) / 2 - rect.top;
-            } else if (rect.top > 0) {
-                deltaY = -rect.top;
-            } else if (rect.bottom < viewHeight) {
-                deltaY = getHeight() - rect.bottom;
-            }
-        }
-
-        if (horizontal) {
-            int viewWidth = getWidth();
-            if (width < viewWidth) {
-                deltaX = (viewWidth - width) / 2 - rect.left;
-            } else if (rect.left > 0) {
-                deltaX = -rect.left;
-            } else if (rect.right < viewWidth) {
-                deltaX = viewWidth - rect.right;
-            }
-        }
+        deltaY = centerVertical(rect, height, deltaY);
+        deltaX = centerHorizontal(rect, width, deltaX);
 
         postTranslate(deltaX, deltaY);
         setImageMatrix(getImageViewMatrix());
+    }
+
+    private float centerVertical(RectF rect, float height, float deltaY) {
+        int viewHeight = getHeight();
+        if (height < viewHeight) {
+            deltaY = (viewHeight - height) / 2 - rect.top;
+        } else if (rect.top > 0) {
+            deltaY = -rect.top;
+        } else if (rect.bottom < viewHeight) {
+            deltaY = getHeight() - rect.bottom;
+        }
+        return deltaY;
+    }
+
+    private float centerHorizontal(RectF rect, float width, float deltaX) {
+        int viewWidth = getWidth();
+        if (width < viewWidth) {
+            deltaX = (viewWidth - width) / 2 - rect.left;
+        } else if (rect.left > 0) {
+            deltaX = -rect.left;
+        } else if (rect.right < viewWidth) {
+            deltaX = viewWidth - rect.right;
+        }
+        return deltaX;
     }
 
     private void init() {
@@ -313,7 +316,7 @@ abstract class ImageViewTouchBase extends ImageView {
 
         suppMatrix.postScale(deltaScale, deltaScale, centerX, centerY);
         setImageMatrix(getImageViewMatrix());
-        center(true, true);
+        center();
     }
 
     protected void zoomTo(final float scale, final float centerX,
@@ -383,7 +386,7 @@ abstract class ImageViewTouchBase extends ImageView {
             suppMatrix.postScale(1F / rate, 1F / rate, cx, cy);
         }
         setImageMatrix(getImageViewMatrix());
-        center(true, true);
+        center();
     }
 
     protected void postTranslate(float dx, float dy) {

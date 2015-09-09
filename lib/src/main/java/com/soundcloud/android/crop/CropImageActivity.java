@@ -198,7 +198,7 @@ public class CropImageActivity extends MonitoredActivity {
                         handler.post(new Runnable() {
                             public void run() {
                                 if (imageView.getScale() == 1F) {
-                                    imageView.center(true, true);
+                                    imageView.center();
                                 }
                                 latch.countDown();
                             }
@@ -296,7 +296,7 @@ public class CropImageActivity extends MonitoredActivity {
 
         if (croppedImage != null) {
             imageView.setImageRotateBitmapResetBase(new RotateBitmap(croppedImage, exifRotation), true);
-            imageView.center(true, true);
+            imageView.center();
             imageView.highlightViews.clear();
         }
         saveImage(croppedImage);
