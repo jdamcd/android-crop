@@ -122,10 +122,6 @@ public class CropImageView extends ImageViewTouchBase {
                         - lastX, event.getY() - lastY);
                 lastX = event.getX();
                 lastY = event.getY();
-                if (motionEdge == HighlightView.MOVE) {
-                    // Prevent image "twitching" when zooming back to max bounds
-                    ensureVisible(motionHighlightView);
-                }
             }
 
             // If we're not zoomed then there's no point in even allowing the user to move the image around.
@@ -187,8 +183,8 @@ public class CropImageView extends ImageViewTouchBase {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-        for (HighlightView mHighlightView : highlightViews) {
-            mHighlightView.draw(canvas);
+        for (HighlightView highlightView : highlightViews) {
+            highlightView.draw(canvas);
         }
     }
 
