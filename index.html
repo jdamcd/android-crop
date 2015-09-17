@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>android-crop by jdamcd</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">android-crop</h1>
+      <h2 class="project-tagline">An Android library project for cropping images</h2>
+      <a href="https://github.com/jdamcd/android-crop" class="btn">View on GitHub</a>
+      <a href="https://github.com/jdamcd/android-crop/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/jdamcd/android-crop/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <blockquote>
+<p>I guess people are just cropping out all the sadness</p>
+</blockquote>
+
+<p>An Android library project to provide a simple image cropping <code>Activity</code>, based on code from AOSP.</p>
+
+<p><a href="https://travis-ci.org/jdamcd/android-crop"><img src="https://travis-ci.org/jdamcd/android-crop.png" alt="build status"></a> 
+<a href="http://search.maven.org/#artifactdetails%7Ccom.soundcloud.android%7Candroid-crop%7C1.0.1%7Caar.asc"><img src="https://img.shields.io/badge/maven%20central-1.0.1-brightgreen.svg" alt="maven central"></a>
+<a href="CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-1.0.1-lightgrey.svg" alt="changelog"></a></p>
+
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Gradle build &amp; AAR</li>
+<li>Modern UI</li>
+<li>Backwards compatible to SDK 10</li>
+<li>Simple builder for configuration</li>
+<li>Example project</li>
+</ul>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>First, declare <code>CropImageActivity</code> in your manifest file:</p>
+
+<p><code>&lt;activity android:name="com.soundcloud.android.crop.CropImageActivity" /&gt;</code></p>
+
+<h4>
+<a id="crop" class="anchor" href="#crop" aria-hidden="true"><span class="octicon octicon-link"></span></a>Crop</h4>
+
+<p><code>Crop.of(inputUri, outputUri).asSquare().start(activity)</code></p>
+
+<p>Listen for the result of the crop (see example project if you want to do some error handling):</p>
+
+<pre><code>@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent result) {
+    if (requestCode == Crop.REQUEST_CROP &amp;&amp; resultCode == RESULT_OK) {
+        doSomethingWithCroppedImage(outputUri);
+    }
+}
+</code></pre>
+
+<p>Some options are provided to style the crop screen. See example project theme.</p>
+
+<h4>
+<a id="pick" class="anchor" href="#pick" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pick</h4>
+
+<p>The library provides a utility method to start an image picker:</p>
+
+<p><code>Crop.pickImage(activity)</code></p>
+
+<h4>
+<a id="dependency" class="anchor" href="#dependency" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dependency</h4>
+
+<p>The AAR is published on Maven Central:</p>
+
+<p><code>compile 'com.soundcloud.android:android-crop:1.0.1@aar'</code></p>
+
+<h4>
+<a id="users" class="anchor" href="#users" aria-hidden="true"><span class="octicon octicon-link"></span></a>Users</h4>
+
+<p>Apps that use this library include: <a href="https://play.google.com/store/apps/details?id=com.soundcloud.android">SoundCloud</a>, <a href="https://play.google.com/store/apps/details?id=com.depop">Depop</a>, <a href="https://play.google.com/store/apps/details?id=com.polyvore">Polyvore</a>, <a href="https://play.google.com/store/apps/details?id=org.thoughtcrime.securesms">TextSecure</a></p>
+
+<h2>
+<a id="how-does-it-look" class="anchor" href="#how-does-it-look" aria-hidden="true"><span class="octicon octicon-link"></span></a>How does it look?</h2>
+
+<p><img src="screenshot.png" alt="android-crop screenshot"></p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>This project is based on the <a href="https://source.android.com">AOSP</a> camera image cropper via <a href="https://github.com/lvillani/android-cropimage">android-cropimage</a>.</p>
+
+<pre><code>Copyright 2015 SoundCloud
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+</code></pre>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/jdamcd/android-crop">android-crop</a> is maintained by <a href="https://github.com/jdamcd">jdamcd</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
