@@ -246,7 +246,7 @@ public class Crop {
     }
 
     private static Intent getImagePicker() {
-        return new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
+        return new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI).setType("image/*");
     }
 
     private static void showImagePickerError(Context context) {
