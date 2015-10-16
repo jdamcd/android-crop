@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -16,12 +17,15 @@ import java.io.File;
 public class MainActivity extends Activity {
 
     private ImageView resultView;
+    private View progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         resultView = (ImageView) findViewById(R.id.result_image);
+        progress = findViewById(R.id.progress);
+        hideProgress();
     }
 
     @Override
@@ -33,6 +37,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_select) {
+            showProgress();
             resultView.setImageDrawable(null);
             Crop.pickImage(this);
             return true;
@@ -42,6 +47,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent result) {
+        hideProgress();
         if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
             beginCrop(result.getData());
         } else if (requestCode == Crop.REQUEST_CROP) {
@@ -50,11 +56,13 @@ public class MainActivity extends Activity {
     }
 
     private void beginCrop(Uri source) {
+        showProgress();
         Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
         Crop.of(source, destination).asSquare().start(this);
     }
 
     private void handleCrop(int resultCode, Intent result) {
+        hideProgress();
         if (resultCode == RESULT_OK) {
             resultView.setImageURI(Crop.getOutput(result));
         } else if (resultCode == Crop.RESULT_ERROR) {
@@ -62,4 +70,11 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void hideProgress() {
+        progress.setVisibility(View.INVISIBLE);
+    }
+
+    private void showProgress() {
+        progress.setVisibility(View.VISIBLE);
+    }
 }
