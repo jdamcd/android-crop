@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +19,7 @@ public class MainActivity extends Activity {
 
     private ImageView resultView;
     private View progress;
+    private int REQUEST_SHOOT = 5015;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +43,19 @@ public class MainActivity extends Activity {
             resultView.setImageDrawable(null);
             Crop.pickImage(this);
             return true;
+        } else if (item.getItemId() == R.id.action_camera) {
+            showProgress();
+            resultView.setImageDrawable(null);
+            shoot();
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void shoot() {
+        final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, getCaptureUri());
+        startActivityForResult(intent, REQUEST_SHOOT);
     }
 
     @Override
@@ -50,9 +63,15 @@ public class MainActivity extends Activity {
         hideProgress();
         if (requestCode == Crop.REQUEST_PICK && resultCode == RESULT_OK) {
             beginCrop(result.getData());
+        } else if (requestCode == REQUEST_SHOOT && resultCode == RESULT_OK) {
+            beginCrop(getCaptureUri());
         } else if (requestCode == Crop.REQUEST_CROP) {
             handleCrop(resultCode, result);
         }
+    }
+
+    private Uri getCaptureUri() {
+        return Uri.parse("content://com.soundcloud.android.crop.example.capture/capture.jpg");
     }
 
     private void beginCrop(Uri source) {

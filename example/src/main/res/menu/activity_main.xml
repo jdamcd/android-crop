@@ -6,4 +6,8 @@
         android:title="@string/action_select"
         android:showAsAction="always" />
 
+    <item android:id="@+id/action_camera"
+        android:title="@string/action_camera"
+        android:showAsAction="always" />
+
 </menu>
