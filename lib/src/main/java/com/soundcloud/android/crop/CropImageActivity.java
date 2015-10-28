@@ -67,11 +67,20 @@ public class CropImageActivity extends MonitoredActivity {
     private CropImageView imageView;
     private HighlightView cropView;
 
+    private int rotationInternal = 0;
+
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setupWindowFlags();
         setupViews();
+
+        if ( icicle == null ) {
+            rotationInternal = 0;
+        } else {
+            rotationInternal = icicle.getInt( "rotationInternal", 0 );
+        }
 
         loadInput();
         if (rotateBitmap == null) {
@@ -79,6 +88,12 @@ public class CropImageActivity extends MonitoredActivity {
             return;
         }
         startCrop();
+    }
+
+    @Override
+    public void onSaveInstanceState( Bundle outState ) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("rotationInternal", rotationInternal);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -114,6 +129,30 @@ public class CropImageActivity extends MonitoredActivity {
                 onSaveClicked();
             }
         });
+
+        findViewById(R.id.btn_rotate_left).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onRotate(270);
+            }
+        });
+
+        findViewById(R.id.btn_rotate_right).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onRotate(90);
+            }
+        });
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            if (extras.containsKey(Crop.Extra.ROTATION)) {
+                boolean enableRotation = extras.getBoolean(Crop.Extra.ROTATION);
+                if (enableRotation) {
+                    findViewById(R.id.btn_rotate_left).setVisibility(View.VISIBLE);
+                    findViewById(R.id.btn_rotate_right).setVisibility(View.VISIBLE);
+                }
+            }
+        }
     }
 
     private void loadInput() {
@@ -131,6 +170,9 @@ public class CropImageActivity extends MonitoredActivity {
         sourceUri = intent.getData();
         if (sourceUri != null) {
             exifRotation = CropUtil.getExifRotation(CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri));
+
+            exifRotation = (exifRotation + rotationInternal) % 360;
+            if (exifRotation<0) exifRotation+=360;
 
             InputStream is = null;
             try {
@@ -187,11 +229,15 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     private void startCrop() {
+        startCrop(getResources().getString(R.string.crop__wait));
+    }
+
+    private void startCrop( String message ) {
         if (isFinishing()) {
             return;
         }
         imageView.setImageRotateBitmapResetBase(rotateBitmap, true);
-        CropUtil.startBackgroundJob(this, null, getResources().getString(R.string.crop__wait),
+        CropUtil.startBackgroundJob(this, null, message,
                 new Runnable() {
                     public void run() {
                         final CountDownLatch latch = new CountDownLatch(1);
@@ -261,6 +307,25 @@ public class CropImageActivity extends MonitoredActivity {
             });
         }
     }
+
+
+    private void onRotate( int angle ) {
+        if ( (angle==0) || (angle==90) || (angle==180) || (angle==270) ) {
+            rotationInternal = (rotationInternal + angle) % 360;
+            if (rotationInternal<0) rotationInternal += 360;
+        } else {
+            return;
+        }
+
+        imageView.reset();
+        loadInput();
+        if (rotateBitmap == null) {
+            finish();
+            return;
+        }
+        startCrop(null);
+    }
+
 
     private void onSaveClicked() {
         if (cropView == null || isSaving) {
@@ -344,9 +409,17 @@ public class CropImageActivity extends MonitoredActivity {
 
             try {
                 croppedImage = decoder.decodeRegion(rect, new BitmapFactory.Options());
-                if (rect.width() > outWidth || rect.height() > outHeight) {
+
+                int rectW = rect.width();
+                int rectH = rect.height();
+                if ( (Math.abs(exifRotation)!=0) && (Math.abs(exifRotation)!=180) ) {
+                    rectW = rect.height();
+                    rectH = rect.width();
+                }
+
+                if (rectW > outWidth || rectH > outHeight) {
                     Matrix matrix = new Matrix();
-                    matrix.postScale((float) outWidth / rect.width(), (float) outHeight / rect.height());
+                    matrix.postScale((float) outWidth / rectW, (float) outHeight / rectH);
                     croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), matrix, true);
                 }
             } catch (IllegalArgumentException e) {
@@ -376,12 +449,22 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     private void saveOutput(Bitmap croppedImage) {
+
+        int jpgQuality = 90;
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            if (extras.containsKey(Crop.Extra.JPG_QUALITY)) {
+                jpgQuality = extras.getInt(Crop.Extra.JPG_QUALITY);
+            }
+        }
+
         if (saveUri != null) {
             OutputStream outputStream = null;
             try {
                 outputStream = getContentResolver().openOutputStream(saveUri);
                 if (outputStream != null) {
-                    croppedImage.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+                    croppedImage.compress(Bitmap.CompressFormat.JPEG, jpgQuality, outputStream);
                 }
             } catch (IOException e) {
                 setResultException(e);
@@ -390,10 +473,15 @@ public class CropImageActivity extends MonitoredActivity {
                 CropUtil.closeSilently(outputStream);
             }
 
+            /*
             CropUtil.copyExifRotation(
                     CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri),
                     CropUtil.getFromMediaUri(this, getContentResolver(), saveUri)
             );
+            */
+            CropUtil.saveExifRotation(
+                    CropUtil.getFromMediaUri(this, getContentResolver(), saveUri),
+                    exifRotation );
 
             setResultUri(saveUri);
         }

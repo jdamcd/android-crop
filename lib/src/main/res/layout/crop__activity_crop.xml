@@ -7,7 +7,7 @@
 
     <include
         android:id="@+id/done_cancel_bar"
-        layout="@layout/crop__layout_done_cancel" />
+        layout="@layout/crop__layout_done_cancel_rotate" />
 
     <com.soundcloud.android.crop.CropImageView
         android:id="@+id/crop_image"

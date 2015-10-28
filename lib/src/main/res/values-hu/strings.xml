@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="crop__saving">Kép mentése…</string>
+    <string name="crop__wait">Kérem várjon…</string>
+    <string name="crop__pick_error">Nincs megfelelő kép</string>
+
+    <string name="crop__done">KÉSZ</string>
+    <string name="crop__cancel" tools:ignore="ButtonCase">ELVET</string>
+
+</resources>
