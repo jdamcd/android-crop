@@ -26,6 +26,7 @@ public class Crop {
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
         String ROTATION = "rotation";
+        String JPG_QUALITY = "jpg_quality";
         String ERROR = "error";
     }
 
@@ -85,6 +86,18 @@ public class Crop {
      */
     public Crop enableRotation() {
         cropIntent.putExtra(Extra.ROTATION, true);
+        return this;
+    }
+
+    /**
+     * Set JPG quality
+     *
+     * @param quality  JPG Quality (10< q <100)
+     */
+    public Crop withJpgQuality(int quality) {
+        if ( (quality>=10) || (quality<=100) ) {
+            cropIntent.putExtra(Extra.JPG_QUALITY, quality);
+        }
         return this;
     }
 
