@@ -19,6 +19,12 @@
         <item name="android:background">@drawable/crop__selectable_background</item>
     </style>
 
+    <style name="Crop.ActionButtonWrap">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/crop__selectable_background</item>
+    </style>
+
     <style name="Crop.ActionButtonText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -39,6 +45,20 @@
     <style name="Crop.ActionButtonText.Cancel">
         <item name="android:drawableLeft">@drawable/crop__ic_cancel</item>
         <item name="android:text">@string/crop__cancel</item>
+    </style>
+
+    <style name="Crop.ActionButtonText.RotateRight">
+        <item name="android:drawableLeft">@drawable/crop__ic_rotate_right</item>
+        <item name="android:drawablePadding">0dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+    </style>
+
+    <style name="Crop.ActionButtonText.RotateLeft">
+        <item name="android:drawableLeft">@drawable/crop__ic_rotate_left</item>
+        <item name="android:drawablePadding">0dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
     </style>
 
 </resources>

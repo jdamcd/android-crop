@@ -192,4 +192,10 @@ public class CropImageView extends ImageViewTouchBase {
         highlightViews.add(hv);
         invalidate();
     }
+
+    public void reset() {
+        highlightViews.clear();
+        invalidate();
+    }
+
 }

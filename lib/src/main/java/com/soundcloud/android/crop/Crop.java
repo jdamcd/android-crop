@@ -25,6 +25,7 @@ public class Crop {
         String ASPECT_Y = "aspect_y";
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
+        String ROTATION = "rotation";
         String ERROR = "error";
     }
 
@@ -76,6 +77,14 @@ public class Crop {
     public Crop withMaxSize(int width, int height) {
         cropIntent.putExtra(Extra.MAX_X, width);
         cropIntent.putExtra(Extra.MAX_Y, height);
+        return this;
+    }
+
+    /**
+     * Enable rotation*
+     */
+    public Crop enableRotation() {
+        cropIntent.putExtra(Extra.ROTATION, true);
         return this;
     }
 

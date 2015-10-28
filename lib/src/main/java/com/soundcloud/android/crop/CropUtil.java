@@ -38,7 +38,7 @@ import java.io.IOException;
 /*
  * Modified from original in AOSP.
  */
-class CropUtil {
+public class CropUtil {
 
     private static final String SCHEME_FILE = "file";
     private static final String SCHEME_CONTENT = "content";
@@ -83,6 +83,33 @@ class CropUtil {
             return true;
         } catch (IOException e) {
             Log.e("Error copying Exif data", e);
+            return false;
+        }
+    }
+
+    public static boolean saveExifRotation( File destFile, int exifRotation ) {
+        if (destFile == null) return false;
+        exifRotation = exifRotation % 360;
+        if (exifRotation<0) exifRotation+=360;
+        try {
+            ExifInterface exifDest = new ExifInterface(destFile.getAbsolutePath());
+            switch (exifRotation) {
+                case 90:
+                    exifDest.setAttribute( ExifInterface.TAG_ORIENTATION, "" + ExifInterface.ORIENTATION_ROTATE_90 );
+                    break;
+                case 180:
+                    exifDest.setAttribute( ExifInterface.TAG_ORIENTATION, "" + ExifInterface.ORIENTATION_ROTATE_180 );
+                    break;
+                case 270:
+                    exifDest.setAttribute( ExifInterface.TAG_ORIENTATION, "" + ExifInterface.ORIENTATION_ROTATE_270 );
+                    break;
+                default:
+                    exifDest.setAttribute( ExifInterface.TAG_ORIENTATION, "" + ExifInterface.ORIENTATION_NORMAL );
+            }
+            exifDest.saveAttributes();
+            return true;
+        } catch (IOException e) {
+            Log.e("Error saving Exif data", e);
             return false;
         }
     }
@@ -161,8 +188,10 @@ class CropUtil {
             String title, String message, Runnable job, Handler handler) {
         // Make the progress dialog uncancelable, so that we can guarantee
         // the thread will be done before the activity getting destroyed
-        ProgressDialog dialog = ProgressDialog.show(
-                activity, title, message, true, false);
+        ProgressDialog dialog = null;
+        if (null!=message) {
+            dialog = ProgressDialog.show(activity, title, message, true, false);
+        }
         new Thread(new BackgroundJob(activity, job, dialog, handler)).start();
     }
 
@@ -175,7 +204,7 @@ class CropUtil {
         private final Runnable cleanupRunner = new Runnable() {
             public void run() {
                 activity.removeLifeCycleListener(BackgroundJob.this);
-                if (dialog.getWindow() != null) dialog.dismiss();
+                if ( (null!=dialog) && (dialog.getWindow() != null)) dialog.dismiss();
             }
         };
 
@@ -206,12 +235,16 @@ class CropUtil {
 
         @Override
         public void onActivityStopped(MonitoredActivity activity) {
-            dialog.hide();
+            if (null!=dialog) {
+                dialog.hide();
+            }
         }
 
         @Override
         public void onActivityStarted(MonitoredActivity activity) {
-            dialog.show();
+            if (null!=dialog) {
+                dialog.show();
+            }
         }
     }
 
