@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="crop__saving">Bild speichern…</string>
+    <string name="crop__wait">Bitte warten…</string>
+    <string name="crop__pick_error">Keine Bildquellen verfügbar</string>
+
+    <string name="crop__done">übernehmen</string>
+    <string name="crop__cancel" tools:ignore="ButtonCase">abbrechen</string>
+
+</resources>
