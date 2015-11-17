@@ -361,6 +361,9 @@ public class CropImageActivity extends MonitoredActivity {
         } catch (OutOfMemoryError e) {
             Log.e("OOM cropping image: " + e.getMessage(), e);
             setResultException(e);
+        } catch (NullPointerException e) {
+            Log.e("NPE cropping image: " + e.getMessage(), e);
+            setResultException(e);
         } finally {
             CropUtil.closeSilently(is);
         }
