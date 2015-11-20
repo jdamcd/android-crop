@@ -1,3 +1,7 @@
+## Next
+* Fix max size crash when input cannot be decoded
+* Translations: German, Chinese (simplified & traditional)
+
 ## 1.0.1
 
 * Support image picker helper from Fragments
