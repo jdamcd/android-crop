@@ -39,7 +39,7 @@ protected void onActivityResult(int requestCode, int resultCode, Intent result) 
 }
 ```
     
-Some options are provided to style the crop screen. See example project theme.
+Some attributes are provided to customise of the crop screen. See example project [theme](https://github.com/jdamcd/android-crop/blob/master/example/src/main/res/values/theme.xml).
 
 #### Pick
 
