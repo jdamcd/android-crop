@@ -321,7 +321,7 @@ public class CropImageActivity extends MonitoredActivity {
 
         if (croppedImage != null) {
             imageView.setImageBitmapResetBase(croppedImage, true);
-            imageView.center(true, true);
+            imageView.center();
             imageView.highlightViews.clear();
         }
         saveImage(croppedImage);
