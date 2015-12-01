@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="crop__saving">正在儲存相片…</string>
+    <string name="crop__wait">請稍候…</string>
+    <string name="crop__pick_error">沒有可用的圖片來源</string>
+
+    <string name="crop__done">完成</string>
+    <string name="crop__cancel" tools:ignore="ButtonCase">取消</string>
+
+</resources>

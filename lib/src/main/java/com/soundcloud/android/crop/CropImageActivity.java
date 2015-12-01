@@ -16,6 +16,7 @@
 
 package com.soundcloud.android.crop;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,12 +26,14 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.opengl.GLES10;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Pair;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,11 +72,10 @@ public class CropImageActivity extends MonitoredActivity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.crop__activity_crop);
-        initViews();
+        setupWindowFlags();
+        setupViews();
 
-        setupFromIntent();
+        loadInput();
         if (srcBitmap == null) {
             finish();
             return;
@@ -81,7 +83,17 @@ public class CropImageActivity extends MonitoredActivity {
         startCrop();
     }
 
-    private void initViews() {
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    private void setupWindowFlags() {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+    }
+
+    private void setupViews() {
+        setContentView(R.layout.crop__activity_crop);
+
         imageView = (CropImageView) findViewById(R.id.crop_image);
         imageView.context = this;
         imageView.setRecycler(new ImageViewTouchBase.Recycler() {
@@ -106,7 +118,7 @@ public class CropImageActivity extends MonitoredActivity {
         });
     }
 
-    private void setupFromIntent() {
+    private void loadInput() {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         Bitmap initialBitmap ;
@@ -209,7 +221,7 @@ public class CropImageActivity extends MonitoredActivity {
                         handler.post(new Runnable() {
                             public void run() {
                                 if (imageView.getScale() == 1F) {
-                                    imageView.center(true, true);
+                                    imageView.center();
                                 }
                                 latch.countDown();
                             }
@@ -377,7 +389,7 @@ public class CropImageActivity extends MonitoredActivity {
 
         } catch (IOException e) {
             Log.e("Error cropping image: " + e.getMessage(), e);
-            finish();
+            setResultException(e);
         } catch (OutOfMemoryError e) {
             Log.e("OOM cropping image: " + e.getMessage(), e);
             setResultException(e);

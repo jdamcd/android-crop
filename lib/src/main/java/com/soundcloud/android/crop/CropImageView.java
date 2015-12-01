@@ -18,6 +18,7 @@ public class CropImageView extends ImageViewTouchBase {
     private float lastX;
     private float lastY;
     private int motionEdge;
+    private int validPointerId;
 
     public CropImageView(Context context) {
         super(context);
@@ -83,7 +84,7 @@ public class CropImageView extends ImageViewTouchBase {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
         CropImageActivity cropImageActivity = (CropImageActivity) context;
         if (cropImageActivity.isSaving()) {
             return false;
@@ -98,6 +99,8 @@ public class CropImageView extends ImageViewTouchBase {
                     motionHighlightView = hv;
                     lastX = event.getX();
                     lastY = event.getY();
+                    // Prevent multiple touches from interfering with crop area re-sizing
+                    validPointerId = event.getPointerId(event.getActionIndex());
                     motionHighlightView.setMode((edge == HighlightView.MOVE)
                             ? HighlightView.ModifyMode.Move
                             : HighlightView.ModifyMode.Grow);
@@ -111,29 +114,20 @@ public class CropImageView extends ImageViewTouchBase {
                 motionHighlightView.setMode(HighlightView.ModifyMode.None);
             }
             motionHighlightView = null;
+            center();
             break;
         case MotionEvent.ACTION_MOVE:
-            if (motionHighlightView != null) {
+            if (motionHighlightView != null && event.getPointerId(event.getActionIndex()) == validPointerId) {
                 motionHighlightView.handleMotion(motionEdge, event.getX()
                         - lastX, event.getY() - lastY);
                 lastX = event.getX();
                 lastY = event.getY();
-                ensureVisible(motionHighlightView);
             }
-            break;
-        }
 
-        switch (event.getAction()) {
-        case MotionEvent.ACTION_UP:
-            center(true, true);
-            break;
-        case MotionEvent.ACTION_MOVE:
-            // if we're not zoomed then there's no point in even allowing
-            // the user to move the image around. This call to center puts
-            // it back to the normalized location (with false meaning don't
-            // animate).
+            // If we're not zoomed then there's no point in even allowing the user to move the image around.
+            // This call to center puts it back to the normalized location.
             if (getScale() == 1F) {
-                center(true, true);
+                center();
             }
             break;
         }
@@ -189,8 +183,8 @@ public class CropImageView extends ImageViewTouchBase {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-        for (HighlightView mHighlightView : highlightViews) {
-            mHighlightView.draw(canvas);
+        for (HighlightView highlightView : highlightViews) {
+            highlightView.draw(canvas);
         }
     }
 

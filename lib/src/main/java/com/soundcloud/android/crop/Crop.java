@@ -1,11 +1,13 @@
 package com.soundcloud.android.crop;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
@@ -18,7 +20,7 @@ public class Crop {
     public static final int REQUEST_PICK = 9162;
     public static final int RESULT_ERROR = 404;
 
-    static interface Extra {
+    interface Extra {
         String ASPECT_X = "aspect_x";
         String ASPECT_Y = "aspect_y";
         String MAX_X = "max_x";
@@ -31,7 +33,7 @@ public class Crop {
     /**
      * Create a crop Intent builder with source and destination image Uris
      *
-     * @param source Uri for image to crop
+     * @param source      Uri for image to crop
      * @param destination Uri for saving the cropped image
      */
     public static Crop of(Uri source, Uri destination) {
@@ -68,7 +70,7 @@ public class Crop {
     /**
      * Set maximum crop size
      *
-     * @param width Max width
+     * @param width  Max width
      * @param height Max height
      */
     public Crop withMaxSize(int width, int height) {
@@ -87,9 +89,9 @@ public class Crop {
     }
 
     /**
-     * Send the crop Intent from an Activity with a custom requestCode
+     * Send the crop Intent from an Activity with a custom request code
      *
-     * @param activity Activity to receive result
+     * @param activity    Activity to receive result
      * @param requestCode requestCode for result
      */
     public void start(Activity activity, int requestCode) {
@@ -99,44 +101,45 @@ public class Crop {
     /**
      * Send the crop Intent from a Fragment
      *
-     * @param context Context
+     * @param context  Context
      * @param fragment Fragment to receive result
      */
     public void start(Context context, Fragment fragment) {
         start(context, fragment, REQUEST_CROP);
     }
 
-	/**
-	 * Send the crop Intent from a support library Fragment
-	 *
-	 * @param context Context
-	 * @param fragment Fragment to receive result
-	 */
-	public void start(Context context, android.support.v4.app.Fragment fragment) {
-		start(context, fragment, REQUEST_CROP);
-	}
+    /**
+     * Send the crop Intent from a support library Fragment
+     *
+     * @param context  Context
+     * @param fragment Fragment to receive result
+     */
+    public void start(Context context, android.support.v4.app.Fragment fragment) {
+        start(context, fragment, REQUEST_CROP);
+    }
 
     /**
-     * Send the crop Intent with a custom requestCode
+     * Send the crop Intent with a custom request code
      *
-     * @param context Context
-     * @param fragment Fragment to receive result
+     * @param context     Context
+     * @param fragment    Fragment to receive result
      * @param requestCode requestCode for result
      */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void start(Context context, Fragment fragment, int requestCode) {
         fragment.startActivityForResult(getIntent(context), requestCode);
     }
 
-	/**
-	 * Send the crop Intent with a custom requestCode
-	 *
-	 * @param context Context
-	 * @param fragment Fragment to receive result
-	 * @param requestCode requestCode for result
-	 */
-	public void start(Context context, android.support.v4.app.Fragment fragment, int requestCode) {
-		fragment.startActivityForResult(getIntent(context), requestCode);
-	}
+    /**
+     * Send the crop Intent with a custom request code
+     *
+     * @param context     Context
+     * @param fragment    Fragment to receive result
+     * @param requestCode requestCode for result
+     */
+    public void start(Context context, android.support.v4.app.Fragment fragment, int requestCode) {
+        fragment.startActivityForResult(getIntent(context), requestCode);
+    }
 
     /**
      * Get Intent to start crop Activity
@@ -169,27 +172,85 @@ public class Crop {
     }
 
     /**
-     * Utility to start an image picker
+     * Pick image from an Activity
      *
-     * @param activity Activity that will receive result
+     * @param activity Activity to receive result
      */
     public static void pickImage(Activity activity) {
         pickImage(activity, REQUEST_PICK);
     }
 
     /**
-     * Utility to start an image picker with request code
+     * Pick image from a Fragment
      *
-     * @param activity Activity that will receive result
+     * @param context  Context
+     * @param fragment Fragment to receive result
+     */
+    public static void pickImage(Context context, Fragment fragment) {
+        pickImage(context, fragment, REQUEST_PICK);
+    }
+
+    /**
+     * Pick image from a support library Fragment
+     *
+     * @param context  Context
+     * @param fragment Fragment to receive result
+     */
+    public static void pickImage(Context context, android.support.v4.app.Fragment fragment) {
+        pickImage(context, fragment, REQUEST_PICK);
+    }
+
+    /**
+     * Pick image from an Activity with a custom request code
+     *
+     * @param activity    Activity to receive result
      * @param requestCode requestCode for result
      */
     public static void pickImage(Activity activity, int requestCode) {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
         try {
-            activity.startActivityForResult(intent, requestCode);
+            activity.startActivityForResult(getImagePicker(), requestCode);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(activity, R.string.crop__pick_error, Toast.LENGTH_SHORT).show();
+            showImagePickerError(activity);
         }
+    }
+
+    /**
+     * Pick image from a Fragment with a custom request code
+     *
+     * @param context     Context
+     * @param fragment    Fragment to receive result
+     * @param requestCode requestCode for result
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static void pickImage(Context context, Fragment fragment, int requestCode) {
+        try {
+            fragment.startActivityForResult(getImagePicker(), requestCode);
+        } catch (ActivityNotFoundException e) {
+            showImagePickerError(context);
+        }
+    }
+
+    /**
+     * Pick image from a support library Fragment with a custom request code
+     *
+     * @param context     Context
+     * @param fragment    Fragment to receive result
+     * @param requestCode requestCode for result
+     */
+    public static void pickImage(Context context, android.support.v4.app.Fragment fragment, int requestCode) {
+        try {
+            fragment.startActivityForResult(getImagePicker(), requestCode);
+        } catch (ActivityNotFoundException e) {
+            showImagePickerError(context);
+        }
+    }
+
+    private static Intent getImagePicker() {
+        return new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
+    }
+
+    private static void showImagePickerError(Context context) {
+        Toast.makeText(context, R.string.crop__pick_error, Toast.LENGTH_SHORT).show();
     }
 
 }
