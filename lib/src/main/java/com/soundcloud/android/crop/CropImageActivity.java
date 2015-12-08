@@ -295,23 +295,22 @@ public class CropImageActivity extends MonitoredActivity {
         }
 
         if (croppedImage != null) {
-            imageView.setImageRotateBitmapResetBase(new RotateBitmap(croppedImage, exifRotation), true);
-            imageView.center();
+            //imageView.setImageRotateBitmapResetBase(new RotateBitmap(croppedImage, exifRotation), true);
+            //imageView.center();
             imageView.highlightViews.clear();
         }
         saveImage(croppedImage);
     }
 
-    private void saveImage(Bitmap croppedImage) {
-        if (croppedImage != null) {
-            final Bitmap b = croppedImage;
+    private void saveImage(final Bitmap b) {
+        if (b != null) {
             CropUtil.startBackgroundJob(this, null, getResources().getString(R.string.crop__saving),
                     new Runnable() {
                         public void run() {
                             saveOutput(b);
+                            b.recycle();
                         }
-                    }, handler
-            );
+                    }, handler);
         } else {
             finish();
         }
@@ -337,6 +336,14 @@ public class CropImageActivity extends MonitoredActivity {
                 RectF adjusted = new RectF();
                 matrix.mapRect(adjusted, new RectF(rect));
 
+                //if the cutting box are rectangle( outWidth != outHeight ),and the exifRotation is 90 or 270,
+                //the outWidth and outHeight should be interchanged
+                 if (exifRotation==90 || exifRotation==270) {
+                     int temp=outWidth;
+                     outWidth=outHeight;
+                     outHeight=temp;
+                 }
+
                 // Adjust to account for origin at 0,0
                 adjusted.offset(adjusted.left < 0 ? width : 0, adjusted.top < 0 ? height : 0);
                 rect = new Rect((int) adjusted.left, (int) adjusted.top, (int) adjusted.right, (int) adjusted.bottom);
@@ -344,11 +351,14 @@ public class CropImageActivity extends MonitoredActivity {
 
             try {
                 croppedImage = decoder.decodeRegion(rect, new BitmapFactory.Options());
-                if (croppedImage != null && (rect.width() > outWidth || rect.height() > outHeight)) {
-                    Matrix matrix = new Matrix();
+                Matrix matrix = new Matrix();
+                if (rect.width() > outWidth || rect.height() > outHeight) {
                     matrix.postScale((float) outWidth / rect.width(), (float) outHeight / rect.height());
-                    croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), matrix, true);
                 }
+                //If the picture's exifRotation !=0 ,they should be rotated to 0 degrees
+                //If the picture need not to be scale, they also need to be rotate to 0 degrees
+                matrix.postRotate(exifRotation);
+                croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), matrix, true);
             } catch (IllegalArgumentException e) {
                 // Rethrow with some extra information
                 throw new IllegalArgumentException("Rectangle " + rect + " is outside of the image ("
@@ -376,33 +386,35 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     private void saveOutput(Bitmap croppedImage) {
-        if (saveUri != null) {
-            OutputStream outputStream = null;
-            try {
-                outputStream = getContentResolver().openOutputStream(saveUri);
-                if (outputStream != null) {
-                    croppedImage.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
-                }
-            } catch (IOException e) {
-                setResultException(e);
-                Log.e("Cannot open file: " + saveUri, e);
-            } finally {
-                CropUtil.closeSilently(outputStream);
-            }
-
-            CropUtil.copyExifRotation(
-                    CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri),
-                    CropUtil.getFromMediaUri(this, getContentResolver(), saveUri)
-            );
-
-            setResultUri(saveUri);
+        int jpgQuality = 90;
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            if (extras.containsKey(Crop.Extra.JPG_QUALITY))
+                jpgQuality = extras.getInt(Crop.Extra.JPG_QUALITY);
         }
 
-        final Bitmap b = croppedImage;
+        OutputStream outputStream = null;
+        try {
+            if (saveUri != null) {
+                outputStream = this.getContentResolver().openOutputStream(saveUri);
+                if (outputStream != null) {
+                    croppedImage.compress(Bitmap.CompressFormat.JPEG, jpgQuality, outputStream);
+                }
+                croppedImage.recycle();
+            }
+
+            setResultUri(saveUri);
+        } catch(IOException  e) {
+            setResultException(e);
+            Log.e("Error saving file: " + saveUri, e);
+        } finally {
+            CropUtil.closeSilently(outputStream);
+        }
+
         handler.post(new Runnable() {
             public void run() {
                 imageView.clear();
-                b.recycle();
             }
         });
 
@@ -433,5 +445,4 @@ public class CropImageActivity extends MonitoredActivity {
     private void setResultException(Throwable throwable) {
         setResult(Crop.RESULT_ERROR, new Intent().putExtra(Crop.Extra.ERROR, throwable));
     }
-
 }
