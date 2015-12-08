@@ -72,20 +72,6 @@ class CropUtil {
         }
     }
 
-    public static boolean copyExifRotation(File sourceFile, File destFile) {
-        if (sourceFile == null || destFile == null) return false;
-        try {
-            ExifInterface exifSource = new ExifInterface(sourceFile.getAbsolutePath());
-            ExifInterface exifDest = new ExifInterface(destFile.getAbsolutePath());
-            exifDest.setAttribute(ExifInterface.TAG_ORIENTATION, exifSource.getAttribute(ExifInterface.TAG_ORIENTATION));
-            exifDest.saveAttributes();
-            return true;
-        } catch (IOException e) {
-            Log.e("Error copying Exif data", e);
-            return false;
-        }
-    }
-
     @Nullable
     public static File getFromMediaUri(Context context, ContentResolver resolver, Uri uri) {
         if (uri != null) {
@@ -95,64 +81,6 @@ class CropUtil {
             }
         }
         return null;
-    }
-
-    public static void startBackgroundJob(MonitoredActivity activity,
-            String title, String message, Runnable job, Handler handler) {
-        // Make the progress dialog uncancelable, so that we can guarantee
-        // the thread will be done before the activity getting destroyed
-        ProgressDialog dialog = ProgressDialog.show(
-                activity, title, message, true, false);
-        new Thread(new BackgroundJob(activity, job, dialog, handler)).start();
-    }
-
-    private static class BackgroundJob extends MonitoredActivity.LifeCycleAdapter implements Runnable {
-
-        private final MonitoredActivity activity;
-        private final ProgressDialog dialog;
-        private final Runnable job;
-        private final Handler handler;
-        private final Runnable cleanupRunner = new Runnable() {
-            public void run() {
-                activity.removeLifeCycleListener(BackgroundJob.this);
-                if (dialog.getWindow() != null) dialog.dismiss();
-            }
-        };
-
-        public BackgroundJob(MonitoredActivity activity, Runnable job,
-                             ProgressDialog dialog, Handler handler) {
-            this.activity = activity;
-            this.dialog = dialog;
-            this.job = job;
-            this.activity.addLifeCycleListener(this);
-            this.handler = handler;
-        }
-
-        public void run() {
-            try {
-                job.run();
-            } finally {
-                handler.post(cleanupRunner);
-            }
-        }
-
-        @Override
-        public void onActivityDestroyed(MonitoredActivity activity) {
-            // We get here only when the onDestroyed being called before
-            // the cleanupRunner. So, run it now and remove it from the queue
-            cleanupRunner.run();
-            handler.removeCallbacks(cleanupRunner);
-        }
-
-        @Override
-        public void onActivityStopped(MonitoredActivity activity) {
-            dialog.hide();
-        }
-
-        @Override
-        public void onActivityStarted(MonitoredActivity activity) {
-            dialog.show();
-        }
     }
 
     /**
@@ -246,7 +174,7 @@ class CropUtil {
      * @return The value of the _data column, which is typically a file path.
      */
     private static String getDataColumn(Context context, Uri uri, String selection,
-                                       String[] selectionArgs) {
+                                        String[] selectionArgs) {
         Cursor cursor = null;
         final String column = "_data";
         final String[] projection = { column };
@@ -310,5 +238,63 @@ class CropUtil {
      */
     private static boolean isLocal(String url) {
         return (url != null && !url.startsWith("http://") && !url.startsWith("https://"));
+    }
+
+    public static void startBackgroundJob(MonitoredActivity activity,
+            String title, String message, Runnable job, Handler handler) {
+        // Make the progress dialog uncancelable, so that we can guarantee
+        // the thread will be done before the activity getting destroyed
+        ProgressDialog dialog = ProgressDialog.show(
+                activity, title, message, true, false);
+        new Thread(new BackgroundJob(activity, job, dialog, handler)).start();
+    }
+
+    private static class BackgroundJob extends MonitoredActivity.LifeCycleAdapter implements Runnable {
+
+        private final MonitoredActivity activity;
+        private final ProgressDialog dialog;
+        private final Runnable job;
+        private final Handler handler;
+        private final Runnable cleanupRunner = new Runnable() {
+            public void run() {
+                activity.removeLifeCycleListener(BackgroundJob.this);
+                if (dialog.getWindow() != null) dialog.dismiss();
+            }
+        };
+
+        public BackgroundJob(MonitoredActivity activity, Runnable job,
+                             ProgressDialog dialog, Handler handler) {
+            this.activity = activity;
+            this.dialog = dialog;
+            this.job = job;
+            this.activity.addLifeCycleListener(this);
+            this.handler = handler;
+        }
+
+        public void run() {
+            try {
+                job.run();
+            } finally {
+                handler.post(cleanupRunner);
+            }
+        }
+
+        @Override
+        public void onActivityDestroyed(MonitoredActivity activity) {
+            // We get here only when the onDestroyed being called before
+            // the cleanupRunner. So, run it now and remove it from the queue
+            cleanupRunner.run();
+            handler.removeCallbacks(cleanupRunner);
+        }
+
+        @Override
+        public void onActivityStopped(MonitoredActivity activity) {
+            dialog.hide();
+        }
+
+        @Override
+        public void onActivityStarted(MonitoredActivity activity) {
+            dialog.show();
+        }
     }
 }
