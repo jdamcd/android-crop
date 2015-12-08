@@ -429,12 +429,21 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     private void saveOutput(Bitmap croppedImage) {
+        int jpgQuality = 90;
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            if (extras.containsKey(Crop.Extra.JPG_QUALITY)) {
+                jpgQuality = extras.getInt(Crop.Extra.JPG_QUALITY);
+            }
+        }
+
         if (saveUri != null) {
             OutputStream outputStream = null;
             try {
                 outputStream = getContentResolver().openOutputStream(saveUri);
                 if (outputStream != null) {
-                    croppedImage.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+                    croppedImage.compress(Bitmap.CompressFormat.JPEG, jpgQuality, outputStream);
                 }
             } catch (IOException e) {
                 setResultException(e);

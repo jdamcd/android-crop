@@ -25,6 +25,7 @@ public class Crop {
         String ASPECT_Y = "aspect_y";
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
+        String JPG_QUALITY = "jpg_quality";
         String ERROR = "error";
     }
 
@@ -76,6 +77,18 @@ public class Crop {
     public Crop withMaxSize(int width, int height) {
         cropIntent.putExtra(Extra.MAX_X, width);
         cropIntent.putExtra(Extra.MAX_Y, height);
+        return this;
+    }
+
+    /**
+     * Set JPG quality
+     *
+     * @param quality  JPG Quality (10< q <100)
+    */
+    public Crop withJpgQuality(int quality) {
+        if ( (quality>=10) || (quality<=100) ) {
+            cropIntent.putExtra(Extra.JPG_QUALITY, quality);
+        }
         return this;
     }
 

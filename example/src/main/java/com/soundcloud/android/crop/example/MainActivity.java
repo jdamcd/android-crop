@@ -1,7 +1,5 @@
 package com.soundcloud.android.crop.example;
 
-import com.soundcloud.android.crop.Crop;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
 
@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
 
     private void beginCrop(Uri source) {
         Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
-        Crop.of(source, destination).asSquare().start(this);
+        Crop.of(source, destination).asSquare().withJpgQuality(90).start(this);
     }
 
     private void handleCrop(int resultCode, Intent result) {
