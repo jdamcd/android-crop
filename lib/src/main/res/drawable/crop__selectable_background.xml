@@ -9,12 +9,4 @@
         </shape>
     </item>
 
-    <item android:state_focused="true">
-        <shape>
-            <solid android:color="@color/crop__selector_focused" />
-        </shape>
-    </item>
-
-    <item android:drawable="@android:color/transparent" />
-
 </selector>
