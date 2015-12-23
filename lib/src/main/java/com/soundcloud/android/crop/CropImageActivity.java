@@ -56,6 +56,7 @@ public class CropImageActivity extends MonitoredActivity {
     private int maxX;
     private int maxY;
     private int exifRotation;
+    private boolean saveAsPng;
 
     private Uri sourceUri;
     private Uri saveUri;
@@ -125,6 +126,7 @@ public class CropImageActivity extends MonitoredActivity {
             aspectY = extras.getInt(Crop.Extra.ASPECT_Y);
             maxX = extras.getInt(Crop.Extra.MAX_X);
             maxY = extras.getInt(Crop.Extra.MAX_Y);
+            saveAsPng = extras.getBoolean(Crop.Extra.AS_PNG, false);
             saveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);
         }
 
@@ -381,7 +383,9 @@ public class CropImageActivity extends MonitoredActivity {
             try {
                 outputStream = getContentResolver().openOutputStream(saveUri);
                 if (outputStream != null) {
-                    croppedImage.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+                    croppedImage.compress(saveAsPng ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG,
+                            90,     // note: quality is ignored when using PNG
+                            outputStream);
                 }
             } catch (IOException e) {
                 setResultException(e);

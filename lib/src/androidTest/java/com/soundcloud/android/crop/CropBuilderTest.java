@@ -74,4 +74,11 @@ public class CropBuilderTest extends BaseTestCase {
         assertThat(intent.getIntExtra("max_y", 0)).isEqualTo(200);
     }
 
+    public void testAsPngSetAsExtras() {
+        builder.asPng(true);
+
+        Intent intent = builder.getIntent(activity);
+
+        assertThat(intent.getBooleanExtra("as_png", false)).isEqualTo(true);
+    }
 }
