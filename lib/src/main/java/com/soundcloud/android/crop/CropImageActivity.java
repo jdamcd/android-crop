@@ -33,6 +33,8 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -126,6 +128,7 @@ public class CropImageActivity extends MonitoredActivity {
             maxX = extras.getInt(Crop.Extra.MAX_X);
             maxY = extras.getInt(Crop.Extra.MAX_Y);
             saveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);
+            getIntentActionButtonsPosition(extras.getString(Crop.Extra.ACTION_BUTTONS_POSITION));
         }
 
         sourceUri = intent.getData();
@@ -149,6 +152,48 @@ public class CropImageActivity extends MonitoredActivity {
                 CropUtil.closeSilently(is);
             }
         }
+    }
+
+    private void getIntentActionButtonsPosition(String pos) {
+        Crop.ActionButtonsPosition actionButtonsPosition =
+                pos != null ? Crop.ActionButtonsPosition.valueOf(pos) : null;
+
+        if (actionButtonsPosition != null) {
+            switch (actionButtonsPosition) {
+                case TOP:
+                    setActionButtonsPositionOnTop(true);
+                    break;
+                case BOTTOM:
+                    setActionButtonsPositionOnTop(false);
+                    break;
+            }
+        } else {
+            setActionButtonsPositionOnTop(true);
+        }
+    }
+
+    private void setActionButtonsPositionOnTop(boolean onTop) {
+        final int disabled = 0;
+        final RelativeLayout actionButtonsLayout = (RelativeLayout) findViewById(R.id.action_buttons_layout);
+
+        final LayoutParams actionButtonsParams =
+                (RelativeLayout.LayoutParams) actionButtonsLayout.getLayoutParams();
+
+        final LayoutParams imageViewParams =
+                (RelativeLayout.LayoutParams) imageView.getLayoutParams();
+
+        if (onTop) {
+            actionButtonsParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, disabled);
+            imageViewParams.addRule(RelativeLayout.ABOVE, disabled);
+            imageViewParams.addRule(RelativeLayout.BELOW, actionButtonsLayout.getId());
+        } else {
+            actionButtonsParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+            imageViewParams.addRule(RelativeLayout.BELOW, disabled);
+            imageViewParams.addRule(RelativeLayout.ABOVE, actionButtonsLayout.getId());
+        }
+
+        actionButtonsLayout.setLayoutParams(actionButtonsParams);
+        imageView.setLayoutParams(imageViewParams);
     }
 
     private int calculateBitmapSampleSize(Uri bitmapUri) throws IOException {

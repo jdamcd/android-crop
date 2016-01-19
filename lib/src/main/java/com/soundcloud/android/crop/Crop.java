@@ -26,6 +26,20 @@ public class Crop {
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
         String ERROR = "error";
+        String ACTION_BUTTONS_POSITION = "action_buttons_positions";
+    }
+
+    public enum ActionButtonsPosition {
+        TOP("TOP"), BOTTOM("BOTTOM");
+
+        private final String position;
+
+        ActionButtonsPosition(final String position) { this. position = position; }
+
+        @Override
+        public String toString() {
+            return position;
+        }
     }
 
     private Intent cropIntent;
@@ -76,6 +90,17 @@ public class Crop {
     public Crop withMaxSize(int width, int height) {
         cropIntent.putExtra(Extra.MAX_X, width);
         cropIntent.putExtra(Extra.MAX_Y, height);
+        return this;
+    }
+
+    /**
+     * Set activity action buttons position: top or bottom
+     * This is optional function, ActionButtonsPosition.TOP is the default position of the buttons
+     *
+     * @param pos Enum with values: TOP, BOTTOM
+     */
+    public Crop setActionButtonsPosition(ActionButtonsPosition pos) {
+        cropIntent.putExtra(Extra.ACTION_BUTTONS_POSITION, pos.toString());
         return this;
     }
 
