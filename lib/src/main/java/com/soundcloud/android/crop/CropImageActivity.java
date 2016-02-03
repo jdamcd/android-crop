@@ -53,8 +53,8 @@ public class CropImageActivity extends MonitoredActivity {
     private int aspectY;
 
     // Output image
-    private int maxX;
-    private int maxY;
+    protected int maxX;
+    protected int maxY;
     private int exifRotation;
 
     private Uri sourceUri;
@@ -62,10 +62,10 @@ public class CropImageActivity extends MonitoredActivity {
 
     private boolean isSaving;
 
-    private int sampleSize;
+    protected int sampleSize;
     private RotateBitmap rotateBitmap;
     private CropImageView imageView;
-    private HighlightView cropView;
+    protected HighlightView cropView;
 
     @Override
     public void onCreate(Bundle icicle) {
