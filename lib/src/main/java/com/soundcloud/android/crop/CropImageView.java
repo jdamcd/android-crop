@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -115,6 +116,25 @@ public class CropImageView extends ImageViewTouchBase {
             }
             motionHighlightView = null;
             center();
+
+            CropImageActivity cia=(CropImageActivity)context;
+            Rect r=cia.cropView.getScaledCropRect(cia.sampleSize);
+            int width = r.width();
+            int height = r.height();
+            int outWidth = width;
+            int outHeight = height;
+            if (cia.maxX > 0 && cia.maxY > 0 && (width > cia.maxX || height > cia.maxY)) {
+                float ratio = (float) width / (float) height;
+                if ((float) cia.maxX / (float) cia.maxY > ratio) {
+                    outHeight = cia.maxY;
+                    outWidth = (int) ((float) cia.maxY * ratio + .5f);
+                } else {
+                    outWidth = cia.maxX;
+                    outHeight = (int) ((float) cia.maxX / ratio + .5f);
+                }
+            }
+            Toast t=Toast.makeText(cia, outWidth + "x" + outHeight, Toast.LENGTH_SHORT);
+            t.show();
             break;
         case MotionEvent.ACTION_MOVE:
             if (motionHighlightView != null && event.getPointerId(event.getActionIndex()) == validPointerId) {
