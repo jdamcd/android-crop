@@ -27,6 +27,7 @@ import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Pair;
 
 import java.io.Closeable;
 import java.io.File;
@@ -52,25 +53,43 @@ class CropUtil {
         }
     }
 
-    public static int getExifRotation(File imageFile) {
-        if (imageFile == null) return 0;
+    public static Pair<Integer,Integer> getExifRotationTranslation(File imageFile) {
+        int exifRotation = 0, exifScale = 1;
+        if (imageFile == null) return new Pair<Integer,Integer>(0,1);
         try {
             ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
-            // We only recognize a subset of orientation tag values
             switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)) {
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    return 90;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    return 180;
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    return 270;
-                default:
-                    return ExifInterface.ORIENTATION_UNDEFINED;
+              case ExifInterface.ORIENTATION_UNDEFINED:
+              case ExifInterface.ORIENTATION_NORMAL:
+                break ;
+              case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                exifScale=-1;
+                break;
+              case ExifInterface.ORIENTATION_ROTATE_180:
+                exifRotation = 180;
+                break;
+              case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                exifRotation = 180;
+                exifScale=-1;
+                break;
+             case ExifInterface.ORIENTATION_TRANSPOSE:
+                exifRotation = 90;
+                exifScale=-1;
+                break;
+             case ExifInterface.ORIENTATION_ROTATE_90:
+                exifRotation = 90;
+                break;
+             case ExifInterface.ORIENTATION_TRANSVERSE:
+                exifRotation = 270;
+                exifScale=-1;
+                break;
+             case ExifInterface.ORIENTATION_ROTATE_270:
+                exifRotation = 270;
             }
         } catch (IOException e) {
             Log.e("Error getting Exif data", e);
-            return 0;
         }
+        return new Pair<Integer,Integer>(exifRotation,exifScale);
     }
 
     public static boolean copyExifRotation(File sourceFile, File destFile) {
