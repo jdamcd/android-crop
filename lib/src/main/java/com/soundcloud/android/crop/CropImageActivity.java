@@ -325,9 +325,10 @@ public class CropImageActivity extends MonitoredActivity {
         Bitmap croppedImage = null;
         try {
             is = getContentResolver().openInputStream(sourceUri);
-            BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(is, false);
-            final int width = decoder.getWidth();
-            final int height = decoder.getHeight();
+            croppedImage = BitmapFactory.decodeStream(is);
+            final int width = croppedImage.getWidth();
+            final int height = croppedImage.getHeight();
+
 
             if (exifRotation != 0) {
                 // Adjust crop area to account for image rotation
@@ -343,7 +344,8 @@ public class CropImageActivity extends MonitoredActivity {
             }
 
             try {
-                croppedImage = decoder.decodeRegion(rect, new BitmapFactory.Options());
+                croppedImage = Bitmap.createBitmap(croppedImage, rect.left, rect.top, rect.width(), rect.height());
+
                 if (croppedImage != null && (rect.width() > outWidth || rect.height() > outHeight)) {
                     Matrix matrix = new Matrix();
                     matrix.postScale((float) outWidth / rect.width(), (float) outHeight / rect.height());
