@@ -35,6 +35,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -54,6 +55,8 @@ public class CropImageActivity extends MonitoredActivity {
     private int aspectY;
 
     // Output image
+    private int minX;
+    private int minY;
     private int maxX;
     private int maxY;
     private int exifRotation;
@@ -133,6 +136,9 @@ public class CropImageActivity extends MonitoredActivity {
             maxX = extras.getInt(Crop.Extra.MAX_X);
             maxY = extras.getInt(Crop.Extra.MAX_Y);
             saveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);
+
+            minX = extras.getInt(Crop.Extra.MIN_X, 0);
+            minY = extras.getInt(Crop.Extra.MIN_Y, 0);
         }
 
         sourceUri = intent.getData();
@@ -146,6 +152,20 @@ public class CropImageActivity extends MonitoredActivity {
                 BitmapFactory.Options option = new BitmapFactory.Options();
                 option.inSampleSize = sampleSize;
                 rotateBitmap = new RotateBitmap(BitmapFactory.decodeStream(is, null, option), exifRotation);
+
+                option.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(new File(sourceUri.getPath()).getAbsolutePath(), option);
+                int imageHeight = option.outHeight;
+                int imageWidth = option.outWidth;
+
+                if (minX > imageHeight || minY > imageWidth)
+                {
+                    Intent intentError = new Intent();
+                    intentError.putExtra(Crop.Extra.ERROR, new Throwable("Image is less then minimum size specified.\nRequired size:"+minX+"x"+minY));
+                    setResult(Crop.RESULT_ERROR, intentError);
+                    finish();
+                }
+
             } catch (IOException e) {
                 Log.e("Error reading image: " + e.getMessage(), e);
                 setResultException(e);
@@ -251,7 +271,7 @@ public class CropImageActivity extends MonitoredActivity {
             int y = (height - cropHeight) / 2;
 
             RectF cropRect = new RectF(x, y, x + cropWidth, y + cropHeight);
-            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX != 0 && aspectY != 0);
+            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX != 0 && aspectY != 0, minX, minY);
             imageView.add(hv);
         }
 
