@@ -25,8 +25,9 @@ public class Crop {
         String ASPECT_Y = "aspect_y";
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
-        String MIN_X = "mix_x";
-        String MIN_Y = "mix_y";
+        String MIN_X = "min_x";
+        String MIN_Y = "min_y";
+        String AS_PNG = "as_png";
         String ERROR = "error";
     }
 
@@ -90,6 +91,14 @@ public class Crop {
     public Crop withMinSize(int width, int height) {
         cropIntent.putExtra(Extra.MIN_X, width);
         cropIntent.putExtra(Extra.MIN_Y, height);
+        return this;
+    }
+    /**
+     * Set whether to save the result as a PNG or not. Helpful to preserve alpha.
+     * @param asPng whether to save the result as a PNG or not
+     */
+    public Crop asPng(boolean asPng) {
+        cropIntent.putExtra(Extra.AS_PNG, asPng);
         return this;
     }
 
@@ -264,7 +273,7 @@ public class Crop {
     }
 
     private static void showImagePickerError(Context context) {
-        Toast.makeText(context, R.string.crop__pick_error, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context.getApplicationContext(), R.string.crop__pick_error, Toast.LENGTH_SHORT).show();
     }
 
 }
