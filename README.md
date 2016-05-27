@@ -2,6 +2,8 @@
 
 An Android library project that provides a simple image cropping `Activity`, based on code from AOSP.
 
+**Note:** We use this library in production without too many problems, but it's not maintained very actively. There are [other options](https://android-arsenal.com/tag/45) out there.
+
 [![build status](https://travis-ci.org/jdamcd/android-crop.svg)](https://travis-ci.org/jdamcd/android-crop) 
 [![maven central](https://img.shields.io/badge/maven%20central-1.0.1-brightgreen.svg)](http://search.maven.org/#artifactdetails%7Ccom.soundcloud.android%7Candroid-crop%7C1.0.1%7Caar.asc)
 [![changelog](https://img.shields.io/badge/changelog-1.0.1-lightgrey.svg)](CHANGELOG.md)
@@ -69,7 +71,7 @@ Apps that use this library include: [SoundCloud](https://play.google.com/store/a
 
 This project is based on the [AOSP](https://source.android.com) camera image cropper via [android-cropimage](https://github.com/lvillani/android-cropimage).
 
-    Copyright 2015 SoundCloud
+    Copyright 2016 SoundCloud
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
