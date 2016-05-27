@@ -26,6 +26,19 @@ public class Crop {
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
         String ERROR = "error";
+        String SCALE_METHOD = "scale_method";
+    }
+
+    public enum ScaleMethod {
+        /**
+         * Using the exact dimensions provided and using a scaling function for creating a scale bitmap. When scaling a large amount, the quality can suffer.
+         */
+        EXACT,
+        /**
+         * This approach uses sampling while decoding the image which provides better results; however, this requires the image be scaled by powers of 2 and cannot provide
+         * dimensions exactly requested. This will result in better quality images when the scale amount is large.
+         */
+        BETTER_QUALITY_BEST_FIT;
     }
 
     private Intent cropIntent;
@@ -44,6 +57,7 @@ public class Crop {
         cropIntent = new Intent();
         cropIntent.setData(source);
         cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, destination);
+        cropIntent.putExtra(Extra.SCALE_METHOD, ScaleMethod.EXACT.ordinal());
     }
 
     /**
@@ -76,6 +90,16 @@ public class Crop {
     public Crop withMaxSize(int width, int height) {
         cropIntent.putExtra(Extra.MAX_X, width);
         cropIntent.putExtra(Extra.MAX_Y, height);
+        return this;
+    }
+
+    /**
+     * Set how the image will be scaled when providing {@link Extra#MAX_X} and {@link Extra#MAX_Y} with the {@link #withMaxSize(int, int)}
+     * @param type
+     * @return
+     */
+    public Crop withScaleMethod(ScaleMethod type) {
+        cropIntent.putExtra(Extra.SCALE_METHOD, type.ordinal());
         return this;
     }
 
