@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="crop__saving">در حال ذخیره سازی</string>
+    <string name="crop__wait">لطفاً صبر کنید ...</string>
+    <string name="crop__pick_error">تصویری در دسترس نیست</string>
+
+    <string name="crop__done">تأیید</string>
+    <string name="crop__cancel" tools:ignore="ButtonCase">انصراف</string>
+
+</resources>
