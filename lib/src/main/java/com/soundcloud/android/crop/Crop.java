@@ -83,6 +83,7 @@ public class Crop {
     }
 
     /**
+<<<<<<< HEAD
      * Set minimum crop size
      *
      * @param width  Min width
@@ -94,6 +95,8 @@ public class Crop {
         return this;
     }
     /**
+=======
+>>>>>>> jdamcd/master
      * Set whether to save the result as a PNG or not. Helpful to preserve alpha.
      * @param asPng whether to save the result as a PNG or not
      */
