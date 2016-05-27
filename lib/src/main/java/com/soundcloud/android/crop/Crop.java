@@ -25,6 +25,7 @@ public class Crop {
         String ASPECT_Y = "aspect_y";
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
+        String AS_PNG = "as_png";
         String ERROR = "error";
     }
 
@@ -76,6 +77,15 @@ public class Crop {
     public Crop withMaxSize(int width, int height) {
         cropIntent.putExtra(Extra.MAX_X, width);
         cropIntent.putExtra(Extra.MAX_Y, height);
+        return this;
+    }
+
+    /**
+     * Set whether to save the result as a PNG or not. Helpful to preserve alpha.
+     * @param asPng whether to save the result as a PNG or not
+     */
+    public Crop asPng(boolean asPng) {
+        cropIntent.putExtra(Extra.AS_PNG, asPng);
         return this;
     }
 
