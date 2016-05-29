@@ -13,10 +13,13 @@ android {
         minSdkVersion 10
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0.2"
+        versionName "1.0.1"
 
         testApplicationId 'com.soundcloud.android.crop.test'
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'
+    }
+    lintOptions {
+        disable 'Registered', 'IconDensities'
     }
 }
 
