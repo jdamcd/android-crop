@@ -396,7 +396,11 @@ public class CropImageActivity extends MonitoredActivity {
             try {
                 //save bitmap to file
                 outputStream = getContentResolver().openOutputStream(saveUri);
-                destBitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+                if (outputStream != null) {
+                    destBitmap.compress(saveAsPng ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG,
+                            90,     // note: quality is ignored when using PNG
+                            outputStream);
+                }
                 destBitmap.recycle();
             } catch (OutOfMemoryError error) {
             } catch (IOException e){
