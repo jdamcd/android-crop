@@ -6,4 +6,8 @@
         android:title="@string/action_select"
         android:showAsAction="always" />
 
+    <item android:id="@+id/action_select2"
+        android:title="@string/action_select2"
+        android:showAsAction="always" />
+
 </menu>

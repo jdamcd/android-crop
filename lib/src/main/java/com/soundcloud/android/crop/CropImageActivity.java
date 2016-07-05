@@ -34,6 +34,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -288,6 +289,12 @@ public class CropImageActivity extends MonitoredActivity {
             }
         }
 
+        if(exifRotation % 90 == 0){
+            int tmp = outWidth;
+            outWidth = outHeight;
+            outHeight = tmp;
+        }
+
         try {
             croppedImage = decodeRegionCrop(r, outWidth, outHeight);
         } catch (IllegalArgumentException e) {
@@ -378,19 +385,49 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     private void saveOutput(Bitmap croppedImage) {
+//        if (saveUri != null) {
+//            OutputStream outputStream = null;
+//            try {
+//                outputStream = getContentResolver().openOutputStream(saveUri);
+//                if (outputStream != null) {
+//                    croppedImage.compress(saveAsPng ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG,
+//                            90,     // note: quality is ignored when using PNG
+//                            outputStream);
+//                }
+//            } catch (IOException e) {
+//                setResultException(e);
+//                Log.e("Cannot open file: " + saveUri, e);
+//            } finally {
+//                CropUtil.closeSilently(outputStream);
+//            }
+//
+//            CropUtil.copyExifRotation(
+//                    CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri),
+//                    CropUtil.getFromMediaUri(this, getContentResolver(), saveUri)
+//            );
+//
+//            setResultUri(saveUri);
+//        }
+
         if (saveUri != null) {
             OutputStream outputStream = null;
+
+            Bitmap destBitmap = croppedImage;
+            if(exifRotation != 0){
+                destBitmap = CropUtil.rotateImage(croppedImage, exifRotation);
+            }
+            FileInputStream inputStream = null;
             try {
+                //保存bitmap到文件
                 outputStream = getContentResolver().openOutputStream(saveUri);
-                if (outputStream != null) {
-                    croppedImage.compress(saveAsPng ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG,
-                            90,     // note: quality is ignored when using PNG
-                            outputStream);
-                }
-            } catch (IOException e) {
+                destBitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+                destBitmap.recycle();
+            } catch (OutOfMemoryError error) {
+            } catch (IOException e){
                 setResultException(e);
                 Log.e("Cannot open file: " + saveUri, e);
-            } finally {
+            }finally {
+                CropUtil.closeSilently(inputStream);
                 CropUtil.closeSilently(outputStream);
             }
 

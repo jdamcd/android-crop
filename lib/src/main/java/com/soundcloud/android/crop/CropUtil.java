@@ -20,6 +20,8 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Handler;
@@ -158,7 +160,7 @@ class CropUtil {
     }
 
     public static void startBackgroundJob(MonitoredActivity activity,
-            String title, String message, Runnable job, Handler handler) {
+                                          String title, String message, Runnable job, Handler handler) {
         // Make the progress dialog uncancelable, so that we can guarantee
         // the thread will be done before the activity getting destroyed
         ProgressDialog dialog = ProgressDialog.show(
@@ -213,6 +215,15 @@ class CropUtil {
         public void onActivityStarted(MonitoredActivity activity) {
             dialog.show();
         }
+    }
+
+    public static Bitmap rotateImage(Bitmap img, int rotate) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(rotate);
+        int width = img.getWidth();
+        int height = img.getHeight();
+        img = Bitmap.createBitmap(img, 0, 0, width, height, matrix, false);
+        return img;
     }
 
 }
