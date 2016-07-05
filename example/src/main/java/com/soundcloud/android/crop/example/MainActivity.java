@@ -86,7 +86,7 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent result) {
         if ((requestCode == Crop.REQUEST_PICK || requestCode == REQUEST_PICK_CAMERA) && resultCode == RESULT_OK) {
             if(result != null)
-                beginCrop(result.getData(),1,1);
+                beginCrop(result.getData(),4,3);
             else {
                 beginCrop(Uri.fromFile(imageFile),4,3);
             }

@@ -289,7 +289,7 @@ public class CropImageActivity extends MonitoredActivity {
             }
         }
 
-        if(exifRotation % 90 == 0){
+        if(exifRotation != 0 && exifRotation % 90 == 0){
             int tmp = outWidth;
             outWidth = outHeight;
             outHeight = tmp;
