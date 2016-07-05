@@ -385,30 +385,6 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     private void saveOutput(Bitmap croppedImage) {
-//        if (saveUri != null) {
-//            OutputStream outputStream = null;
-//            try {
-//                outputStream = getContentResolver().openOutputStream(saveUri);
-//                if (outputStream != null) {
-//                    croppedImage.compress(saveAsPng ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG,
-//                            90,     // note: quality is ignored when using PNG
-//                            outputStream);
-//                }
-//            } catch (IOException e) {
-//                setResultException(e);
-//                Log.e("Cannot open file: " + saveUri, e);
-//            } finally {
-//                CropUtil.closeSilently(outputStream);
-//            }
-//
-//            CropUtil.copyExifRotation(
-//                    CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri),
-//                    CropUtil.getFromMediaUri(this, getContentResolver(), saveUri)
-//            );
-//
-//            setResultUri(saveUri);
-//        }
-
         if (saveUri != null) {
             OutputStream outputStream = null;
 
@@ -418,7 +394,7 @@ public class CropImageActivity extends MonitoredActivity {
             }
             FileInputStream inputStream = null;
             try {
-                //保存bitmap到文件
+                //save bitmap to file
                 outputStream = getContentResolver().openOutputStream(saveUri);
                 destBitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
                 destBitmap.recycle();
