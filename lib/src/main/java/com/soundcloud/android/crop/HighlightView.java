@@ -230,7 +230,7 @@ class HighlightView {
     // Determines which edges are hit by touching at (x, y)
     public int getHit(float x, float y) {
         Rect r = computeLayout();
-        final float hysteresis = 20F;
+        final float hysteresis = dpToPx(10);
         int retval = GROW_NONE;
 
         // verticalCheck makes sure the position is between the top and
