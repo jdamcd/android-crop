@@ -42,7 +42,7 @@ public class CropImageView extends ImageViewTouchBase {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             int resID = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
             if(resID > 0){
-                softNavbarHeight = getResources().getDimensionPixelSize(resID) + 50;
+                softNavbarHeight = getResources().getDimensionPixelSize(resID);
             }
         }
 
@@ -154,15 +154,12 @@ public class CropImageView extends ImageViewTouchBase {
         int panDeltaX2 = Math.min(0, getRight() - r.right);
 
         int panDeltaY1 = Math.max(0, getTop() - r.top);
-        int panDeltaY2 = Math.min(0, getBottom() - r.bottom);
+        int panDeltaY2 = Math.min(0, getBottom() - r.bottom - softNavbarHeight);
 
         int panDeltaX = panDeltaX1 != 0 ? panDeltaX1 : panDeltaX2;
         int panDeltaY = panDeltaY1 != 0 ? panDeltaY1 : panDeltaY2;
 
         if (panDeltaX != 0 || panDeltaY != 0) {
-            if(softNavbarHeight > 0 && panDeltaY < 0){
-                panDeltaY = panDeltaY - softNavbarHeight;
-            }
             panBy(panDeltaX, panDeltaY);
         }
     }
