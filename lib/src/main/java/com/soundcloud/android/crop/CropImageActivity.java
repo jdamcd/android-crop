@@ -132,7 +132,7 @@ public class CropImageActivity extends MonitoredActivity {
 
         sourceUri = intent.getData();
         if (sourceUri != null) {
-            exifRotation = CropUtil.getExifRotation(CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri));
+            exifRotation = CropUtil.getExifRotation(getContentResolver(), sourceUri);
 
             InputStream is = null;
             try {
@@ -346,9 +346,30 @@ public class CropImageActivity extends MonitoredActivity {
 
             try {
                 croppedImage = decoder.decodeRegion(rect, new BitmapFactory.Options());
-                if (croppedImage != null && (rect.width() > outWidth || rect.height() > outHeight)) {
-                    Matrix matrix = new Matrix();
+                if (croppedImage == null) return null;
+
+                boolean needToApplyMatrix = false;
+                Matrix matrix = new Matrix();
+
+                if (exifRotation != 0) {
+                    matrix.postRotate(exifRotation);
+                    needToApplyMatrix = true;
+
+                    if (exifRotation == 90 || exifRotation == 270) {
+                        // swap width and height for the output image
+                        int temp = outWidth;
+                        //noinspection SuspiciousNameCombination
+                        outWidth = outHeight;
+                        outHeight = temp;
+                    }
+                }
+
+                if (rect.width() > outWidth || rect.height() > outHeight) {
                     matrix.postScale((float) outWidth / rect.width(), (float) outHeight / rect.height());
+                    needToApplyMatrix = true;
+                }
+
+                if (needToApplyMatrix) {
                     croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), matrix, true);
                 }
             } catch (IllegalArgumentException e) {
@@ -393,11 +414,6 @@ public class CropImageActivity extends MonitoredActivity {
             } finally {
                 CropUtil.closeSilently(outputStream);
             }
-
-            CropUtil.copyExifRotation(
-                    CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri),
-                    CropUtil.getFromMediaUri(this, getContentResolver(), saveUri)
-            );
 
             setResultUri(saveUri);
         }
