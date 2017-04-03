@@ -19,11 +19,11 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-annotations:25.1.1'
-    compile 'com.android.support:support-v4:25.1.1'
-    compile 'com.android.support:exifinterface:25.1.1'
+    compile 'com.android.support:support-annotations:25.3.1'
+    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:exifinterface:25.3.1'
     androidTestCompile 'com.squareup:fest-android:1.0.7'
-    androidTestCompile 'com.android.support:support-v4:25.1.1'
+    androidTestCompile 'com.android.support:support-v4:25.3.1'
     androidTestCompile 'org.mockito:mockito-core:1.9.5'
     androidTestCompile 'com.google.dexmaker:dexmaker:1.0'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
