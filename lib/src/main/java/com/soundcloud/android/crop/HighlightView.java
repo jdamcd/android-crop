@@ -19,6 +19,7 @@ package com.soundcloud.android.crop;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -30,6 +31,7 @@ import android.graphics.Region;
 import android.os.Build;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.ImageView;
 
 /*
  * Modified from version in AOSP.
@@ -65,6 +67,7 @@ class HighlightView {
     private final Paint handlePaint = new Paint();
 
     private View viewContext; // View displaying image
+    private Bitmap extraBitmap;
     private boolean showThirds;
     private boolean showCircle;
     private int highlightColor;
@@ -97,9 +100,10 @@ class HighlightView {
         }
     }
 
-    public void setup(Matrix m, Rect imageRect, RectF cropRect, boolean maintainAspectRatio) {
+    public void setup(Matrix m, Rect imageRect, RectF cropRect, boolean maintainAspectRatio, Bitmap extraBitmap) {
         matrix = new Matrix(m);
 
+        this.extraBitmap = extraBitmap;
         this.cropRect = cropRect;
         this.imageRect = new RectF(imageRect);
         this.maintainAspectRatio = maintainAspectRatio;
@@ -131,6 +135,7 @@ class HighlightView {
         if (!hasFocus()) {
             outlinePaint.setColor(Color.BLACK);
             canvas.drawRect(drawRect, outlinePaint);
+            drawBadge(canvas, drawRect);
         } else {
             Rect viewDrawingRect = new Rect();
             viewContext.getDrawingRect(viewDrawingRect);
@@ -147,6 +152,7 @@ class HighlightView {
 
             canvas.restore();
             canvas.drawPath(path, outlinePaint);
+            drawBadge(canvas, drawRect);
 
             if (showThirds) {
                 drawThirds(canvas);
@@ -160,6 +166,22 @@ class HighlightView {
                     (handleMode == HandleMode.Changing && modifyMode == ModifyMode.Grow)) {
                 drawHandles(canvas);
             }
+        }
+    }
+
+    private void drawBadge(final Canvas canvas, final Rect drawRect) {
+        if (extraBitmap != null) {
+            final float maxBadgeSize = drawRect.width() / 3;
+            float scaleFactor = maxBadgeSize / extraBitmap.getWidth();
+            final int scaledHeight = Math.round(extraBitmap.getHeight() * scaleFactor);
+            final int scaledWidth = Math.round(extraBitmap.getWidth() * scaleFactor);
+
+            final Bitmap scaledBitmap = Bitmap.createScaledBitmap(extraBitmap, scaledHeight, scaledWidth, false);
+
+            final float left = drawRect.centerX() - scaledBitmap.getWidth()/ 2;
+            final float top = drawRect.bottom - drawRect.height() * 0.05f - scaledBitmap.getHeight();
+
+            canvas.drawBitmap(scaledBitmap, left, top, null);
         }
     }
 

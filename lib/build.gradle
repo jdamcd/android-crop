@@ -1,20 +1,45 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven'
-apply plugin: 'signing'
-//apply from: '../.publishing/sonatype.gradle'
+apply plugin: 'git-repo'
+apply plugin: 'maven-publish'
 
 archivesBaseName = 'android-crop'
+version = '1.0.1-WW'
+def versionCodeInt = 7
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.1'
-
+    compileSdkVersion 24
+    buildToolsVersion '23.0.3'
     defaultConfig {
-        minSdkVersion 10
-        targetSdkVersion 22
+        minSdkVersion 15
+        targetSdkVersion 24
+        versionCode versionCodeInt
+        versionName "${version}"
 
         testApplicationId 'com.soundcloud.android.crop.test'
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true // this prevents "not mocked" error
+    }
+    libraryVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+
+            if (outputFile != null && outputFile.name.endsWith('.aar')) {
+                output.outputFile = new File(outputFile.parent, "${archivesBaseName}-${variant.buildType.name}.aar")
+            }
+        }
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 
@@ -26,5 +51,108 @@ dependencies {
     androidTestCompile 'org.mockito:mockito-core:1.9.5'
     androidTestCompile 'com.google.dexmaker:dexmaker:1.0'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
+}
+
+android.libraryVariants.all { variant ->
+    def name = variant.buildType.name
+    def task = project.tasks.create "jar${name.capitalize()}", Jar
+    task.dependsOn variant.javaCompile
+    task.from variant.javaCompile.destinationDir
+    artifacts.add('archives', task);
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'com.weightwatchers.crop'
+            artifactId "${archivesBaseName}"
+            version "${version}"
+
+            artifact sourcesJar {
+                classifier 'sources'
+            }
+
+            artifact ("${buildDir}/outputs/aar/${archivesBaseName}-release.aar") {
+                extension = 'aar'
+            }
+
+            // http://stackoverflow.com/a/24764713
+            pom.withXml {
+                def dependenciesNode = asNode().appendNode('dependencies')
+
+                configurations.compile.allDependencies.each {
+                    if (it.group) {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', it.group)
+                        dependencyNode.appendNode('artifactId', it.name)
+                        dependencyNode.appendNode('version', it.version)
+
+                        if (it instanceof ModuleDependency) {
+                            def depExclusionsNode = dependencyNode.appendNode('exclusions')
+
+                            ((ModuleDependency) it).excludeRules.each {
+                                def exclusionNode = depExclusionsNode.appendNode('exclusion')
+                                exclusionNode.appendNode('groupId', it.group)
+                                exclusionNode.appendNode('artifactId', it.module)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url "file://${gitPublishConfig.home}/${gitPublishConfig.org}/${gitPublishConfig.repo}/releases"
+        }
+    }
+
+    publish.dependsOn assembleRelease
+
+}
+
+gitPublishConfig {
+    org = 'WW-Digital'
+    repo = 'android-gradle-repo'
+}
+
+repositories {
+    flatDir {
+        dirs 'aar'
+    }
+
+    github("${gitPublishConfig.org}", "${gitPublishConfig.repo}")
+
+    maven {
+        url 'https://repo.commonsware.com.s3.amazonaws.com'
+    }
+    maven {
+        url 'https://jitpack.io'
+    }
+    maven {
+        url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    failOnError  false
+    source = android.sourceSets.main.java.sourceFiles
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
 }
 

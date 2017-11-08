@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -33,7 +34,9 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -64,6 +67,7 @@ public class CropImageActivity extends MonitoredActivity {
     private boolean isSaving;
 
     private int sampleSize;
+    private Bitmap extraBitmap;
     private RotateBitmap rotateBitmap;
     private CropImageView imageView;
     private HighlightView cropView;
@@ -128,6 +132,13 @@ public class CropImageActivity extends MonitoredActivity {
             maxY = extras.getInt(Crop.Extra.MAX_Y);
             saveAsPng = extras.getBoolean(Crop.Extra.AS_PNG, false);
             saveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);
+        }
+
+        final String bitmapPath = intent.getStringExtra(Crop.Extra.BITMAP_PATH);
+        if (bitmapPath != null) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            extraBitmap = BitmapFactory.decodeFile(bitmapPath, options);
         }
 
         sourceUri = intent.getData();
@@ -246,7 +257,7 @@ public class CropImageActivity extends MonitoredActivity {
             int y = (height - cropHeight) / 2;
 
             RectF cropRect = new RectF(x, y, x + cropWidth, y + cropHeight);
-            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX != 0 && aspectY != 0);
+            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX != 0 && aspectY != 0, extraBitmap);
             imageView.add(hv);
         }
 
@@ -288,8 +299,19 @@ public class CropImageActivity extends MonitoredActivity {
             }
         }
 
+        Bitmap combinedImage = Bitmap.createBitmap(outWidth, outHeight, Bitmap.Config.ARGB_8888);
         try {
             croppedImage = decodeRegionCrop(r, outWidth, outHeight);
+            if (extraBitmap !=null) {
+                Canvas comboImage = new Canvas(combinedImage);
+                comboImage.drawBitmap(croppedImage, 0, 0, null);
+                final int maxSize = croppedImage.getWidth() / 3;
+                extraBitmap = Bitmap.createScaledBitmap(extraBitmap, maxSize, maxSize, false);
+                final float leftOffset = comboImage.getWidth() / 2 - extraBitmap.getWidth() / 2;
+                final float topOffset = comboImage.getHeight() -
+                        comboImage.getHeight() * 0.05f - extraBitmap.getHeight();
+                comboImage.drawBitmap(extraBitmap, leftOffset, topOffset, null);
+            }
         } catch (IllegalArgumentException e) {
             setResultException(e);
             finish();
@@ -301,7 +323,11 @@ public class CropImageActivity extends MonitoredActivity {
             imageView.center();
             imageView.highlightViews.clear();
         }
-        saveImage(croppedImage);
+        if (extraBitmap != null) {
+            saveImage(combinedImage);
+        } else {
+            saveImage(croppedImage);
+        }
     }
 
     private void saveImage(Bitmap croppedImage) {
