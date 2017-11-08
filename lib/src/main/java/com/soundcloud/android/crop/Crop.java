@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -27,6 +28,7 @@ public class Crop {
         String MAX_Y = "max_y";
         String AS_PNG = "as_png";
         String ERROR = "error";
+        String BITMAP_PATH = "bitmap_path";
     }
 
     private Intent cropIntent;
@@ -86,6 +88,15 @@ public class Crop {
      */
     public Crop asPng(boolean asPng) {
         cropIntent.putExtra(Extra.AS_PNG, asPng);
+        return this;
+    }
+
+    /**
+     * Set whether to show a bitmap in the crop view.
+     * @param bitmapPath the path to bitmap to show in the crop view.
+     */
+    public Crop withBitmap(final String bitmapPath) {
+        cropIntent.putExtra(Extra.BITMAP_PATH, bitmapPath);
         return this;
     }
 

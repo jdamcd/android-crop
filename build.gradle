@@ -4,6 +4,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath 'com.layer:gradle-git-repo-plugin:2.0.2'
     }
 }
 
