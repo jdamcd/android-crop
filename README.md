@@ -2,9 +2,8 @@
 
 An Android library project that provides a simple image cropping `Activity`, based on code from AOSP.
 
-**Note:** We use this library in production without too many problems, but it's not maintained very actively. There are [other options](https://android-arsenal.com/tag/45) out there.
+**Deprecated!** This project is not maintained. If it doesn't meet your needs as is, consider creating a fork or picking from these [alternatives](https://android-arsenal.com/tag/45).
 
-[![build status](https://travis-ci.org/jdamcd/android-crop.svg)](https://travis-ci.org/jdamcd/android-crop) 
 [![maven central](https://img.shields.io/badge/maven%20central-1.0.1-brightgreen.svg)](http://search.maven.org/#artifactdetails%7Ccom.soundcloud.android%7Candroid-crop%7C1.0.1%7Caar.asc)
 [![changelog](https://img.shields.io/badge/changelog-1.0.1-lightgrey.svg)](CHANGELOG.md)
 
@@ -58,10 +57,6 @@ The AAR is published on Maven Central:
 ```groovy
 compile 'com.soundcloud.android:android-crop:1.0.1@aar'
 ```
-
-#### Users
-
-Apps that use this library include: [SoundCloud](https://play.google.com/store/apps/details?id=com.soundcloud.android), [Depop](https://play.google.com/store/apps/details?id=com.depop), [Polyvore](https://play.google.com/store/apps/details?id=com.polyvore), [TextSecure](https://play.google.com/store/apps/details?id=org.thoughtcrime.securesms)
 
 ## How does it look?
 
