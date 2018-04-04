@@ -68,6 +68,8 @@ public class CropImageActivity extends MonitoredActivity {
     private CropImageView imageView;
     private HighlightView cropView;
 
+    private Rect croppingRect;
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -301,6 +303,8 @@ public class CropImageActivity extends MonitoredActivity {
             imageView.center();
             imageView.highlightViews.clear();
         }
+
+        croppingRect = r;
         saveImage(croppedImage);
     }
 
@@ -431,7 +435,16 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     private void setResultUri(Uri uri) {
-        setResult(RESULT_OK, new Intent().putExtra(MediaStore.EXTRA_OUTPUT, uri));
+        Intent intent = new Intent();
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        if(croppingRect!=null) {
+            intent.putExtra(Crop.KEY_CROP_X, croppingRect.left);
+            intent.putExtra(Crop.KEY_CROP_Y, croppingRect.top);
+            intent.putExtra(Crop.KEY_CROP_WIDTH, croppingRect.width());
+            intent.putExtra(Crop.KEY_CROP_HEIGHT, croppingRect.height());
+        }
+
+        setResult(RESULT_OK,intent);
     }
 
     private void setResultException(Throwable throwable) {
