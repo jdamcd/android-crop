@@ -20,6 +20,11 @@ public class Crop {
     public static final int REQUEST_PICK = 9162;
     public static final int RESULT_ERROR = 404;
 
+    public static final String KEY_CROP_X = "CropX";
+    public static final String KEY_CROP_Y = "CropY";
+    public static final String KEY_CROP_WIDTH = "CropWidth";
+    public static final String KEY_CROP_HEIGHT = "CropHeight";
+
     interface Extra {
         String ASPECT_X = "aspect_x";
         String ASPECT_Y = "aspect_y";

@@ -1,7 +1,5 @@
 package com.soundcloud.android.crop.example;
 
-import com.soundcloud.android.crop.Crop;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.soundcloud.android.crop.Crop;
 
 import java.io.File;
 
@@ -57,6 +57,11 @@ public class MainActivity extends Activity {
     private void handleCrop(int resultCode, Intent result) {
         if (resultCode == RESULT_OK) {
             resultView.setImageURI(Crop.getOutput(result));
+            int x = result.getExtras().getInt(Crop.KEY_CROP_X);
+            int y = result.getExtras().getInt(Crop.KEY_CROP_Y);
+            int w = result.getExtras().getInt(Crop.KEY_CROP_WIDTH);
+            int h = result.getExtras().getInt(Crop.KEY_CROP_HEIGHT);
+            Toast.makeText(this,x + "," + y + "," + w + "," + h,Toast.LENGTH_LONG).show();
         } else if (resultCode == Crop.RESULT_ERROR) {
             Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
         }
