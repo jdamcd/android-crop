@@ -339,6 +339,14 @@ public class CropImageActivity extends MonitoredActivity {
                 RectF adjusted = new RectF();
                 matrix.mapRect(adjusted, new RectF(rect));
 
+                //if the cutting box are rectangle( outWidth != outHeight ),and the exifRotation is 90 or 270,
+                //the outWidth and outHeight showld be interchanged
+                if (exifRotation==90||exifRotation==270){
+                    int temp=outWidth;
+                    outWidth=outHeight;
+                    outHeight=temp;
+                }
+
                 // Adjust to account for origin at 0,0
                 adjusted.offset(adjusted.left < 0 ? width : 0, adjusted.top < 0 ? height : 0);
                 rect = new Rect((int) adjusted.left, (int) adjusted.top, (int) adjusted.right, (int) adjusted.bottom);
@@ -349,6 +357,14 @@ public class CropImageActivity extends MonitoredActivity {
                 if (croppedImage != null && (rect.width() > outWidth || rect.height() > outHeight)) {
                     Matrix matrix = new Matrix();
                     matrix.postScale((float) outWidth / rect.width(), (float) outHeight / rect.height());
+
+                    //if the picture's exifRotation !=0 ,they should be rotate to 0 degrees
+                    matrix.postRotate(exifRotation);
+                    croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), matrix, true);
+                }else{
+                    //if the picture need not to be scale, they also neet to be rotate to 0 degrees
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(exifRotation);
                     croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), matrix, true);
                 }
             } catch (IllegalArgumentException e) {
