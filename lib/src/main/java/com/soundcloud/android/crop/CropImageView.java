@@ -3,6 +3,7 @@ package com.soundcloud.android.crop;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -20,6 +21,8 @@ public class CropImageView extends ImageViewTouchBase {
     private int motionEdge;
     private int validPointerId;
 
+    private int softNavbarHeight = 0;
+
     public CropImageView(Context context) {
         super(context);
     }
@@ -35,6 +38,14 @@ public class CropImageView extends ImageViewTouchBase {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int resID = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+            if(resID > 0){
+                softNavbarHeight = getResources().getDimensionPixelSize(resID);
+            }
+        }
+
         if (bitmapDisplayed.getBitmap() != null) {
             for (HighlightView hv : highlightViews) {
 
@@ -143,7 +154,7 @@ public class CropImageView extends ImageViewTouchBase {
         int panDeltaX2 = Math.min(0, getRight() - r.right);
 
         int panDeltaY1 = Math.max(0, getTop() - r.top);
-        int panDeltaY2 = Math.min(0, getBottom() - r.bottom);
+        int panDeltaY2 = Math.min(0, getBottom() - r.bottom - softNavbarHeight);
 
         int panDeltaX = panDeltaX1 != 0 ? panDeltaX1 : panDeltaX2;
         int panDeltaY = panDeltaY1 != 0 ? panDeltaY1 : panDeltaY2;
