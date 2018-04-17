@@ -1,6 +1,7 @@
 <resources>
 
     <string name="app_name">Crop Demo</string>
-    <string name="action_select">Pick</string>
+    <string name="action_select">PickFromAlumb</string>
+    <string name="action_select2">PickFromCamera</string>
 
 </resources>
