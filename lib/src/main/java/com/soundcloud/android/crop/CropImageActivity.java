@@ -24,7 +24,6 @@ import android.graphics.BitmapRegionDecoder;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.opengl.GLES10;
 import android.os.Build;
@@ -53,6 +52,11 @@ public class CropImageActivity extends MonitoredActivity {
 
     private int aspectX;
     private int aspectY;
+
+    private int minAspectX;
+    private int minAspectY;
+    private int maxAspectX;
+    private int maxAspectY;
 
     // Output image
     private int minX;
@@ -95,33 +99,34 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     private void setupViews() {
-        setContentView(R.layout.crop__activity_crop);
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+        int layoutId = R.layout.crop__activity_crop;
+        if (extras != null) {
+            layoutId = extras.getInt(Crop.Extra.LAYOUT_ID, R.layout.crop__activity_crop);
+        }
+        setContentView(layoutId);
 
         imageView = (CropImageView) findViewById(R.id.crop_image);
         imageView.context = this;
-        imageView.setRecycler(new ImageViewTouchBase.Recycler()
-        {
+        imageView.setRecycler(new ImageViewTouchBase.Recycler() {
             @Override
-            public void recycle(Bitmap b)
-            {
+            public void recycle(Bitmap b) {
                 b.recycle();
                 System.gc();
             }
         });
 
-        findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
+        findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
                 setResult(RESULT_CANCELED);
                 finish();
             }
         });
 
-        findViewById(R.id.btn_done).setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
+        findViewById(R.id.btn_done).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
                 onSaveClicked();
             }
         });
@@ -134,6 +139,12 @@ public class CropImageActivity extends MonitoredActivity {
         if (extras != null) {
             aspectX = extras.getInt(Crop.Extra.ASPECT_X);
             aspectY = extras.getInt(Crop.Extra.ASPECT_Y);
+
+            minAspectX = extras.getInt(Crop.Extra.MIN_ASPECT_X);
+            minAspectY = extras.getInt(Crop.Extra.MIN_ASPECT_Y);
+            maxAspectX = extras.getInt(Crop.Extra.MAX_ASPECT_X);
+            maxAspectX = extras.getInt(Crop.Extra.MAX_ASPECT_Y);
+
             maxX = extras.getInt(Crop.Extra.MAX_X);
             maxY = extras.getInt(Crop.Extra.MAX_Y);
             saveAsPng = extras.getBoolean(Crop.Extra.AS_PNG, false);
@@ -160,10 +171,9 @@ public class CropImageActivity extends MonitoredActivity {
                 int imageHeight = option.outHeight;
                 int imageWidth = option.outWidth;
 
-                if (minX > imageHeight || minY > imageWidth)
-                {
+                if (minX > imageHeight || minY > imageWidth) {
                     Intent intentError = new Intent();
-                    intentError.putExtra(Crop.Extra.ERROR, new Throwable("Image is less then minimum size specified.\nRequired size:"+minX+"x"+minY));
+                    intentError.putExtra(Crop.Extra.ERROR, new Throwable("Image is less then minimum size specified.\nRequired size:" + minX + "x" + minY));
                     setResult(Crop.RESULT_ERROR, intentError);
                     finish();
                 }
@@ -273,7 +283,10 @@ public class CropImageActivity extends MonitoredActivity {
             int y = (height - cropHeight) / 2;
 
             RectF cropRect = new RectF(x, y, x + cropWidth, y + cropHeight);
-            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX != 0 && aspectY != 0, minX, minY);
+
+            boolean maintainAspectRatio = !(minAspectX != 0 && minAspectY != 0 && maxAspectX != 0 && maxAspectY != 0) && (aspectX != 0 && aspectY != 0);
+
+            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, maintainAspectRatio, minX, minY);
             imageView.add(hv);
         }
 
@@ -318,8 +331,7 @@ public class CropImageActivity extends MonitoredActivity {
         try {
             croppedImage = decodeRegionCrop(r, outWidth, outHeight);
 
-            if (exifRotation != 0)
-            {
+            if (exifRotation != 0) {
                 Matrix m = new Matrix();
                 m.postRotate(exifRotation);
                 croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), m, true);

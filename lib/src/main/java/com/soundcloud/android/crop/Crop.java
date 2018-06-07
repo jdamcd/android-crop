@@ -23,12 +23,19 @@ public class Crop {
     interface Extra {
         String ASPECT_X = "aspect_x";
         String ASPECT_Y = "aspect_y";
+
+        String MIN_ASPECT_X = "min_aspect_x";
+        String MIN_ASPECT_Y = "min_aspect_y";
+        String MAX_ASPECT_X = "max_aspect_x";
+        String MAX_ASPECT_Y = "max_aspect_y";
+
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
         String MIN_X = "min_x";
         String MIN_Y = "min_y";
         String AS_PNG = "as_png";
         String ERROR = "error";
+        String LAYOUT_ID = "layout_id";
     }
 
     private Intent cropIntent;
@@ -49,6 +56,11 @@ public class Crop {
         cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, destination);
     }
 
+//    public Crop withLayout(int layoutId) {
+//        cropIntent.putExtra(Extra.LAYOUT_ID, layoutId);
+//        return this;
+//    }
+
     /**
      * Set fixed aspect ratio for crop area
      *
@@ -60,6 +72,16 @@ public class Crop {
         cropIntent.putExtra(Extra.ASPECT_Y, y);
         return this;
     }
+
+//    public Crop withAspectRange(int minX, int minY, int maxX, int maxY) {
+//        cropIntent.putExtra(Extra.MIN_ASPECT_X, minX);
+//        cropIntent.putExtra(Extra.MIN_ASPECT_Y, minY);
+//        cropIntent.putExtra(Extra.MAX_ASPECT_X, maxX);
+//        cropIntent.putExtra(Extra.MAX_ASPECT_Y, maxY);
+//        cropIntent.putExtra(Extra.ASPECT_X, maxX);
+//        cropIntent.putExtra(Extra.ASPECT_Y, maxY);
+//        return this;
+//    }
 
     /**
      * Crop area with fixed 1:1 aspect ratio
@@ -93,8 +115,10 @@ public class Crop {
         cropIntent.putExtra(Extra.MIN_Y, height);
         return this;
     }
+
     /**
      * Set whether to save the result as a PNG or not. Helpful to preserve alpha.
+     *
      * @param asPng whether to save the result as a PNG or not
      */
     public Crop asPng(boolean asPng) {

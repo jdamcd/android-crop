@@ -6,12 +6,11 @@ apply plugin: 'signing'
 archivesBaseName = 'android-crop'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.3'
+    compileSdkVersion 27
 
     defaultConfig {
-        minSdkVersion 10
-        targetSdkVersion 23
+        minSdkVersion 14
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0.1"
 
@@ -24,12 +23,12 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-annotations:23.4.0'
-    compile 'com.android.support:support-v4:23.4.0'
-    androidTestCompile 'com.squareup:fest-android:1.0.7'
-    androidTestCompile 'com.android.support:support-v4:23.4.0'
-    androidTestCompile 'org.mockito:mockito-core:1.9.5'
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.0'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
+    implementation 'com.android.support:support-annotations:27.1.1'
+    implementation 'com.android.support:support-v4:27.1.1'
+    androidTestImplementation 'com.squareup:fest-android:1.0.7'
+    androidTestImplementation 'com.android.support:support-v4:27.1.1'
+    androidTestImplementation 'org.mockito:mockito-core:1.9.5'
+    androidTestImplementation 'com.google.dexmaker:dexmaker:1.0'
+    androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.0'
 }
 
