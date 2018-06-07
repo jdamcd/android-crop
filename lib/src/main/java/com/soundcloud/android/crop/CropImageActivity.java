@@ -34,6 +34,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -52,7 +53,14 @@ public class CropImageActivity extends MonitoredActivity {
     private int aspectX;
     private int aspectY;
 
+    private int minAspectX;
+    private int minAspectY;
+    private int maxAspectX;
+    private int maxAspectY;
+
     // Output image
+    private int minX;
+    private int minY;
     private int maxX;
     private int maxY;
     private int exifRotation;
@@ -91,7 +99,14 @@ public class CropImageActivity extends MonitoredActivity {
     }
 
     private void setupViews() {
-        setContentView(R.layout.crop__activity_crop);
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+        int layoutId = R.layout.crop__activity_crop;
+        if (extras != null) {
+            layoutId = extras.getInt(Crop.Extra.LAYOUT_ID, R.layout.crop__activity_crop);
+        }
+        setContentView(layoutId);
 
         imageView = (CropImageView) findViewById(R.id.crop_image);
         imageView.context = this;
@@ -124,10 +139,19 @@ public class CropImageActivity extends MonitoredActivity {
         if (extras != null) {
             aspectX = extras.getInt(Crop.Extra.ASPECT_X);
             aspectY = extras.getInt(Crop.Extra.ASPECT_Y);
+
+            minAspectX = extras.getInt(Crop.Extra.MIN_ASPECT_X);
+            minAspectY = extras.getInt(Crop.Extra.MIN_ASPECT_Y);
+            maxAspectX = extras.getInt(Crop.Extra.MAX_ASPECT_X);
+            maxAspectX = extras.getInt(Crop.Extra.MAX_ASPECT_Y);
+
             maxX = extras.getInt(Crop.Extra.MAX_X);
             maxY = extras.getInt(Crop.Extra.MAX_Y);
             saveAsPng = extras.getBoolean(Crop.Extra.AS_PNG, false);
             saveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);
+
+            minX = extras.getInt(Crop.Extra.MIN_X, 0);
+            minY = extras.getInt(Crop.Extra.MIN_Y, 0);
         }
 
         sourceUri = intent.getData();
@@ -141,6 +165,19 @@ public class CropImageActivity extends MonitoredActivity {
                 BitmapFactory.Options option = new BitmapFactory.Options();
                 option.inSampleSize = sampleSize;
                 rotateBitmap = new RotateBitmap(BitmapFactory.decodeStream(is, null, option), exifRotation);
+
+                option.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(new File(sourceUri.getPath()).getAbsolutePath(), option);
+                int imageHeight = option.outHeight;
+                int imageWidth = option.outWidth;
+
+                if (minX > imageHeight || minY > imageWidth) {
+                    Intent intentError = new Intent();
+                    intentError.putExtra(Crop.Extra.ERROR, new Throwable("Image is less then minimum size specified.\nRequired size:" + minX + "x" + minY));
+                    setResult(Crop.RESULT_ERROR, intentError);
+                    finish();
+                }
+
             } catch (IOException e) {
                 Log.e("Error reading image: " + e.getMessage(), e);
                 setResultException(e);
@@ -246,7 +283,10 @@ public class CropImageActivity extends MonitoredActivity {
             int y = (height - cropHeight) / 2;
 
             RectF cropRect = new RectF(x, y, x + cropWidth, y + cropHeight);
-            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX != 0 && aspectY != 0);
+
+            boolean maintainAspectRatio = !(minAspectX != 0 && minAspectY != 0 && maxAspectX != 0 && maxAspectY != 0) && (aspectX != 0 && aspectY != 0);
+
+            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, maintainAspectRatio, minX, minY);
             imageView.add(hv);
         }
 
@@ -290,6 +330,12 @@ public class CropImageActivity extends MonitoredActivity {
 
         try {
             croppedImage = decodeRegionCrop(r, outWidth, outHeight);
+
+            if (exifRotation != 0) {
+                Matrix m = new Matrix();
+                m.postRotate(exifRotation);
+                croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), m, true);
+            }
         } catch (IllegalArgumentException e) {
             setResultException(e);
             finish();
@@ -297,7 +343,7 @@ public class CropImageActivity extends MonitoredActivity {
         }
 
         if (croppedImage != null) {
-            imageView.setImageRotateBitmapResetBase(new RotateBitmap(croppedImage, exifRotation), true);
+//            imageView.setImageRotateBitmapResetBase(new RotateBitmap(croppedImage, exifRotation), true);
             imageView.center();
             imageView.highlightViews.clear();
         }
@@ -393,11 +439,6 @@ public class CropImageActivity extends MonitoredActivity {
             } finally {
                 CropUtil.closeSilently(outputStream);
             }
-
-            CropUtil.copyExifRotation(
-                    CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri),
-                    CropUtil.getFromMediaUri(this, getContentResolver(), saveUri)
-            );
 
             setResultUri(saveUri);
         }

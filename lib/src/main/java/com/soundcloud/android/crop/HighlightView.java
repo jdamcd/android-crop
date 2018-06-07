@@ -77,6 +77,9 @@ class HighlightView {
     private float outlineWidth;
     private boolean isFocused;
 
+    private float minWidth = 0f;
+    private float minHeight = 0f;
+
     public HighlightView(View context) {
         viewContext = context;
         initStyles(context.getContext());
@@ -95,6 +98,13 @@ class HighlightView {
         } finally {
             attributes.recycle();
         }
+    }
+
+    public void setup(Matrix m, Rect imageRect, RectF cropRect, boolean maintainAspectRatio, int minWidth, int minHeight)
+    {
+        this.minWidth = minWidth;
+        this.minHeight = minHeight;
+        setup(m, imageRect, cropRect, maintainAspectRatio);
     }
 
     public void setup(Matrix m, Rect imageRect, RectF cropRect, boolean maintainAspectRatio) {
@@ -209,10 +219,8 @@ class HighlightView {
                 drawRect.left + xThird, drawRect.bottom, outlinePaint);
         canvas.drawLine(drawRect.left + xThird * 2, drawRect.top,
                 drawRect.left + xThird * 2, drawRect.bottom, outlinePaint);
-        canvas.drawLine(drawRect.left, drawRect.top + yThird,
-                drawRect.right, drawRect.top + yThird, outlinePaint);
-        canvas.drawLine(drawRect.left, drawRect.top + yThird * 2,
-                drawRect.right, drawRect.top + yThird * 2, outlinePaint);
+        canvas.drawLine(drawRect.left, drawRect.top + yThird, drawRect.right, drawRect.top + yThird, outlinePaint);
+        canvas.drawLine(drawRect.left, drawRect.top + yThird * 2, drawRect.right, drawRect.top + yThird * 2, outlinePaint);
     }
 
     private void drawCircle(Canvas canvas) {
@@ -346,6 +354,14 @@ class HighlightView {
                 : widthCap;
         if (r.height() < heightCap) {
             r.inset(0F, -(heightCap - r.height()) / 2F);
+        }
+
+        // Limits the size of the image to the given minimum amount
+        if (minWidth > 0f || minHeight > 0f)
+        {
+            float widthDiff = (Math.abs((r.right-r.left)) < minWidth) ? minWidth - Math.abs((r.right-r.left)) : 0f;
+            float heightDiff = (Math.abs((r.bottom-r.top)) < minHeight) ? minHeight - Math.abs((r.bottom-r.top)) : 0f;
+            r.inset((widthDiff/2)*-1, (heightDiff / 2) * -1);
         }
 
         // Put the cropping rectangle inside the image rectangle
