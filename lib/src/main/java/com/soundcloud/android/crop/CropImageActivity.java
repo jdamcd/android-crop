@@ -349,6 +349,7 @@ public class CropImageActivity extends MonitoredActivity {
                 if (croppedImage != null && (rect.width() > outWidth || rect.height() > outHeight)) {
                     Matrix matrix = new Matrix();
                     matrix.postScale((float) outWidth / rect.width(), (float) outHeight / rect.height());
+                    matrix.setRotate(exifRotation);
                     croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), matrix, true);
                 }
             } catch (IllegalArgumentException e) {
@@ -393,12 +394,6 @@ public class CropImageActivity extends MonitoredActivity {
             } finally {
                 CropUtil.closeSilently(outputStream);
             }
-
-            CropUtil.copyExifRotation(
-                    CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri),
-                    CropUtil.getFromMediaUri(this, getContentResolver(), saveUri)
-            );
-
             setResultUri(saveUri);
         }
 
