@@ -15,8 +15,14 @@
             </intent-filter>
         </activity>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
+
+        <provider android:authorities="com.soundcloud.android.crop.example.capture"
+            android:enabled="true" android:exported="true" android:name=".SharePhotoProvider"/>
+
     </application>
     
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
 
 </manifest>
