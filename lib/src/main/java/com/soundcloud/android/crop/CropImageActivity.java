@@ -347,8 +347,14 @@ public class CropImageActivity extends MonitoredActivity {
             try {
                 croppedImage = decoder.decodeRegion(rect, new BitmapFactory.Options());
                 if (croppedImage != null && (rect.width() > outWidth || rect.height() > outHeight)) {
-                    Matrix matrix = new Matrix();
-                    matrix.postScale((float) outWidth / rect.width(), (float) outHeight / rect.height());
+					Matrix matrix=new Matrix();
+					RectF adjusted=new RectF(0, 0, outWidth, outHeight);
+					if(exifRotation!=0){
+						matrix.setRotate(-exifRotation);
+						matrix.mapRect(adjusted);
+						matrix.setRotate(0);
+					}
+					matrix.postScale(adjusted.width()/rect.width(), adjusted.height()/rect.height());
                     croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), matrix, true);
                 }
             } catch (IllegalArgumentException e) {
