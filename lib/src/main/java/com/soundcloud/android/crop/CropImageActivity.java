@@ -219,36 +219,32 @@ public class CropImageActivity extends MonitoredActivity {
     private class Cropper {
 
         private void makeDefault() {
-            if (rotateBitmap == null) {
-                return;
-            }
-
-            HighlightView hv = new HighlightView(imageView);
-            final int width = rotateBitmap.getWidth();
-            final int height = rotateBitmap.getHeight();
-
-            Rect imageRect = new Rect(0, 0, width, height);
-
-            // Make the default size about 4/5 of the width or height
-            int cropWidth = Math.min(width, height) * 4 / 5;
-            @SuppressWarnings("SuspiciousNameCombination")
-            int cropHeight = cropWidth;
-
-            if (aspectX != 0 && aspectY != 0) {
-                if (aspectX > aspectY) {
-                    cropHeight = cropWidth * aspectY / aspectX;
-                } else {
-                    cropWidth = cropHeight * aspectX / aspectY;
-                }
-            }
-
-            int x = (width - cropWidth) / 2;
-            int y = (height - cropHeight) / 2;
-
-            RectF cropRect = new RectF(x, y, x + cropWidth, y + cropHeight);
-            hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX != 0 && aspectY != 0);
-            imageView.add(hv);
-        }
+		if(rotateBitmap==null) return;
+		HighlightView hv=new HighlightView(imageView);
+		final int width=rotateBitmap.getWidth();
+		final int height=rotateBitmap.getHeight();
+		Rect imageRect=new Rect(0, 0, width, height);
+		float scale=1.0f;//初始缩放比例，推荐设为0.8f
+		int cropWidth=(int)(Math.min(width, height)*scale);
+		int cropHeight=cropWidth;
+		if(aspectX>0 && aspectY>0){
+			float ratio=aspectX/(float)aspectY;
+			if(ratio>1){
+				cropHeight=(int)(cropWidth/ratio);
+			}else{
+				cropWidth=(int)(cropHeight*ratio);
+			}
+			ratio=Math.min(width/(float)cropWidth, height/(float)cropHeight);
+			ratio*=scale;
+			cropWidth*=ratio;
+			cropHeight*=ratio;
+		}
+		int x=(width-cropWidth)/2;
+		int y=(height-cropHeight)/2;
+		RectF cropRect=new RectF(x, y, x+cropWidth, y+cropHeight);
+		hv.setup(imageView.getUnrotatedMatrix(), imageRect, cropRect, aspectX!=0 && aspectY!=0);
+		imageView.add(hv);
+	}
 
         public void crop() {
             handler.post(new Runnable() {
@@ -347,10 +343,16 @@ public class CropImageActivity extends MonitoredActivity {
             try {
                 croppedImage = decoder.decodeRegion(rect, new BitmapFactory.Options());
                 if (croppedImage != null && (rect.width() > outWidth || rect.height() > outHeight)) {
-                    Matrix matrix = new Matrix();
-                    matrix.postScale((float) outWidth / rect.width(), (float) outHeight / rect.height());
-                    croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), matrix, true);
-                }
+			Matrix matrix=new Matrix();
+			RectF adjusted=new RectF(0, 0, outWidth, outHeight);
+			if(exifRotation!=0){
+				matrix.setRotate(-exifRotation);
+				matrix.mapRect(adjusted);
+				matrix.setRotate(0);
+			}
+			matrix.postScale(adjusted.width()/rect.width(), adjusted.height()/rect.height());
+			croppedImage = Bitmap.createBitmap(croppedImage, 0, 0, croppedImage.getWidth(), croppedImage.getHeight(), matrix, true);
+		}
             } catch (IllegalArgumentException e) {
                 // Rethrow with some extra information
                 throw new IllegalArgumentException("Rectangle " + rect + " is outside of the image ("
