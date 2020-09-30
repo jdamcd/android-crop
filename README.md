@@ -1,6 +1,7 @@
 > I guess people are just cropping out all the sadness
 
-An Android library project that provides a simple image cropping `Activity`, based on code from AOSP.
+
+***An Android library project that provides a simple image cropping `Activity`, based on code from AOSP.***
 
 **Deprecated!** This project is not maintained. If it doesn't meet your needs as is, consider creating a fork or picking from these [alternatives](https://android-arsenal.com/tag/45).
 
