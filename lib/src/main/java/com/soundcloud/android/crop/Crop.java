@@ -41,7 +41,7 @@ public class Crop {
         return new Crop(source, destination);
     }
 
-    private Crop(Uri source, Uri destination) {
+    public Crop(Uri source, Uri destination) {
         cropIntent = new Intent();
         cropIntent.setData(source);
         cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, destination);
